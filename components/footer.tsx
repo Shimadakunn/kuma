@@ -7,6 +7,8 @@ import {
   ArrowRightLeft,
   HandCoins,
   PercentCircle,
+  MousePointer2,
+  CreditCard 
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -22,11 +24,13 @@ const Footer = () => {
     <footer className="w-[6vw] h-screen p-4 mr-8 ml-2">
       <div className="w-full h-full bg-primary rounded flex items-center justify-between flex-col pt-4 pb-8">
         <div className="flex items-center justify-between flex-col space-y-8">
-          <PawPrint size={60} color="#d0f500" />
+          <PawPrint size={60} color="black"/>
           <Icons path_name="" tooltip="Go to Home Page"/>
           <Icons path_name="swap" tooltip="Swap Tokens"/>
           <Icons path_name="stake" tooltip="Stake Tokens"/>
-          <Icons path_name="lend" tooltip="Lend Tokens"/>
+          <Icons path_name="lend" tooltip="Lend / Borrow Tokens"/>
+          <Icons path_name="send" tooltip="Send / Receive Tokens"/>
+          <Icons path_name="onramp" tooltip="Buy Tokens with Fiat"/>
         </div>
         <Icons path_name="profile" tooltip="See Profile Info"/>
       </div>
@@ -49,37 +53,49 @@ const Icons: React.FC<FooterProps> = ({ path_name, tooltip }) => {
       <Tooltip>
         <TooltipTrigger asChild>
           <div
-            className={`flex items-center justify-center cursor-pointer p-4 ${
+            className={`flex items-center justify-center cursor-pointer p-3 ${
               path === "/" + path_name ? "bg-foreground" : "bg-transparent"
             }  rounded-xl`}
             onClick={() => router.push("/" + path_name)}
           >
             {path_name === "" ? (
               <Home
-                size={35}
+                size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
             ) : path_name === "swap" ? (
               <ArrowRightLeft
-                size={35}
+                size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
             ) : path_name === "stake" ? (
               <HandCoins
-                size={35}
+                size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
             ) : path_name === "lend" ? (
               <PercentCircle
-                size={35}
+                size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
             ) : path_name === "profile" ? (
               <UserRound
-                size={35}
+                size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
-            ) : (
+            ) : path_name === "send" ? (
+              <MousePointer2
+                size={32}
+                color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
+              />
+            ) :
+            path_name === "onramp" ? (
+              <CreditCard
+                size={32}
+                color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
+              />
+            ) :
+             (
               ""
             )}
           </div>

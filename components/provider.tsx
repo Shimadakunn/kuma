@@ -94,7 +94,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     init();
     setTimeout(() => {
     setLoading(false);
-    toast('Logged in successfully!');
+    toast.success('Logged in successfully!');
   }, 750);
   }, []);
   

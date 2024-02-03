@@ -1,6 +1,5 @@
 "use client";
-import { ProviderContext } from "@/components/provider";
-import { useContext } from "react";
+import { useWeb3Auth } from "../services/web3auth";
 
 import Image from "next/image";
 import Background from "../public/images/2-white.png";
@@ -17,14 +16,15 @@ import {
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-import { Twitter, Github, Facebook ,Youtube } from 'lucide-react';
+import { Twitter, Github, Facebook ,Youtube, PawPrint } from 'lucide-react';
 
 const Landing = () => {
-    const {login} = useContext(ProviderContext);
+    const { login } = useWeb3Auth();
     return (
         <main className="relative h-screen w-screen">
-            <header className="text-5xl font-[Monument] font-black tracking-tighter pl-8 pt-4">
-                KUMA
+            <header className="text-5xl font-[Monument] font-black tracking-tighter pl-8 pt-4 flex items-center justify-start">
+            <PawPrint size={50} strokeWidth={2} color="white" className="mr-4"/> 
+            <div>KUMA</div> 
             </header>
             <div className="absolute left-0 bottom-0 h-[90vh] pl-28">
                 <Image src={Background} alt="landing" className="w-full h-full object-cover"/>
@@ -37,9 +37,9 @@ const Landing = () => {
             <div className="absolute right-0 bottom-0 h-[90vh] w-[45%] flex items-start justify-center space-y-16 flex-col pl-12">
                 <h1 className="text-5xl font-[Monument] font-black tracking-tighter">OWN YOUR MONEY</h1>
                 <p className="text-2xl font-light tracking-tighter">Take control of your money and data</p>
+                <Button className="bg-foreground rounded-none hover:bg-foreground/90 tracking-tighter" onClick={login}>GET STARTED</Button>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button className="bg-foreground rounded-none hover:bg-foreground/90 tracking-tighter">GET STARTED</Button>
                     </DialogTrigger>
                     <DialogContent className="border border-[#a56cfe]/50">
                         <DialogHeader>
@@ -67,10 +67,10 @@ const Landing = () => {
                                 </div>
                                 <Label className="font-light text-lg">Phone Login</Label>
                                 <div className="flex items-center justify-center w-full pb-8">
-                                    <Input placeholder="Ex: 0712459874" className="w-[75%] border border-secondary/40 font-light"/>
+                                    <Input placeholder="Ex: 0712459874" className="w-[75%] border-0 bg-primary/15 font-light"/>
                                 </div>
                                 <div className="flex items-center justify-center w-full">
-                                    <Button className="w-[80%] bg-foreground rounded-none hover:bg-foreground/90 tracking-tighter">LOG IN</Button>
+                                    <Button className="w-[98%] bg-foreground rounded-none hover:bg-foreground/90 tracking-tighter">LOG IN</Button>
                                 </div>
                             </div>
                     </DialogContent>

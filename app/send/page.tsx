@@ -1,27 +1,55 @@
 "use client";
-import { ProviderContext } from "@/components/provider";
+import { useWeb3Auth } from "../../services/web3auth";
 import { Button } from "@/components/ui/button";
-import { useContext, useEffect } from "react";
+
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 export default function Home() {
-  const {logout, userInfo, getUserInfo, accounts,getAccounts, balance, getBalance} = useContext(ProviderContext);
-  useEffect(() => {
-    getAccounts();
-    getUserInfo();
-  }, []);
+  const { balance, sendTransaction, connectedChain } = useWeb3Auth();
+  const [amount, setAmount] = useState<number>();
+  const [toAddress, setToAddress] = useState<string>();
+
   return(
-    <>
-      <div>
-        <h1 className="font-[Monument] text-5xl tracking-[-0.2rem]">CONNECT AND PLAY</h1>
-        <p className="font-extralight tracking-tight">Logged in as {accounts}</p>
-        <Button onClick={logout} className="border-2 border-foreground bg-primary text-foreground">Logout</Button>
-        <div className="your-element w-28 h-8 bg-primary mt-32 border-foreground border" >
-          <p className="pl-4 font-extralight tracking-tight">Balance: {balance}</p>
+      <main className="flex items-center justify-center h-full w-full">
+        <div className="shadow w-[30vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
+            <div className='p-1'>
+              Send Token
+            </div>
+            <div className='relative'>
+              <Input className="h-[20vh] border-0 text-4xl font-medium bg-primary/15" placeholder="0" 
+                type="number"
+                value={amount}
+                onChange={(e) => setAmount(parseFloat(e.target.value))}
+              />
+              <div className='absolute top-1/2 right-4 -translate-y-1/2 text-2xl'>
+                {connectedChain.ticker}
+              </div>
+              <div className='absolute bottom-2 right-4 font-semibold text-gray-500 text-sm'>
+                Solde: {balance} <span className="text-secondary/80 cursor-pointer" onClick={()=>setAmount(parseFloat(balance!))}>Max</span>
+              </div>
+              <div className='absolute top-2 left-2 font-semibold text-gray-500 text-sm'>
+                You send
+              </div>
+            </div>
+            <div className='relative'>
+              <Input className="h-[10vh] border-0 text-xl font-medium bg-primary/15" placeholder="0x..."
+                value={toAddress}
+                type="text"
+                onChange={(e) => setToAddress(e.target.value)}
+              />
+              <div className='absolute top-2 left-2 font-semibold text-gray-500 text-xs '>
+                To
+              </div>
+            </div>
+          <Button className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest" 
+            onClick={() => sendTransaction(amount!.toString(), toAddress!)}
+            // onClick={() => getAddress()}
+            disabled={ !amount || !toAddress || parseFloat(balance!) < amount}
+          >
+            SWAP
+          </Button>
         </div>
-        <div className="your-element w-28 h-8 bg-secondary mt-32 border-foreground border text-black" >
-          <p className="pl-4 font-extralight tracking-tight">Balance: {balance}</p>
-        </div>
-      </div>
-    </>
+      </main>
   )
 }

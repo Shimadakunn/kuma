@@ -1,4 +1,5 @@
 import Provider from "@/components/provider";
+import { Web3AuthProvider } from "../services/web3auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -22,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <Provider>
+        <Web3AuthProvider>
           <div className="flex">
             <Footer />
             <div className="flex flex-col w-full">
@@ -30,8 +31,8 @@ export default function RootLayout({
               {children}
             </div>
           </div>
-        </Provider>
-        <Toaster />
+        </Web3AuthProvider>
+        <Toaster richColors/>
       </body>
     </html>
   );

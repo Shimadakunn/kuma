@@ -4,12 +4,13 @@ import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { createContext, useEffect, useState } from "react";
+import { ContractFactory, ethers } from "ethers";
 import Web3 from "web3";
 
 import { toast } from 'sonner';
 
-import Login from "./login-page";
 import Loading from "../components/ui/loading-page";
+import Login from "./login-page";
 
 const clientId =
   "BCqPWVEYpxRQaQKlTqcoZf3ChePO95Xn2IlfIuxsRJO1zofLmC7637tP0Tth8SWkzxXfkTHCgxSgg1TeihZmlGc";
@@ -56,6 +57,7 @@ const openloginAdapter = new OpenloginAdapter({
 web3auth.configureAdapter(openloginAdapter);
 
 export const ProviderContext = createContext<{
+  provider: IProvider | null;
   login: () => void;
   logout: () => void;
   userInfo: any | undefined;
@@ -66,6 +68,7 @@ export const ProviderContext = createContext<{
   getBalance: () => void;
   signedMessage: string | undefined;
   signMessage: (message: string) => void;
+  sendTransaction: (amount: number, toAddress: string) => void;
 }>({});
 
 export default function Provider({ children }: { children: React.ReactNode }) {
@@ -124,12 +127,12 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     await web3auth.logout();
     setProvider(null);
     setLoggedIn(false);
-    console.log("logged out");
+    toast.error("logged out");
   };
 
   const getAccounts = async () => {
     if (!provider) {
-      console.log("provider not initialized yet");
+      toast.error("provider not initialized yet");
       return;
     }
     const web3 = new Web3(provider as any);
@@ -139,7 +142,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
 
   const getBalance = async () => {
     if (!provider) {
-      console.log("provider not initialized yet");
+      toast.error("provider not initialized yet");
       return;
     }
     const web3 = new Web3(provider as any);
@@ -153,7 +156,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
 
   const signMessage = async (message: string) => {
     if (!provider) {
-      console.log("provider not initialized yet");
+      toast.error("provider not initialized yet");
       return;
     }
     const web3 = new Web3(provider as any);
@@ -166,9 +169,47 @@ export default function Provider({ children }: { children: React.ReactNode }) {
     setSignedMessage(signedMessage);
   };
 
+  const sendTransaction = async (amount:number, toAddress:string ): Promise<string> => {
+    // if (!provider){
+    //   toast.error("An error has occured.");
+    //   return;
+    // }
+    // const web3 = new Web3(provider as any);
+    // const fromAddress = (await web3.eth.getAccounts())[0];
+    // // const amountInWei = web3.utils.toWei(amount!, "ether");
+    // toast(fromAddress);
+    // toast(toAddress);
+    // // toast(amountInWei);
+    // const receipt = await web3.eth.sendTransaction({
+    //   from: fromAddress,
+    //   to: "0x63972913FC6FA0dd24250E0F0cEe8724b47a8e14",
+    //   value: "1000000000000000",
+    // })
+    // toast.success(`Transaction Hash: ${receipt.transactionHash}`);
+    try {
+      const ethersProvider = new ethers.BrowserProvider(provider as any);
+
+      const signer = await ethersProvider.getSigner();
+
+      const amountBigInt = ethers.parseEther(amount.toString());
+      const tx = await signer.sendTransaction({
+        to: toAddress,
+        value: amountBigInt,
+        maxPriorityFeePerGas: "5000000000",
+        maxFeePerGas: "6000000000000",
+      });
+      toast.success(`Transaction Hash: ${tx.hash}`);
+      return `Transaction Hash: ${tx.hash}`;
+    } catch (error: any) {
+      toast.error(`Error: ${error.message}`); 
+      return error as string;
+    }
+  };
+
   return (
     <ProviderContext.Provider
       value={{
+        provider,
         login,
         logout,
         userInfo,
@@ -179,6 +220,7 @@ export default function Provider({ children }: { children: React.ReactNode }) {
         getBalance,
         signedMessage,
         signMessage,
+        sendTransaction,
       }}
     >
       {loading ? <Loading/>:

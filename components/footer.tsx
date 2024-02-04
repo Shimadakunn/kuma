@@ -7,7 +7,7 @@ import {
   ArrowRightLeft,
   HandCoins,
   PercentCircle,
-  MousePointer2,
+  Send,
   CreditCard ,
   Webhook 
 } from "lucide-react";
@@ -86,7 +86,7 @@ const Icons: React.FC<FooterProps> = ({ path_name, tooltip }) => {
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
             ) : path_name === "send" ? (
-              <MousePointer2
+              <Send
                 size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />

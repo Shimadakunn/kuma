@@ -5,6 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
+import { Send } from 'lucide-react';
+
 export default function Home() {
   const { balance, sendTransaction, connectedChain } = useWeb3Auth();
   const [amount, setAmount] = useState<number>();
@@ -22,7 +24,7 @@ export default function Home() {
                 value={amount}
                 onChange={(e) => setAmount(parseFloat(e.target.value))}
               />
-              <div className='absolute top-1/2 right-4 -translate-y-1/2 text-2xl'>
+              <div className='absolute top-1/2 right-4 -translate-y-1/2 text-2xl font-[Monument]'>
                 {connectedChain.ticker}
               </div>
               <div className='absolute bottom-2 right-4 font-semibold text-gray-500 text-sm'>
@@ -44,10 +46,9 @@ export default function Home() {
             </div>
           <Button className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest" 
             onClick={() => sendTransaction(amount!.toString(), toAddress!)}
-            // onClick={() => getAddress()}
             disabled={ !amount || !toAddress || parseFloat(balance!) < amount}
           >
-            SWAP
+            SEND<Send className="ml-1" size={20}/>
           </Button>
         </div>
       </main>

@@ -259,7 +259,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       success: (data) => {
         //TODO: Receipe can callback and can't handle it
         const hashPattern = /0x[a-fA-F0-9]{64}/;
-        return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`https://sepolia.etherscan.io/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
+        return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`{connectedChain.ticker}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
         return `Error`;

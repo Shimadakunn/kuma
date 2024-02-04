@@ -51,7 +51,7 @@ const Header = () => {
       </div>
       <div className="font-[Monument] text-2xl tracking-tight flex space-x-2 items-center justify-center">
         <div className="font-light text-secondary">{chainId}</div>
-        <Popover open={open} onOpenChange={setOpen}>
+        {/* <Popover open={open} onOpenChange={setOpen}>
           <PopoverTrigger asChild>
             <Button
               variant="outline"
@@ -62,7 +62,7 @@ const Header = () => {
               <span className="w-full truncate">
                 {value
                   ? value
-                  : "sepolia testnet"}
+                  : connectedChain.chainNamespace}
               </span>
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -95,7 +95,7 @@ const Header = () => {
               </CommandGroup>
             </Command>
           </PopoverContent>
-        </Popover>
+        </Popover> */}
         <div className="truncate max-w-[7vw]">{balance}</div>
         <div className="font-light text-secondary">{connectedChain.ticker}</div>
       </div>

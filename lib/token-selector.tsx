@@ -1,5 +1,5 @@
 "use client";
-import { useWeb3Auth } from "../../services/web3auth";
+import { useWeb3Auth } from "../services/web3auth";
 import { token } from "@/config/tokenConfig";
 import { chain } from "@/config/chainConfig";
 
@@ -93,7 +93,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({ chainChange, selectedTok
                 value={key}
                 onSelect={(currentValue) => {
                   setValue(currentValue);
-                  if(chainChange || chainChange === undefined){
+                  if((chainChange || chainChange === undefined) && chainId !== token[currentValue].chainId){
                       changeChain(token[currentValue].chainId);
                   }
                   selectedToken(currentValue);

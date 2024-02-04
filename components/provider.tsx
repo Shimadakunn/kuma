@@ -3,13 +3,13 @@ import { CHAIN_NAMESPACES, IProvider, WALLET_ADAPTERS } from "@web3auth/base";
 import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import { Web3AuthNoModal } from "@web3auth/no-modal";
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { ethers } from "ethers";
 import { createContext, useEffect, useState } from "react";
-import { ContractFactory, ethers } from "ethers";
 import Web3 from "web3";
 
 import { toast } from 'sonner';
 
-import Loading from "../components/ui/loading-page";
+import Loading from "./loading-page";
 import Login from "./login-page";
 
 const clientId =

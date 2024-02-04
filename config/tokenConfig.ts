@@ -31,4 +31,11 @@ export const token: {
         image: "https://sideshift.ai/api/v2/coins/icon/ETH",
         chainId: "0xaa36a7"
     },
+    usdc: {
+        coin: "USDC",
+        name: "USD Coin",
+        decimals: 6,
+        image: "https://sideshift.ai/api/v2/coins/icon/USDC",
+        chainId: "0x1"
+    }
   } 

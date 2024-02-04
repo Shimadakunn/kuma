@@ -9,8 +9,8 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 import { chain } from "../config/chainConfig";
 import { getWalletProvider, IWalletProvider } from "./walletProvider";
 
+import Loading from "../components/loading-page";
 import Login from "../components/login-page";
-import Loading from "../components/ui/loading-page";
 
 import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
@@ -259,7 +259,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       success: (data) => {
         //TODO: Receipe can callback and can't handle it
         const hashPattern = /0x[a-fA-F0-9]{64}/;
-        return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`{connectedChain.ticker}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
+        return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
         return `Error`;

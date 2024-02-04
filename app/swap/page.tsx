@@ -1,6 +1,6 @@
 "use client";
 import { useWeb3Auth } from "../../services/web3auth";
-import { token } from "@/config/tokenConfig";
+import {fetchTokenQuote} from "@/lib/fetchTokenQuote";
 
 import {
   Command,
@@ -16,28 +16,52 @@ import {
 } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { ArrowRightLeft, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
-import TokenSelector from "@/components/ui/token-selector";
+import TokenSelector from "@/lib/token-selector";
 
 export default function Home() {
   const { balance, sendTransaction, connectedChain } = useWeb3Auth();
   const [amountSend, setAmountSend] = useState<number>();
   const [tokenSend, setTokenSend] = useState<string>();
+  const [tokenSendQuote, setTokenSendQuote] = useState<number>();
+  const [tokenSendQuoteLoading, setTokenSendQuoteLoading] = useState<boolean>(false);
   const [amountReceive, setAmountReceive] = useState<string>();
   const [tokenReceive, setTokenReceive] = useState<string>();
+  const [tokenReceiveQuote, setTokenReceiveQuote] = useState<number>();
+  
+  useEffect(() => {
+    const fetchSendTokenQuote = async () => {
+      if(amountSend){
+        fetchTokenQuote(tokenSend!, amountSend) 
+        .then((fetchedRate) => {
+          toast("fetchedRate:"+fetchedRate);
+          setTokenSendQuote(fetchedRate);
+        })
+        .catch((error) => {
+          console.error('Error fetching token quote:', error);
+          toast.error('Failed to fetch token quote');
+        });
+      }
+    }
+    fetchSendTokenQuote();
+  },[amountSend,tokenSend])
 
-  const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("ethereum");
+  const swap = async () => {
+  }
+
   return (
     <main className="flex items-center justify-center h-full w-full">
       <div className="shadow w-[30vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
         <div className="p-1">Swap Token</div>
         <div className="relative">
+          <div className="absolute top-2 left-2 font-semibold text-gray-500 text-sm">
+            You send
+          </div>
           <Input
             className="h-[15vh] border-0 text-4xl font-medium bg-primary/15"
             placeholder="0"
@@ -48,6 +72,11 @@ export default function Home() {
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl">
             <TokenSelector selectedToken={setTokenSend}/>
           </div>
+          <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
+            {tokenSendQuote ? 
+             Number.parseFloat(tokenSendQuote.toString()).toFixed(2) + " $":""
+            }
+          </div>
           {tokenSend}
           <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
             Solde: {balance}{" "}
@@ -57,9 +86,6 @@ export default function Home() {
             >
               Max
             </span>
-          </div>
-          <div className="absolute top-2 left-2 font-semibold text-gray-500 text-sm">
-            You send
           </div>
         </div>
         <div className="relative">

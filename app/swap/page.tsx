@@ -27,7 +27,9 @@ import TokenSelector from "@/components/ui/token-selector";
 export default function Home() {
   const { balance, sendTransaction, connectedChain } = useWeb3Auth();
   const [amountSend, setAmountSend] = useState<number>();
+  const [tokenSend, setTokenSend] = useState<string>();
   const [amountReceive, setAmountReceive] = useState<string>();
+  const [tokenReceive, setTokenReceive] = useState<string>();
 
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("ethereum");
@@ -44,8 +46,9 @@ export default function Home() {
             onChange={(e) => setAmountSend(parseFloat(e.target.value))}
           />
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl">
-            <TokenSelector/>
+            <TokenSelector selectedToken={setTokenSend}/>
           </div>
+          {tokenSend}
           <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
             Solde: {balance}{" "}
             <span
@@ -67,17 +70,9 @@ export default function Home() {
             value={amountReceive}
           />
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl font-[Monument]">
-            {connectedChain.ticker}
+          <TokenSelector chainChange={false} selectedToken={setTokenReceive}/>
           </div>
-          <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
-            Solde: {balance}{" "}
-            <span
-              className="text-secondary/80 cursor-pointer"
-              onClick={() => setAmountSend(parseFloat(balance!))}
-            >
-              Max
-            </span>
-          </div>
+          {tokenReceive}
           <div className="absolute top-2 left-2 font-semibold text-gray-500 text-sm">
             You receive
           </div>

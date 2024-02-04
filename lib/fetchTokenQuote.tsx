@@ -3,19 +3,28 @@ import { token } from "@/config/tokenConfig";
 import {chain } from "@/config/chainConfig";
 import { toast } from "sonner";
 
-export const fetchTokenQuote = async (tokenValue:string, amount:number) => {
-  const tokenTicker = token[tokenValue].coin;
+export const fetchTokenQuote = async (sendToken:string, sendAmount:number, receiveToken?:string) => {
+  const sendTokenTicker = token[sendToken].coin;
   
-  const tokenChain = Object.keys(chain).find((key) => {
-    return chain[key].chainId === token[tokenValue].chainId;
+  const sendTokenChain = Object.keys(chain).find((key) => {
+    return chain[key].chainId === token[sendToken].chainId;
   });
-  toast("tokenChain:"+tokenChain+" tokenTicker:"+tokenTicker+" amount:"+amount.toString());
+  let receiveTokenTicker = "usdc";
+  let receiveTokenChain = "polygon";
+
+  if(receiveToken){
+    receiveTokenTicker = token[receiveToken!].coin;
+    receiveTokenChain = Object.keys(chain).find((key) => {
+      return chain[key].chainId === token[receiveToken!].chainId;
+    });
+  }
+
     const data = JSON.stringify({
-      depositCoin: tokenTicker,
-      depositNetwork: tokenChain,
-      settleCoin: "usdc",
-      settleNetwork: "ethereum",
-      depositAmount: amount.toString(),
+      depositCoin: sendTokenTicker,
+      depositNetwork: sendTokenChain,
+      settleCoin: receiveTokenTicker,
+      settleNetwork: receiveTokenChain,
+      depositAmount: sendAmount.toString(),
       settleAmount: null,
       affiliateId: "w3SGv4itW",
     });
@@ -33,7 +42,7 @@ export const fetchTokenQuote = async (tokenValue:string, amount:number) => {
 
     try {
       const response = await axios(config);
-      return response.data.rate;
+      return response.data.settleAmount;
     } catch (error) {
       console.error(error);
       return error;

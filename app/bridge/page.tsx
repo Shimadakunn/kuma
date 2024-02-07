@@ -1,12 +1,10 @@
 "use client";
-import { useWeb3Auth } from "../../services/web3auth";
 import { Button } from "@/components/ui/button";
+import { useWeb3Auth } from "../../services/web3auth";
 
-import { toast } from "sonner";
 
 export default function Home() {
   const { address, logout } = useWeb3Auth();
- 
   return(
     <>
       <div>

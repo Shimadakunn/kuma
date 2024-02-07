@@ -1,20 +1,21 @@
 "use client";
-import { useWeb3Auth } from "../../services/web3auth";
-import {fetchTokenQuote} from "@/lib/fetchTokenQuote";
+import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
+import { SendToShift } from "@/lib/sideShift/swapToken";
+import SimpleTokenSelector from "@/lib/simple-token-selector";
 import TokenSelector from "@/lib/token-selector";
-import {SendToShift} from "@/lib/swapToken";
+import { useWeb3Auth } from "../../services/web3auth";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton"
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
 
-import { ArrowRightLeft, Check, ChevronsUpDown } from "lucide-react";
+import { ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
 
 
 export default function Home() {
-  const { balance, sendTransaction, address } = useWeb3Auth();
+  const { balance, address } = useWeb3Auth();
 
   const [amountSend, setAmountSend] = useState<number>();
   const [tokenSend, setTokenSend] = useState<string>();
@@ -125,7 +126,7 @@ export default function Home() {
             }
           </div>
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl font-[Monument]">
-            <TokenSelector chainChange={false} selectedToken={setTokenReceive}/>
+            <SimpleTokenSelector otherToken={tokenSend} selectedToken={setTokenReceive}/>
           </div>
         </div>
         <Button

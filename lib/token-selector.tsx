@@ -1,33 +1,30 @@
 "use client";
-import { useWeb3Auth } from "../services/web3auth";
-import { token } from "@/config/tokenConfig";
 import { chain } from "@/config/chainConfig";
+import { token } from "@/config/tokenConfig";
+import { useWeb3Auth } from "../services/web3auth";
 
+import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
-  CommandItem,
+  CommandItem
 } from "@/components/ui/command";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
-import { ArrowRightLeft, Check, ChevronsUpDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
+import { Check, ChevronsUpDown } from "lucide-react";
 
 interface ChildComponentProps {
-    chainChange?: boolean;
     selectedToken: React.Dispatch<React.SetStateAction<string | undefined>>;
   }
 
-const TokenSelector: React.FC<ChildComponentProps> = ({ chainChange, selectedToken }) => {
+const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
   const {
     balance,
     sendTransaction,
@@ -49,21 +46,15 @@ const TokenSelector: React.FC<ChildComponentProps> = ({ chainChange, selectedTok
     updateConnectedChain(chainInfo!);
   };
 
-
-  useEffect(() => {
-    if (chainId !== null && (chainChange || chainChange === undefined)) {
+  useEffect(() => { //Initializes the value of the token selector
+    if (chainId !== null && !valueInitianilized) {
+      console.log("useeffect:");
       const key = Object.keys(token).find((key) => {
         return token[key].chainId === "0x" + chainId;
       });
       setValue(key!);
       selectedToken(key!);
       setValueInitialized(true);
-      console.log("value:"+value);
-    }
-    else if(chainId !== null && !valueInitianilized && !chainChange){
-        setValue("ethereum");
-        selectedToken("ethereum");
-        setValueInitialized(true);
     }
   }, [chainId]);
 
@@ -93,7 +84,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({ chainChange, selectedTok
                 value={key}
                 onSelect={(currentValue) => {
                   setValue(currentValue);
-                  if((chainChange || chainChange === undefined) && chainId !== token[currentValue].chainId){
+                  if( chainId !== token[currentValue].chainId){
                       changeChain(token[currentValue].chainId);
                   }
                   selectedToken(currentValue);

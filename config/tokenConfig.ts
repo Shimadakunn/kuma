@@ -4,6 +4,7 @@ type TokenType = {
     decimals?: number;
     image: string;
     chainId: string;
+    chainKey?: string;
 }
 
 
@@ -15,14 +16,16 @@ export const token: {
         name: "Ethereum",
         decimals: 18,
         image: "https://sideshift.ai/api/v2/coins/icon/ETH",
-        chainId: "0x1"
+        chainId: "0x1",
+        chainKey: "eth"
     },
     matic: {
         coin: "MATIC",
         name: "Matic",
         decimals: 18,
         image: "https://sideshift.ai/api/v2/coins/icon/MATIC",
-        chainId: "0x89"
+        chainId: "0x89",
+        chainKey: "pol"
     },
     "ethereum-sepolia": {
         coin: "ETH SEP",
@@ -36,6 +39,7 @@ export const token: {
         name: "USD Coin",
         decimals: 6,
         image: "https://sideshift.ai/api/v2/coins/icon/USDC",
-        chainId: "0x1"
+        chainId: "0x1",
+        chainKey: "eth"
     }
   } 

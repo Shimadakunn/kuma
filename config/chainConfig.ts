@@ -209,7 +209,7 @@ export const chain: {
     ticker: "sFUEL",
     tickerName: "sFUEL",
   },
-  SOLANA: {
+  Solana: {
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
     chainId: "0x3",
     rpcTarget: "https://summer-frosty-friday.solana-devnet.quiknode.pro/5430f85cfb9a90ac2763131b24d8a746f2d18825/",

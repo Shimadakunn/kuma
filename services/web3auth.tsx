@@ -37,7 +37,6 @@ export interface IWeb3AuthContext {
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
   writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
-  getSolanaAddress: () => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -63,7 +62,6 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   readContract: async () => "",
   writeContract: async () => "",
   switchChain: async () => {},
-  getSolanaAddress: async () => "",
 });
 
 export function useWeb3Auth(): IWeb3AuthContext {
@@ -218,6 +216,12 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("provider not initialized yet");
       return "";
     }
+    if(chainId === "0x3") {
+      const updatedAddress = await solprovider!.getAddress();
+      setAddress(updatedAddress);
+      toast(updatedAddress);
+      return address;
+    }
     const updatedAddress = await provider.getAddress();
     setAddress(updatedAddress);
     toast(updatedAddress);
@@ -229,8 +233,14 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    const updatedBalance = await provider!.getBalance();
+    if(chainId === "0x3") {
+      const updatedBalance = await solprovider!.getBalance();
+      setBalance(updatedBalance);
+      toast(updatedBalance);
+      return balance;
+    }
 
+    const updatedBalance = await provider!.getBalance();
     setBalance(updatedBalance);
     toast(updatedBalance);
     return balance;
@@ -240,6 +250,11 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
       return "";
+    }
+    if(chainId === "0x3") {
+      const signature = await solprovider!.signMessage(message);
+      toast(signature);
+      return signature;
     }
     const signature = await provider!.signMessage(message);
     toast(signature);
@@ -270,6 +285,11 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
+    if(chainId === "0x3") {
+      const privateKey = await solprovider!.getPrivateKey();
+      toast("Private Key: "+ privateKey);
+      return privateKey;
+    }
     const privateKey = await provider!.getPrivateKey();
     toast("Private Key: "+ privateKey);
     return privateKey;
@@ -280,7 +300,9 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-
+    if(chainId === "0x3") {
+      return solprovider!.getChainId();
+    }
     await provider!.getChainId();
   };
 
@@ -309,28 +331,27 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   };
 
   const switchChain = async (network: string) => {
-    if (!provider) {
+    if (!provider || !solprovider) {
       toast.error("provider not initialized yet");
       return;
     }
+    console.log(chain[network])
     
-    await web3Auth!.addChain(chain[network]);
-    await web3Auth!.switchChain(chain[network]);
-    setChainId(await provider.getChainId());
-    setAddress(await provider.getAddress());
-    setBalance(await provider.getBalance());
+    if(network === "Solana") {
+      setAddress(await solprovider.getAddress());
+      setBalance(await solprovider.getBalance());
+      setChainId(await solprovider.getChainId());
+    }
+    else{
+      await web3Auth!.addChain(chain[network]);
+      await web3Auth!.switchChain(chain[network]);
+      setAddress(await provider.getAddress());
+      setBalance(await provider.getBalance());
+      setChainId(await provider.getChainId());
+    }
     setConnectedChain(chain[network]);
 
     toast.success("Switched chain to " + network);
-  };
-
-  const getSolanaAddress = async () => {
-    if(!solprovider) {
-      toast.error("provider not initialized yet");
-      return "";
-    }
-    const solana_address = await solprovider.getPrivateKey();
-    toast.success("Solana address: " + solana_address);
   };
 
   const contextProvider = {
@@ -355,8 +376,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     getChainId,
     readContract,
     writeContract,
-    switchChain,
-    getSolanaAddress,
+    switchChain
   };
   return <Web3AuthContext.Provider value={contextProvider}>
     {isLoading ? <Loading/>:

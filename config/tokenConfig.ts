@@ -47,6 +47,7 @@ export const token: {
         name: "Solana",
         decimals: 9,
         image: "https://sideshift.ai/api/v2/coins/icon/SOL",
-        chainId: "0x3"
+        chainId: "0x3",
+        chainKey: "sol"
     }
 } 

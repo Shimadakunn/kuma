@@ -54,7 +54,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const getSignature = async (message: string): Promise<string> => {
+  const signMessage = async (message: string): Promise<string> => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
 
@@ -68,13 +68,13 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const sendTransaction = async (amount: string, destination: string): Promise<string> => {
+  const sendTransaction = async (amount: number, destination: string): Promise<string> => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
 
       const signer = await ethersProvider.getSigner();
 
-      const amountBigInt = ethers.parseEther(amount);
+      const amountBigInt = ethers.parseEther(amount.toString());
 
       // Submit transaction to the blockchain
       const tx = await signer.sendTransaction({
@@ -97,28 +97,6 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       });
 
       return privateKey as string;
-    } catch (error: any) {
-      toast.error(error);
-      return error as string;
-    }
-  };
-
-  const deployContract = async (contractABI: string, contractByteCode: string, initValue: string): Promise<any> => {
-    try {
-      const ethersProvider = new ethers.BrowserProvider(provider as any);
-
-      const signer = await ethersProvider.getSigner();
-      const factory = new ContractFactory(JSON.parse(contractABI), contractByteCode, signer);
-
-      // Deploy contract with "Hello World!" in the constructor and wait to finish
-      const contract = await factory.deploy(initValue);
-      toast("Contract:" + contract);
-      toast(`Deploying Contract at Target: ${contract.target}, waiting for confirmation...`);
-
-      const receipt = await contract.waitForDeployment();
-      toast.success("Contract Deployed. Receipt:" + receipt);
-
-      return receipt;
     } catch (error: any) {
       toast.error(error);
       return error as string;
@@ -166,10 +144,9 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     getAddress,
     getBalance,
     getChainId,
-    getSignature,
+    signMessage,
     sendTransaction,
     getPrivateKey,
-    deployContract,
     readContract,
     writeContract,
   };

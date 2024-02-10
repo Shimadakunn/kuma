@@ -1,4 +1,3 @@
-import Provider from "@/components/provider";
 import { Web3AuthProvider } from "../services/web3auth";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";

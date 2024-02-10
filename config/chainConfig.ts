@@ -198,15 +198,34 @@ export const chain: {
     ticker: "ETH",
     tickerName: "ETH",
   },
-  // SKALE: {
-  //   chainNamespace: CHAIN_NAMESPACES.EIP155,
-  //   chainId: "0x79f99296",
-  //   rpcTarget: "https://mainnet.skalenodes.com/v1/elated-tan-skat",
-  //   // Avoid using public rpcTarget in production.
-  //   // Use services like Infura, Quicknode etc
-  //   displayName: "SKALE Europa Hub Mainnet",
-  //   blockExplorer: "https://elated-tan-skat.explorer.mainnet.skalenodes.com/",
-  //   ticker: "sFUEL",
-  //   tickerName: "sFUEL",
-  // },
+  SKALE: {
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0x79f99296",
+    rpcTarget: "https://mainnet.skalenodes.com/v1/elated-tan-skat",
+    // Avoid using public rpcTarget in production.
+    // Use services like Infura, Quicknode etc
+    displayName: "SKALE Europa Hub Mainnet",
+    blockExplorer: "https://elated-tan-skat.explorer.mainnet.skalenodes.com/",
+    ticker: "sFUEL",
+    tickerName: "sFUEL",
+  },
+  SOLANA: {
+    chainNamespace: CHAIN_NAMESPACES.SOLANA,
+    chainId: "0x3",
+    rpcTarget: "https://summer-frosty-friday.solana-devnet.quiknode.pro/5430f85cfb9a90ac2763131b24d8a746f2d18825/",
+    displayName: "Solana Mainnet",
+    blockExplorer: "https://explorer.solana.com",
+    ticker: "SOL",
+    tickerName: "SOL",
+  },
+  "Solana Devnet": {
+    chainId: "0x2",
+    displayName: "Solana Testnet",
+    chainNamespace: CHAIN_NAMESPACES.SOLANA,
+    tickerName: "SOLANA",
+    ticker: "SOL",
+    decimals: 18,
+    rpcTarget: "https://api.testnet.solana.com",
+    blockExplorer: "https://explorer.solana.com/?cluster=testnet",
+  },
 };

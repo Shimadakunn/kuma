@@ -1,7 +1,8 @@
 "use client";
 import { useWeb3Auth } from "../../services/web3auth";
-import { Button } from "@/components/ui/button";
+import TokenSelector from "@/components/token-selector/token-selector";
 
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 
@@ -9,6 +10,8 @@ import { Send } from 'lucide-react';
 
 export default function Home() {
   const { balance, sendTransaction, connectedChain } = useWeb3Auth();
+
+  const [tokenSend, setTokenSend] = useState<string>();
   const [amount, setAmount] = useState<number>();
   const [toAddress, setToAddress] = useState<string>();
 
@@ -25,7 +28,7 @@ export default function Home() {
                 onChange={(e) => setAmount(parseFloat(e.target.value))}
               />
               <div className='absolute top-1/2 right-4 -translate-y-1/2 text-2xl font-[Monument]'>
-                {connectedChain.ticker}
+                <TokenSelector selectedToken={setTokenSend}/>
               </div>
               <div className='absolute bottom-2 right-4 font-semibold text-gray-500 text-sm'>
                 Solde: {balance} <span className="text-secondary/80 cursor-pointer" onClick={()=>setAmount(parseFloat(balance!))}>Max</span>
@@ -45,7 +48,7 @@ export default function Home() {
               </div>
             </div>
           <Button className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest" 
-            onClick={() => sendTransaction(amount!.toString(), toAddress!)}
+            onClick={() => sendTransaction(amount!, toAddress!)}
             disabled={ !amount || !toAddress || parseFloat(balance!) < amount}
           >
             SEND<Send className="ml-1" size={20}/>

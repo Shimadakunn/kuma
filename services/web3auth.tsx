@@ -1,13 +1,12 @@
 "use client";
-import { getPublicCompressed } from "@toruslabs/eccrypto";
 import { CustomChainConfig, IProvider, WALLET_ADAPTERS } from "@web3auth/base";
 import { Web3Auth } from "@web3auth/modal";
 import { OPENLOGIN_NETWORK, OpenloginAdapter } from "@web3auth/openlogin-adapter";
-import * as jose from "jose";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 import { chain } from "../config/chainConfig";
-import { getWalletProvider, IWalletProvider } from "./walletProvider";
+import { getEVMWalletProvider, getSolanaWalletProvider, IWalletProvider } from "./walletProvider";
+
 
 import Loading from "../components/loading-page";
 import Login from "../components/login-page";
@@ -31,16 +30,14 @@ export interface IWeb3AuthContext {
   getUserInfo: () => Promise<any>;
   getAddress: () => Promise<string>;
   getBalance: () => Promise<string>;
-  getSignature: (message: string) => Promise<string>;
-  sendTransaction: (amount: string, destination: string) => Promise<string>;
+  signMessage: (message: string) => Promise<string>;
+  sendTransaction: (amount: number, destination: string) => Promise<string>;
   getPrivateKey: () => Promise<string>;
   getChainId: () => Promise<string>;
-  deployContract: (abi: any, bytecode: string, initValue: string) => Promise<any>;
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
   writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
-  verifyServerSide: (idToken: string) => Promise<any>;
   switchChain: (network: string) => Promise<void>;
-  updateConnectedChain: (network: string) => void;
+  getSolanaAddress: () => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -59,16 +56,14 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   getUserInfo: async () => null,
   getAddress: async () => "",
   getBalance: async () => "",
-  getSignature: async () => "",
+  signMessage: async () => "",
   sendTransaction: async () => "",
   getPrivateKey: async () => "",
   getChainId: async () => "",
-  deployContract: async () => {},
   readContract: async () => "",
   writeContract: async () => "",
-  verifyServerSide: async () => {},
-  switchChain: async () => null,
-  updateConnectedChain: () => {},
+  switchChain: async () => {},
+  getSolanaAddress: async () => "",
 });
 
 export function useWeb3Auth(): IWeb3AuthContext {
@@ -82,6 +77,7 @@ interface IWeb3AuthProps {
 export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const [web3Auth, setWeb3Auth] = useState<Web3Auth | null>(null);
   const [provider, setProvider] = useState<IWalletProvider | null>(null);
+  const [solprovider, setSolProvider] = useState<IWalletProvider | null>(null);
   const [address, setAddress] = useState<string | null>(null);
   const [balance, setBalance] = useState<string | null>(null);
   const [user, setUser] = useState<any | null>(null);
@@ -92,7 +88,9 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const [connected, setConnected] = useState<boolean>(false);
 
   const setWalletProvider = useCallback(async (web3authProvider: IProvider | null) => {
-    const walletProvider = getWalletProvider(web3authProvider);
+    const walletProvider = getEVMWalletProvider(web3authProvider);
+    const solWalletProvider = await getSolanaWalletProvider(web3authProvider);
+    setSolProvider(solWalletProvider);
     setProvider(walletProvider);
     setAddress(await walletProvider.getAddress());
     setBalance(await walletProvider.getBalance());
@@ -109,7 +107,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
           web3AuthNetwork: OPENLOGIN_NETWORK.SAPPHIRE_DEVNET,
           uiConfig: {
             defaultLanguage: "en",
-            mode: "dark", // light, dark or auto
+            mode: "dark",
             theme: {
               primary: "#a56cfe",
             },
@@ -238,17 +236,17 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return balance;
   };
 
-  const getSignature = async (message: string) => {
+  const signMessage = async (message: string) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    const signature = await provider!.getSignature(message);
+    const signature = await provider!.signMessage(message);
     toast(signature);
     return signature;
   };
 
-  const sendTransaction = async (amount: string, destination: string) => {
+  const sendTransaction = async (amount: number, destination: string) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
       return "";
@@ -286,15 +284,6 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     await provider!.getChainId();
   };
 
-  const deployContract = async (abi: any, bytecode: string, initValue: string): Promise<any> => {
-    if (!web3Auth) {
-      toast.error("web3auth not initialized yet");
-      return;
-    }
-    const receipt = await provider!.deployContract(abi, bytecode, initValue);
-    return receipt;
-  };
-
   const readContract = async (contractAddress: string, contractABI: any): Promise<string> => {
     if (!provider) {
       toast.error("provider not initialized yet");
@@ -319,68 +308,29 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     }
   };
 
-  const parseToken = (token: any) => {
-    try {
-      const base64Url = token.split(".")[1];
-      const base64 = base64Url.replace("-", "+").replace("_", "/");
-      return JSON.parse(window.atob(base64 || ""));
-    } catch (err) {
-      console.error(err);
-      return null;
-    }
-  };
-
-  const verifyServerSide = async (idTokenInFrontend: string) => {
-    try {
-      if (!provider) {
-        toast.error("provider not initialized yet");
-        return;
-      }
-      const privKey: string = await web3Auth!.provider?.request({
-        method: "eth_private_key",
-      });
-      const pubkey = getPublicCompressed(Buffer.from(privKey, "hex")).toString("hex");
-
-      const jwks = jose.createRemoteJWKSet(new URL("https://api.openlogin.com/jwks"));
-      const jwtDecoded = await jose.jwtVerify(idTokenInFrontend, jwks, {
-        algorithms: ["ES256"],
-      });
-      if ((jwtDecoded.payload as any).wallets[0].public_key === pubkey) {
-        toast.success(
-          "Validation Success!"+
-          "Public Key from Provider: "+
-          pubkey+
-          "Public Key from decoded JWT: "+
-          (jwtDecoded.payload as any).wallets[0].public_key+
-          "Parsed Id Token: "+
-          await parseToken(idTokenInFrontend)
-        );
-      } else {
-        toast.error("Failed");
-      }
-    } catch (e) {
-      toast.error("Error")
-      console.log(e);
-    }
-  };
-
   const switchChain = async (network: string) => {
     if (!provider) {
       toast.error("provider not initialized yet");
       return;
     }
-
+    
     await web3Auth!.addChain(chain[network]);
     await web3Auth!.switchChain(chain[network]);
     setChainId(await provider.getChainId());
     setAddress(await provider.getAddress());
     setBalance(await provider.getBalance());
+    setConnectedChain(chain[network]);
 
     toast.success("Switched chain to " + network);
   };
 
-  const updateConnectedChain = (network: string) => {
-    setConnectedChain(chain[network]);
+  const getSolanaAddress = async () => {
+    if(!solprovider) {
+      toast.error("provider not initialized yet");
+      return "";
+    }
+    const solana_address = await solprovider.getPrivateKey();
+    toast.success("Solana address: " + solana_address);
   };
 
   const contextProvider = {
@@ -399,16 +349,14 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     getUserInfo,
     getAddress,
     getBalance,
-    getSignature,
+    signMessage,
     sendTransaction,
     getPrivateKey,
     getChainId,
-    deployContract,
     readContract,
     writeContract,
-    verifyServerSide,
     switchChain,
-    updateConnectedChain,
+    getSolanaAddress,
   };
   return <Web3AuthContext.Provider value={contextProvider}>
     {isLoading ? <Loading/>:

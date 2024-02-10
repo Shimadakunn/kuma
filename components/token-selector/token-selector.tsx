@@ -1,7 +1,7 @@
 "use client";
 import { chain } from "@/config/chainConfig";
 import { token } from "@/config/tokenConfig";
-import { useWeb3Auth } from "../services/web3auth";
+import { useWeb3Auth } from "../../services/web3auth";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -31,7 +31,6 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
     chainId,
     connectedChain,
     switchChain,
-    updateConnectedChain,
   } = useWeb3Auth();
 
   const [open, setOpen] = useState(false);
@@ -43,7 +42,6 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
         return chain[key].chainId === chainId;
       });
     switchChain(chainInfo!);
-    updateConnectedChain(chainInfo!);
   };
 
   useEffect(() => { //Initializes the value of the token selector

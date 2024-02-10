@@ -1,8 +1,8 @@
 "use client";
+import SimpleTokenSelector from "@/components/token-selector/simple-token-selector";
+import TokenSelector from "@/components/token-selector/token-selector";
 import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
 import { SendToShift } from "@/lib/sideShift/swapToken";
-import SimpleTokenSelector from "@/lib/simple-token-selector";
-import TokenSelector from "@/lib/token-selector";
 import { useWeb3Auth } from "../../services/web3auth";
 
 import { Button } from "@/components/ui/button";

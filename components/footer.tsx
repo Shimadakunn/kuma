@@ -24,14 +24,12 @@ const Footer = () => {
   return (
     <footer className="w-[6vw] h-screen p-4 mr-8 ml-2">
       <div className="w-full h-full bg-primary/70 rounded-xl flex items-center justify-between flex-col px-10 pt-4 pb-8">
-        <div className="flex items-center justify-between flex-col space-y-4">
+        <div className="flex items-center flex-col space-y-8">
           <PawPrint size={60} strokeWidth={2} color="white" className="mb-4"/>
           <Icons path_name="" tooltip="Go to Home Page"/>
           <Icons path_name="swap" tooltip="Swap Tokens"/>
           <Icons path_name="stake" tooltip="Stake Tokens"/>
-          <Icons path_name="lend" tooltip="Lend / Borrow Tokens"/>
           <Icons path_name="send" tooltip="Send / Receive Tokens"/>
-          <Icons path_name="bridge" tooltip="Bridge Tokens"/>
           <Icons path_name="onramp" tooltip="Buy Tokens with Fiat"/>
         </div>
         <Icons path_name="profile" tooltip="See Profile Info"/>
@@ -75,11 +73,6 @@ const Icons: React.FC<FooterProps> = ({ path_name, tooltip }) => {
                 size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />
-            ) : path_name === "lend" ? (
-              <PercentCircle
-                size={32}
-                color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
-              />
             ) : path_name === "profile" ? (
               <UserRound
                 size={32}
@@ -87,11 +80,6 @@ const Icons: React.FC<FooterProps> = ({ path_name, tooltip }) => {
               />
             ) : path_name === "send" ? (
               <Send
-                size={32}
-                color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
-              />
-            ) :path_name === "bridge" ? (
-              <Webhook
                 size={32}
                 color={`${path === "/" + path_name ? "black" : "#ebe9e9"}`}
               />

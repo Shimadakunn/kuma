@@ -15,7 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -46,7 +46,6 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
 
   useEffect(() => { //Initializes the value of the token selector
     if (chainId !== null && !valueInitianilized) {
-      console.log("useeffect:");
       const key = Object.keys(token).find((key) => {
         return token[key].chainId === "0x" + chainId;
       });
@@ -55,6 +54,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
       setValueInitialized(true);
     }
   }, [chainId]);
+
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

@@ -216,13 +216,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("provider not initialized yet");
       return "";
     }
-    if(chainId === "0x3") {
-      const updatedAddress = await solprovider!.getAddress();
-      setAddress(updatedAddress);
-      toast(updatedAddress);
-      return address;
+    let updatedAddress = await provider.getAddress();
+    if(chainId === "3" || chainId === "2") {
+      updatedAddress = await solprovider!.getAddress();
     }
-    const updatedAddress = await provider.getAddress();
     setAddress(updatedAddress);
     toast(updatedAddress);
     return address;
@@ -233,14 +230,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    if(chainId === "0x3") {
-      const updatedBalance = await solprovider!.getBalance();
-      setBalance(updatedBalance);
-      toast(updatedBalance);
-      return balance;
+    let updatedBalance = await provider!.getBalance();
+    if(chainId === "3" || chainId === "2") {
+      updatedBalance = await solprovider!.getBalance();
     }
-
-    const updatedBalance = await provider!.getBalance();
     setBalance(updatedBalance);
     toast(updatedBalance);
     return balance;
@@ -251,12 +244,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    if(chainId === "0x3") {
-      const signature = await solprovider!.signMessage(message);
-      toast(signature);
-      return signature;
+    let signature = await provider!.signMessage(message);
+    if(chainId === "3" || chainId === "2") {
+      signature = await solprovider!.signMessage(message);
     }
-    const signature = await provider!.signMessage(message);
     toast(signature);
     return signature;
   };
@@ -266,18 +257,34 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    const promise = () => provider!.sendTransaction(amount, destination);
-    toast.promise(promise, {
-      loading: 'Sending transaction...',
-      success: (data) => {
-        //TODO: Receipe can callback and can't handle it
-        const hashPattern = /0x[a-fA-F0-9]{64}/;
-        return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
-      },
-      error: (error) => {
-        return `Error`;
-      },
-    });
+    if(chainId === "3" || chainId === "2") {
+      const promise = () => solprovider!.sendTransaction(amount, destination);
+      toast.promise(promise, {
+        loading: 'Sending transaction...',
+        success: (data) => {
+          //TODO: Receipe can callback and can't handle it
+          const hashPattern = /0x[a-fA-F0-9]{64}/;
+          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
+        },
+        error: (error) => {
+          return `Error`;
+        },
+      });
+    }
+    else{
+      const promise = () => provider!.sendTransaction(amount, destination);
+      toast.promise(promise, {
+        loading: 'Sending transaction...',
+        success: (data) => {
+          //TODO: Receipe can callback and can't handle it
+          const hashPattern = /0x[a-fA-F0-9]{64}/;
+          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
+        },
+        error: (error) => {
+          return `Error`;
+        },
+      });
+    }
   };
 
   const getPrivateKey = async () => {
@@ -285,12 +292,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    if(chainId === "0x3") {
-      const privateKey = await solprovider!.getPrivateKey();
-      toast("Private Key: "+ privateKey);
-      return privateKey;
+    let privateKey = await provider!.getPrivateKey();
+    if(chainId === "3" || chainId === "2") {
+      privateKey = await solprovider!.getPrivateKey();
     }
-    const privateKey = await provider!.getPrivateKey();
     toast("Private Key: "+ privateKey);
     return privateKey;
   };
@@ -300,7 +305,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    if(chainId === "0x3") {
+    if(chainId === "3" || chainId === "2") {
       return solprovider!.getChainId();
     }
     await provider!.getChainId();
@@ -337,7 +342,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     }
     console.log(chain[network])
     
-    if(network === "Solana") {
+    if(network === "Solana" || network === "Solana Devnet") {
       setAddress(await solprovider.getAddress());
       setBalance(await solprovider.getBalance());
       setChainId(await solprovider.getChainId());

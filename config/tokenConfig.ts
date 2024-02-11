@@ -4,7 +4,6 @@ type TokenType = {
     decimals?: number;
     image: string;
     chainId: string;
-    chainKey?: string;
 }
 
 
@@ -17,15 +16,6 @@ export const token: {
         decimals: 18,
         image: "https://sideshift.ai/api/v2/coins/icon/ETH",
         chainId: "0x1",
-        chainKey: "eth"
-    },
-    matic: {
-        coin: "MATIC",
-        name: "Matic",
-        decimals: 18,
-        image: "https://sideshift.ai/api/v2/coins/icon/MATIC",
-        chainId: "0x89",
-        chainKey: "pol"
     },
     "ethereum-sepolia": {
         coin: "ETH SEP",
@@ -34,13 +24,26 @@ export const token: {
         image: "https://sideshift.ai/api/v2/coins/icon/ETH",
         chainId: "0xaa36a7"
     },
+    matic: {
+        coin: "MATIC",
+        name: "Matic",
+        decimals: 18,
+        image: "https://sideshift.ai/api/v2/coins/icon/MATIC",
+        chainId: "0x89",
+    },
+    "matic-mumbai": {
+        coin: "MATIC Mumbai",
+        name: "Matic",
+        decimals: 18,
+        image: "https://sideshift.ai/api/v2/coins/icon/MATIC",
+        chainId: "0x13881",
+    },
     usdc: {
         coin: "USDC",
         name: "USD Coin",
         decimals: 6,
         image: "https://sideshift.ai/api/v2/coins/icon/USDC",
         chainId: "0x1",
-        chainKey: "eth"
     },
     solana :{
         coin: "SOL",
@@ -48,6 +51,12 @@ export const token: {
         decimals: 9,
         image: "https://sideshift.ai/api/v2/coins/icon/SOL",
         chainId: "0x3",
-        chainKey: "sol"
+    },
+    "solana-devnet" :{
+        coin: "SOL Devnet",
+        name: "Solana Devnet",
+        decimals: 9,
+        image: "https://sideshift.ai/api/v2/coins/icon/SOL",
+        chainId: "0x2",
     }
 } 

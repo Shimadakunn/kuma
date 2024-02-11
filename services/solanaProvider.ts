@@ -28,7 +28,7 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
     
       const getChainId = async (): Promise<string> => {
         try {
-          return "0x3";
+          return "3";
         } catch (error: any) {
           toast.error(error);
           return error.toString();

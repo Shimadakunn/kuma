@@ -22,7 +22,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 const Header = () => {
-  const { balance, chainId, switchChain, updateConnectedChain, connectedChain } = useWeb3Auth();
+  const { balance, chainId, switchChain, connectedChain } = useWeb3Auth();
   const path = usePathname();
 
   const [open, setOpen] = useState(false);
@@ -37,14 +37,10 @@ const Header = () => {
           ? "SWAP"
           : path === "/stake"
           ? "STAKE"
-          : path === "/lend"
-          ? "BORROW / LEND"
           : path === "/profile"
           ? "PROFILE"
           : path === "/send"
           ? "SEND / RECEIVE"
-          : path === "/bridge"
-          ? "BRIDGE"
           : path === "/onramp"
           ? "ONRAMP"
           : ""}

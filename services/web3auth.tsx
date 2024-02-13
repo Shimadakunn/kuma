@@ -15,6 +15,7 @@ import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 
 export interface IWeb3AuthContext {
+  ethersProvider: IProvider | null;
   web3Auth: Web3Auth | null;
   connected: boolean;
   provider: IWalletProvider | null;
@@ -37,9 +38,11 @@ export interface IWeb3AuthContext {
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
   writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
+  getTokenBalance: (contractAddress: string) => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
+  ethersProvider: null,
   web3Auth: null,
   provider: null,
   isLoading: false,
@@ -62,6 +65,7 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   readContract: async () => "",
   writeContract: async () => "",
   switchChain: async () => {},
+  getTokenBalance: async () => "",
 });
 
 export function useWeb3Auth(): IWeb3AuthContext {
@@ -73,6 +77,7 @@ interface IWeb3AuthProps {
 }
 
 export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
+  const [ethersProvider, setEthersProvider] = useState<IProvider | null>(null);
   const [web3Auth, setWeb3Auth] = useState<Web3Auth | null>(null);
   const [provider, setProvider] = useState<IWalletProvider | null>(null);
   const [solprovider, setSolProvider] = useState<IWalletProvider | null>(null);
@@ -86,6 +91,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const [connected, setConnected] = useState<boolean>(false);
 
   const setWalletProvider = useCallback(async (web3authProvider: IProvider | null) => {
+    setEthersProvider(web3authProvider);
     const walletProvider = getEVMWalletProvider(web3authProvider);
     const solWalletProvider = await getSolanaWalletProvider(web3authProvider);
     setSolProvider(solWalletProvider);
@@ -311,12 +317,22 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     await provider!.getChainId();
   };
 
+  const getTokenBalance = async (contractAddress: string) => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return;
+    }
+    const balance = await provider.getTokenBalance(contractAddress);
+    toast(balance);
+  }
+
   const readContract = async (contractAddress: string, contractABI: any): Promise<string> => {
     if (!provider) {
       toast.error("provider not initialized yet");
       return;
     }
     const message = await provider.readContract(contractAddress, contractABI);
+    console.log(message);
     toast(message);
   };
 
@@ -360,6 +376,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   };
 
   const contextProvider = {
+    ethersProvider,
     web3Auth,
     provider,
     user,
@@ -381,7 +398,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     getChainId,
     readContract,
     writeContract,
-    switchChain
+    switchChain,
+    getTokenBalance,
   };
   return <Web3AuthContext.Provider value={contextProvider}>
     {isLoading ? <Loading/>:

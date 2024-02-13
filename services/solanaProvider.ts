@@ -1,11 +1,11 @@
 import {
-    Connection,
-    LAMPORTS_PER_SOL,
-    PublicKey,
-    SystemProgram,
-    Transaction
+  Connection,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  SystemProgram,
+  Transaction
 } from "@solana/web3.js";
-import { CustomChainConfig, IProvider } from "@web3auth/base";
+import { CustomChainConfig } from "@web3auth/base";
 import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { IWalletProvider } from "./walletProvider";
@@ -36,6 +36,24 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
       };
     
       const getBalance = async (): Promise<string> => {
+        try {
+            const solanaWallet = new SolanaWallet(provider as any);
+            const connectionConfig = await solanaWallet.request<string[], CustomChainConfig>({
+              method: "solana_provider_config",
+              params: [],
+            });
+            const conn = new Connection(connectionConfig.rpcTarget);
+      
+            const accounts = await solanaWallet.requestAccounts();
+            const balance = await conn.getBalance(new PublicKey(accounts[0]));
+            return balance.toString();
+        } catch (error: any) {
+          toast.error(error);
+          return error.toString();
+        }
+      };
+
+      const getTokenBalance = async (): Promise<string> => {
         try {
             const solanaWallet = new SolanaWallet(provider as any);
             const connectionConfig = await solanaWallet.request<string[], CustomChainConfig>({
@@ -133,6 +151,7 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
       };
     
       return {
+        getTokenBalance,
         getAddress,
         getBalance,
         getChainId,

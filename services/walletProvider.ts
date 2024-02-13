@@ -3,7 +3,7 @@ import { IProvider } from "@web3auth/base";
 import evmProvider from "./evmProvider";
 import solanaProvider from "./solanaProvider";
 
-import { SolanaPrivateKeyProvider, SolanaWallet } from "@web3auth/solana-provider";
+import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
 
 export interface IWalletProvider {
   getAddress: () => Promise<string>;
@@ -14,6 +14,7 @@ export interface IWalletProvider {
   getPrivateKey: () => Promise<string>;
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
   writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
+  getTokenBalance: (contractAddress: string) => Promise<string>;
 }
 
 export const getEVMWalletProvider = (provider: IProvider | null): IWalletProvider => {

@@ -1,7 +1,15 @@
 "use client";
+import { useWeb3Auth } from "../../services/web3auth";
 import { token } from "@/config/tokenConfig";
+import { ethers } from "ethers";
 import Image from 'next/image';
-import { useEffect } from "react";
+
+
+
+import { Button } from "@/components/ui/button";
+
+import ERC20 from "@/public/abi/ERC20.json";
+import Sepolia from "@/public/abi/sepolia.json";
 
 export default function Home() {
   return(
@@ -26,6 +34,11 @@ type Pool = {
   tvl: number;
 };
 const StakePool: React.FC<Pool> = ({tok,apy,tvl}) => {
+  const { getTokenBalance } = useWeb3Auth();
+
+  const dai_address ="0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357";
+  const pool_address = "0x0562453c3DAFBB5e625483af58f4E6D668c44e19";
+
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
       <div className="w-28 flex items-center justify-start">
@@ -38,9 +51,9 @@ const StakePool: React.FC<Pool> = ({tok,apy,tvl}) => {
       <div className='w-20 text-center'>
         {tvl}M$
       </div>
-      <div className='w-20 text-right'>
+      <Button className="w-20 text-right" onClick={()=>getTokenBalance(dai_address)}>
         Supply
-      </div>
+      </Button>
     </div>
   );
 }

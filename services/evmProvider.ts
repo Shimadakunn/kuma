@@ -1,7 +1,8 @@
 import type { IProvider } from "@web3auth/base";
-import { ContractFactory, ethers } from "ethers";
+import { ethers } from "ethers";
 
 // import { json } from "stream/consumers";
+import ERC20 from "@/public/abi/ERC20.json";
 import { IWalletProvider } from "./walletProvider";
 
 import { toast } from "sonner";
@@ -83,7 +84,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
         maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
         maxFeePerGas: "6000000000000", // Max fee per gas
       });
-
+      await tx.wait();
       return `Transaction Hash: ${tx.hash}`;
     } catch (error: any) {
       return error as string;
@@ -103,16 +104,26 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
+  const getTokenBalance = async (contractAddress: string) => {
+    try {
+      const ethersProvider = new ethers.BrowserProvider(provider as any);
+      const signer = await ethersProvider.getSigner();
+      const contract = new ethers.Contract(contractAddress, ERC20, signer);
+      const res = ethers.formatEther(await contract.balanceOf(signer.getAddress()));
+      const balance = (+res).toFixed(4);
+      return balance;
+    } catch (error: any) {
+      toast.error(error);
+      return error as string;
+    }
+  }
+
   const readContract = async (contractAddress: string, contractABI: any) => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
-      toast(contractABI);
-
-      const contract = new ethers.Contract(contractAddress, JSON.parse(contractABI), signer);
-
-      // Read message from smart contract
-      const message = await contract.message();
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const message = await contract.balanceOf(signer.getAddress())
       return message;
     } catch (error: any) {
       toast.error(error);
@@ -149,6 +160,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     getPrivateKey,
     readContract,
     writeContract,
+    getTokenBalance,
   };
 };
 

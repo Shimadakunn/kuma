@@ -1,7 +1,8 @@
 import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
-import {token} from "@/config/tokenConfig";
+import { token } from "@/config/tokenConfig";
+import { signDaiPermit } from 'eth-permit';
 
 // import { json } from "stream/consumers";
 import ERC20 from "@/public/abi/ERC20.json";
@@ -46,7 +47,10 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const sendTransaction = async (amount: number, destination: string): Promise<string> => {
+  const sendTransaction = async (
+    amount: number,
+    destination: string
+  ): Promise<string> => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
@@ -98,12 +102,17 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       if (token[tok].address) {
-        const contract = new ethers.Contract(token[tok].address!, ERC20, signer);
-        const res = ethers.formatEther(await contract.balanceOf(signer.getAddress()));
+        const contract = new ethers.Contract(
+          token[tok].address!,
+          ERC20,
+          signer
+        );
+        const res = ethers.formatEther(
+          await contract.balanceOf(signer.getAddress())
+        );
         const balance = (+res).toFixed(4);
         return balance;
-      }
-      else{
+      } else {
         const address = signer.getAddress();
         const res = ethers.formatEther(
           await ethersProvider.getBalance(address)
@@ -115,15 +124,19 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       toast.error(error);
       return error as string;
     }
-  }
+  };
 
   const readContract = async (contractAddress: string, contractABI: any) => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
       const address = await signer.getAddress();
-      const message = await contract.getUserAccountData(address)
+      const message = await contract.getUserAccountData(address);
       return message;
     } catch (error: any) {
       toast.error(error);
@@ -131,18 +144,74 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const writeContract = async (contractAddress: string, tokenAddress:string, contractABI: any, amount: string) => {
+  const writeContract = async (
+    contractAddress: string,
+    tokenAddress: string,
+    contractABI: any,
+    amount: string
+  ) => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       const address = await signer.getAddress();
-      const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      const tx = await contract.supplyWithPermit(tokenAddress, ethers.parseUnits(amount),address,"0","1708073466","27","0x05a850e4f99bbe78ce84bde4d045060a87c7281c28a6b89fa00fa44b44c801e1","0x483e8848fe2e1b9517395632ca3dbca1a3454c232b6237ab1e7625c0bd177df0");
-      console.log("tokenAddress "+tokenAddress+" amount "+ethers.parseUnits(amount)+" address "+address);
+      const contract = new ethers.Contract(
+        contractAddress,
+        contractABI,
+        signer
+      );
+      const value = ethers.parseUnits(amount);
+      const deadline = Math.floor(Date.now() / 1000); + 4200;
+      // const nonces = await contract.nonces(address);
+      const domain = {
+        name: await contract.getAddress(),
+        version: "1",
+      };
+      const types = {
+        Permit: [{
+            name: "owner",
+            type: "address"
+          },
+          {
+            name: "spender",
+            type: "address"
+          },
+          {
+            name: "value",
+            type: "uint256"
+          },
+          {
+            name: "nonce",
+            type: "uint256"
+          },
+          {
+            name: "deadline",
+            type: "uint256"
+          },
+        ],
+      };
+      const values = {
+        owner: address,
+        spender: address,
+        value: value,
+        deadline: deadline,
+      };
+      const signature = await signer.signTypedData(domain, types, values).then(console.log);;
+      // const tx = await contract.supplyWithPermit(
+      //   tokenAddress,
+      //   ethers.parseUnits(amount),
+      //   address,
+      //   "0",
+      //   timestamp.toString(),
+      //   "27",
+      //   "0x05a850e4f99bbe78ce84bde4d045060a87c7281c28a6b89fa00fa44b44c801e1",
+      //   "0x483e8848fe2e1b9517395632ca3dbca1a3454c232b6237ab1e7625c0bd177df0",
+      // );
+      // console.log("tokenAddress " +tokenAddress +" amount " +ethers.parseUnits(amount)+" address "+address);
       // const receipt = await tx.wait();
-      return tx;
+      return signature;
     } catch (error: any) {
-      toast.error(error);
+      // toast.error(error);
+      
       return error as string;
     }
   };

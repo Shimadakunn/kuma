@@ -2,7 +2,7 @@ import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
 import { token } from "@/config/tokenConfig";
-import { signDaiPermit } from 'eth-permit';
+  import { signPermitSigature } from 'ethers-js-permit'
 
 // import { json } from "stream/consumers";
 import ERC20 from "@/public/abi/ERC20.json";
@@ -153,19 +153,22 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
+      const privateKey = await getPrivateKey();
+      const wallet = new ethers.Wallet(privateKey, ethersProvider);
       const address = await signer.getAddress();
       const contract = new ethers.Contract(
         contractAddress,
         contractABI,
         signer
       );
-      const value = ethers.parseUnits(amount);
-      const deadline = Math.floor(Date.now() / 1000); + 4200;
-      // const nonces = await contract.nonces(address);
+      const expiry = Math.floor(Date.now() / 1000) + 4200;
+      console.log(address)
       const domain = {
-        name: await contract.getAddress(),
-        version: "1",
-      };
+        name: 'Dai',
+        version: '1',
+        chainId: 11155111,
+        verifyingContract: tokenAddress
+      }
       const types = {
         Permit: [{
             name: "owner",
@@ -183,19 +186,20 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
             name: "nonce",
             type: "uint256"
           },
-          {
-            name: "deadline",
-            type: "uint256"
-          },
+          {name: "deadline",
+            type: "uint256"},
         ],
       };
-      const values = {
+      const message = {
         owner: address,
-        spender: address,
-        value: value,
-        deadline: deadline,
+        spender: contract,
+        value: ethers.parseUnits(amount),
+        nonce: 0,
+        deadline: expiry,
       };
-      const signature = await signer.signTypedData(domain, types, values).then(console.log);;
+      const signature = await wallet.signTypedData(domain, types, message);
+      console.log("Signature:", signature);
+      // const signature = await signer.signTypedData(domain, types, values).then(console.log);
       // const tx = await contract.supplyWithPermit(
       //   tokenAddress,
       //   ethers.parseUnits(amount),
@@ -208,7 +212,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       // );
       // console.log("tokenAddress " +tokenAddress +" amount " +ethers.parseUnits(amount)+" address "+address);
       // const receipt = await tx.wait();
-      return signature;
+      return "yes";
     } catch (error: any) {
       // toast.error(error);
       

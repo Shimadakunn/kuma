@@ -324,12 +324,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return;
     }
     if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
-      const balance = solprovider!.getBalance();
-      toast(balance);
+      const balance = await solprovider!.getBalance();
       return balance;
     }
     const balance = await provider.getTokenBalance(tok);
-    toast(balance);
     return balance;
   }
 

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { token } from "@/config/tokenConfig";
 
 import { Button } from "@/components/ui/button";
@@ -6,6 +7,7 @@ import {
   Command,
   CommandEmpty,
   CommandGroup,
+  CommandInput,
   CommandItem
 } from "@/components/ui/command";
 import {
@@ -13,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 
 import { cn } from "@/lib/utils";
@@ -34,18 +37,20 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="justify-between text-2xl font-[Monument] bg-foreground/90 border-0 text-black"
+          className="justify-between text-lg font-[Monument] bg-foreground/90 border-0 text-black"
         >
-          <span className="w-full truncate">
-            {value ? token[value].coin : "Select token"}
-        </span>
+            {value ? <div className="w-full flex items-center justify-center">
+            <Image src={`https://cryptofonts.com/img/icons/${token[value].coin.toLowerCase()}.svg`} width={30} height={30} alt={value} className="mr-2"/>
+            {token[value].coin}
+          </div> : "Select token"}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[7vw] p-0 text-2xl font-[Monument]">
+      <PopoverContent className="p-0 text-2xl font-[Monument]">
         <Command>
-          {/* <CommandInput placeholder="Search token..." /> */}
+        <CommandInput placeholder="Search token..."/>
           <CommandEmpty>No framework found.</CommandEmpty>
+          <ScrollArea className="h-[200px] rounded-md border p-2">
           <CommandGroup>
             {Object.keys(token).map((key) => (
               otherToken !== key && (
@@ -57,6 +62,7 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
                     selectedToken(currentValue);
                     setOpen(false);
                   }}
+                  className="w-[250px] text-base"
                 >
                   <Check
                     className={cn(
@@ -64,11 +70,13 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
                       value === key ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {token[key].coin}
+                    <Image src={`https://cryptofonts.com/img/icons/${token[key].coin.toLowerCase()}.svg`} width={30} height={30} alt={key} className="mr-2"/>
+                    {token[key].coin}
                 </CommandItem>
               )
             ))}
           </CommandGroup>
+          </ScrollArea>
         </Command>
       </PopoverContent>
     </Popover>

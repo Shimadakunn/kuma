@@ -13,7 +13,7 @@ export interface IWalletProvider {
   sendTransaction: (amount: number, destination: string) => Promise<string>;
   getPrivateKey: () => Promise<string>;
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
-  writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
+  writeContract: (contractAddress: string, tokenAddress :string, contractABI: any, updatedValue: string) => Promise<string>;
   getTokenBalance: (tok: string) => Promise<string>;
 }
 

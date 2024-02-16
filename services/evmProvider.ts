@@ -15,8 +15,6 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
 
       const signer = await ethersProvider.getSigner();
-
-      // Get user's Ethereum public address
       const address = await signer.getAddress();
       return address;
     } catch (error: any) {
@@ -39,9 +37,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
   const signMessage = async (message: string): Promise<string> => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
-
       const signer = await ethersProvider.getSigner();
-      // Sign the message
       const signedMessage = await signer.signMessage(message);
       return signedMessage;
     } catch (error: any) {
@@ -53,12 +49,8 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
   const sendTransaction = async (amount: number, destination: string): Promise<string> => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
-
       const signer = await ethersProvider.getSigner();
-
       const amountBigInt = ethers.parseEther(amount.toString());
-
-      // Submit transaction to the blockchain
       const tx = await signer.sendTransaction({
         to: destination,
         value: amountBigInt,
@@ -130,7 +122,8 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       const contract = new ethers.Contract(contractAddress, contractABI, signer);
-      const message = await contract.balanceOf(signer.getAddress())
+      const address = await signer.getAddress();
+      const message = await contract.getUserAccountData(address)
       return message;
     } catch (error: any) {
       toast.error(error);
@@ -138,20 +131,16 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const writeContract = async (contractAddress: string, contractABI: any, updatedValue: string) => {
+  const writeContract = async (contractAddress: string, tokenAddress:string, contractABI: any, amount: string) => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
-
       const signer = await ethersProvider.getSigner();
-
-      const contract = new ethers.Contract(contractAddress, JSON.parse(JSON.stringify(contractABI)), signer);
-
-      // Send transaction to smart contract to update message
-      const tx = await contract.update(updatedValue);
-
-      // Wait for transaction to finish
-      const receipt = await tx.wait();
-      return receipt;
+      const address = await signer.getAddress();
+      const contract = new ethers.Contract(contractAddress, contractABI, signer);
+      const tx = await contract.supplyWithPermit(tokenAddress, ethers.parseUnits(amount),address,"0","1708073466","27","0x05a850e4f99bbe78ce84bde4d045060a87c7281c28a6b89fa00fa44b44c801e1","0x483e8848fe2e1b9517395632ca3dbca1a3454c232b6237ab1e7625c0bd177df0");
+      console.log("tokenAddress "+tokenAddress+" amount "+ethers.parseUnits(amount)+" address "+address);
+      // const receipt = await tx.wait();
+      return tx;
     } catch (error: any) {
       toast.error(error);
       return error as string;

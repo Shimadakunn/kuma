@@ -26,10 +26,10 @@ export default function Home() {
       console.error(error);
     }
   }
-  useEffect(() => {
-    if(!provider) return;
-    getBalances();
-  }, [provider]);
+  // useEffect(() => {
+  //   if(!provider) return;
+  //   getBalances();
+  // }, [provider]);
 
 useEffect(() => {
   console.log(balances);

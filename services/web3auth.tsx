@@ -37,7 +37,7 @@ export interface IWeb3AuthContext {
   getPrivateKey: () => Promise<string>;
   getChainId: () => Promise<string>;
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
-  writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
+  writeContract: (contractAddress: string, tokenAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
   getTokenBalance: (tok: string) => Promise<string>;
 }
@@ -337,23 +337,23 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return;
     }
     const message = await provider.readContract(contractAddress, contractABI);
-    console.log(message);
+    console.log(message)
     toast(message);
   };
 
-  const writeContract = async (contractAddress: string, contractABI: any, updatedValue: string): Promise<string> => {
+  const writeContract = async (contractAddress: string, tokenAddress: string, contractABI: any, amount: string): Promise<string> => {
     if (!provider) {
       toast.error("provider not initialized yet");
       return;
     }
-    const receipt = await provider.writeContract(contractAddress, contractABI, updatedValue);
-    toast(receipt);
+    const receipt = await provider.writeContract(contractAddress,tokenAddress, contractABI, amount);
+    console.log(receipt);
 
-    if (receipt) {
-      setTimeout(async () => {
-        await readContract(contractAddress, contractABI);
-      }, 2000);
-    }
+    // if (receipt) {
+    //   setTimeout(async () => {
+    //     await readContract(contractAddress, contractABI);
+    //   }, 2000);
+    // }
   };
 
   const switchChain = async (tok: string) => {

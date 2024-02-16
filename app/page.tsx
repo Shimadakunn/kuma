@@ -1,76 +1,72 @@
 "use client";
-import { Label } from '@radix-ui/react-label';
-import {
-  CategoryScale,
-  Chart as ChartJS,
-  Legend,
-  LineElement,
-  LinearScale,
-  PointElement,
-  Title,
-  Tooltip,
-} from 'chart.js';
-import { Line } from "react-chartjs-2";
+import { useWeb3Auth } from "../services/web3auth";
+import { token } from "@/config/tokenConfig";
+import Image from 'next/image';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-export const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: 'top' as const,
-    },
-    title: {
-      display: false,
-      text: 'Chart.js Line Chart',
-    },
-  },
-};
-
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July'];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: 'Dataset 2',
-      data: [0,10,-20,30,-40,50,-60],
-      borderColor: '#d0f500',
-      backgroundColor: '#d0f500',
-    },
-  ],
-};
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
 
 export default function Home() {
+  const { provider, switchChain, balance,getTokenBalance } = useWeb3Auth();
+
+  const [balances, setBalances] = useState<string[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function getBalances() {
+    setLoading(true);
+    try {
+      const updatedBalances = [];
+      for (const key of Object.keys(token)) {
+        await switchChain(key);
+        const balance = await getTokenBalance(key);
+        console.log("key " + key + " balance " + balance);
+        updatedBalances.push(balance);
+      }
+      setBalances(updatedBalances);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  }
+  useEffect(() => {
+    if(!provider) return;
+    getBalances();
+  }, [provider]);
+
+useEffect(() => {
+  console.log(balances);
+}, [balances]);
   return(
-    <div className="w-full h-full flex items-center justify-center border border-red-500">
-      <div className='flex items-center justify-center w-[50%] h-full border border-blue-500'>
-        <div className='flex items-center justify-center space-x-12'>
-          <div className='dashboard w-[10vw] aspect-[1/1.25] bg-primary flex items-center justify-center'>
-            <Label className='tracking-tight'>Balance</Label>
+    <main className="flex items-center justify-center h-full w-full">
+        <div className="shadow w-[75vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
+          <div className='flex items-center justify-between px-4'>
+            <div className='w-28'>Token</div>
+            <div className='w-20 text-center'>APY</div>
+            <div className='w-20 text-center'>TVL</div>
+            <Button className='w-20 text-right' onClick={()=> getBalances()}>Check Balances</Button>
           </div>
-          <div className='dashboard w-[10vw] aspect-[1/1.25] bg-secondary flex items-center justify-center'>
-            <Label className='tracking-tight text-black'>Balance</Label>
-          </div>
-          <div className='dashboard w-[10vw] aspect-[1/1.25]  bg-foreground flex items-center justify-center'>
-            <Label className='tracking-tight text-black'>Balance</Label>
-          </div>
+          {Object.keys(token).map((key, i) => (
+            <StakePool key={key} tok={key} balance={balances[i]}/>
+          ))}
         </div>
+    </main>
+  )
+}
+type Pool = {
+  tok: string;
+  balance: string;
+};
+const StakePool: React.FC<Pool> = ({tok,balance}) => {
+  return (
+    <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
+      <div className="w-28 flex items-center justify-start">
+        <Image src={`https://cryptofonts.com/img/icons/${token[tok].coin.toLowerCase()}.svg`} width={40} height={40} alt={tok} className="mr-2"/>
+        {token[tok].coin}
       </div>
-      <div className='w-[50%] h-full border border-green-500 flex items-center justify-between flex-col'>
-        <div>
-          hello
-        </div>
-        <Line options={options} data={data}/>
+      <div className='w-20 text-center'>
+        {balance ? balance : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
     </div>
-  )
+  );
 }

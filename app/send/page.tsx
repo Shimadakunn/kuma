@@ -1,6 +1,7 @@
 "use client";
 import { useWeb3Auth } from "../../services/web3auth";
 import TokenSelector from "@/components/token-selector/token-selector";
+import { token } from "@/config/tokenConfig";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,7 +10,7 @@ import { useEffect, useState } from "react";
 import { Send } from 'lucide-react';
 
 export default function Home() {
-  const { balance, sendTransaction, connectedChain } = useWeb3Auth();
+  const { balance, sendTransaction, getTokenBalance } = useWeb3Auth();
 
   const [tokenSend, setTokenSend] = useState<string>();
   const [amount, setAmount] = useState<number>();
@@ -31,7 +32,7 @@ export default function Home() {
                 <TokenSelector selectedToken={setTokenSend}/>
               </div>
               <div className='absolute bottom-2 right-4 font-semibold text-gray-500 text-sm'>
-                Solde: {balance} <span className="text-secondary/80 cursor-pointer" onClick={()=>setAmount(parseFloat(balance!))}>Max</span>
+                Solde:{ balance } <span className="text-secondary/80 cursor-pointer" onClick={()=>setAmount(parseFloat(balance!))}>Max</span>
               </div>
               <div className='absolute top-2 left-2 font-semibold text-gray-500 text-sm'>
                 You send

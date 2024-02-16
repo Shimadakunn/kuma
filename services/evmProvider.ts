@@ -1,6 +1,8 @@
 import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
+import {token} from "@/config/tokenConfig";
+
 // import { json } from "stream/consumers";
 import ERC20 from "@/public/abi/ERC20.json";
 import { IWalletProvider } from "./walletProvider";
@@ -28,27 +30,6 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
 
       return (await ethersProvider.getNetwork()).chainId.toString(16);
-    } catch (error: any) {
-      toast.error(error);
-      return error.toString();
-    }
-  };
-
-  const getBalance = async (): Promise<string> => {
-    try {
-      const ethersProvider = new ethers.BrowserProvider(provider as any);
-
-      const signer = await ethersProvider.getSigner();
-
-      // Get user's Ethereum public address
-      const address = signer.getAddress();
-
-      // Get user's balance in ether
-      const res = ethers.formatEther(
-        await ethersProvider.getBalance(address) // Balance is in wei
-      );
-      const balance = (+res).toFixed(4);
-      return balance;
     } catch (error: any) {
       toast.error(error);
       return error.toString();
@@ -104,14 +85,40 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const getTokenBalance = async (contractAddress: string) => {
+  const getBalance = async (): Promise<string> => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
-      const contract = new ethers.Contract(contractAddress, ERC20, signer);
-      const res = ethers.formatEther(await contract.balanceOf(signer.getAddress()));
+      const address = signer.getAddress();
+      const res = ethers.formatEther(
+        await ethersProvider.getBalance(address) // Balance is in wei
+      );
       const balance = (+res).toFixed(4);
       return balance;
+    } catch (error: any) {
+      toast.error(error);
+      return error.toString();
+    }
+  };
+
+  const getTokenBalance = async (tok: string) => {
+    try {
+      const ethersProvider = new ethers.BrowserProvider(provider as any);
+      const signer = await ethersProvider.getSigner();
+      if (token[tok].address) {
+        const contract = new ethers.Contract(token[tok].address!, ERC20, signer);
+        const res = ethers.formatEther(await contract.balanceOf(signer.getAddress()));
+        const balance = (+res).toFixed(4);
+        return balance;
+      }
+      else{
+        const address = signer.getAddress();
+        const res = ethers.formatEther(
+          await ethersProvider.getBalance(address)
+        );
+        const balance = (+res).toFixed(4);
+        return balance;
+      }
     } catch (error: any) {
       toast.error(error);
       return error as string;

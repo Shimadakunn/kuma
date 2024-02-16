@@ -3,6 +3,15 @@ import { CHAIN_NAMESPACES, CustomChainConfig } from "@web3auth/base";
 export const chain: {
   [key: string]: CustomChainConfig;
 } = {
+  Ethereum: {
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0x1",
+    displayName: "Ethereum Mainnet",
+    rpcTarget: "https://mainnet.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
+    blockExplorer: "https://etherscan.io",
+    ticker: "ETH",
+    tickerName: "Ethereum",
+  },
   "Sepolia Testnet": {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0xaa36a7",
@@ -12,19 +21,10 @@ export const chain: {
     rpcTarget: "https://sepolia.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     blockExplorer: "https://sepolia.etherscan.io",
   },
-  Ethereum: {
-    chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x1",
-    displayName: "Ethereum Mainnet",
-    rpcTarget: "https://rpc.ankr.com/eth",
-    blockExplorer: "https://etherscan.io",
-    ticker: "ETH",
-    tickerName: "Ethereum",
-  },
   Polygon: {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x89", // hex of 137, polygon mainnet
-    rpcTarget: "https://rpc.ankr.com/polygon",
+    rpcTarget: "https://polygon-mainnet.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     // Avoid using public rpcTarget in production.
     // Use services like Infura, Quicknode etc
     displayName: "Polygon Mainnet",
@@ -35,7 +35,7 @@ export const chain: {
   "Polygon Mumbai Testnet": {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x13881", // hex of 80001, polygon testnet
-    rpcTarget: "https://polygon-mumbai-pokt.nodies.app",
+    rpcTarget: "https://polygon-mumbai.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     // Avoid using public rpcTarget in production.
     // Use services like Infura, Quicknode etc
     displayName: "Polygon Mumbai Testnet",
@@ -80,7 +80,7 @@ export const chain: {
   Arbitrum: {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0xA4B1", // hex of 42161
-    rpcTarget: "https://rpc.ankr.com/arbitrum",
+    rpcTarget: "https://arbitrum-mainnet.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     // Avoid using public rpcTarget in production.
     // Use services like Infura, Quicknode etc
     displayName: "Arbitrum Mainnet",
@@ -91,7 +91,7 @@ export const chain: {
   Optimism: {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0xA", // hex of 10
-    rpcTarget: "https://rpc.ankr.com/optimism",
+    rpcTarget: "https://optimism-mainnet.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     // Avoid using public rpcTarget in production.
     // Use services like Infura, Quicknode etc
     displayName: "Optimism Mainnet",

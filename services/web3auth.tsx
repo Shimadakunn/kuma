@@ -5,6 +5,7 @@ import { OPENLOGIN_NETWORK, OpenloginAdapter } from "@web3auth/openlogin-adapter
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
 import { chain } from "../config/chainConfig";
+import { token } from "../config/tokenConfig";
 import { getEVMWalletProvider, getSolanaWalletProvider, IWalletProvider } from "./walletProvider";
 
 
@@ -38,7 +39,7 @@ export interface IWeb3AuthContext {
   readContract: (contractAddress: string, contractABI: any) => Promise<string>;
   writeContract: (contractAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
-  getTokenBalance: (contractAddress: string) => Promise<string>;
+  getTokenBalance: (tok: string) => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -317,13 +318,19 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     await provider!.getChainId();
   };
 
-  const getTokenBalance = async (contractAddress: string) => {
+  const getTokenBalance = async (tok: string) => {
     if (!provider) {
       toast.error("provider not initialized yet");
       return;
     }
-    const balance = await provider.getTokenBalance(contractAddress);
+    if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
+      const balance = solprovider!.getBalance();
+      toast(balance);
+      return balance;
+    }
+    const balance = await provider.getTokenBalance(tok);
     toast(balance);
+    return balance;
   }
 
   const readContract = async (contractAddress: string, contractABI: any): Promise<string> => {
@@ -351,28 +358,25 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     }
   };
 
-  const switchChain = async (network: string) => {
+  const switchChain = async (tok: string) => {
     if (!provider || !solprovider) {
       toast.error("provider not initialized yet");
       return;
     }
-    console.log(chain[network])
-    
-    if(network === "Solana" || network === "Solana Devnet") {
+    if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
       setAddress(await solprovider.getAddress());
       setBalance(await solprovider.getBalance());
       setChainId(await solprovider.getChainId());
     }
     else{
-      await web3Auth!.addChain(chain[network]);
-      await web3Auth!.switchChain(chain[network]);
+      await web3Auth!.addChain(chain[token[tok].network!]);
+      await web3Auth!.switchChain(chain[token[tok].network!]);
       setAddress(await provider.getAddress());
-      setBalance(await provider.getBalance());
+      setBalance(await provider.getTokenBalance(tok));
       setChainId(await provider.getChainId());
     }
-    setConnectedChain(chain[network]);
-
-    toast.success("Switched chain to " + network);
+    setConnectedChain(chain[token[tok].network!]);
+    toast.success("Switched chain to " + token[tok].network);
   };
 
   const contextProvider = {

@@ -1,5 +1,4 @@
 "use client";
-import { chain } from "@/config/chainConfig";
 import { token } from "@/config/tokenConfig";
 import { useWeb3Auth } from "../../services/web3auth";
 
@@ -15,7 +14,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -24,12 +23,9 @@ interface ChildComponentProps {
     selectedToken: React.Dispatch<React.SetStateAction<string | undefined>>;
   }
 
-const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
+const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken}) => {
   const {
-    balance,
-    sendTransaction,
     chainId,
-    connectedChain,
     switchChain,
   } = useWeb3Auth();
 
@@ -37,14 +33,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
   const [value, setValue] = useState("ethereum");
   const [valueInitianilized, setValueInitialized] = useState(false);
 
-  const changeChain = (chainId: string) => {
-    const chainInfo = Object.keys(chain).find((key) => {
-        return chain[key].chainId === chainId;
-      });
-    switchChain(chainInfo!);
-  };
-
-  useEffect(() => { //Initializes the value of the token selector
+  useEffect(() => {
     if (chainId !== null && !valueInitianilized) {
       const key = Object.keys(token).find((key) => {
         return token[key].chainId === "0x" + chainId;
@@ -82,9 +71,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken }) => {
                 value={key}
                 onSelect={(currentValue) => {
                   setValue(currentValue);
-                  if( chainId !== token[currentValue].chainId){
-                      changeChain(token[currentValue].chainId);
-                  }
+                  switchChain(currentValue);
                   selectedToken(currentValue);
                   setOpen(false);
                 }}

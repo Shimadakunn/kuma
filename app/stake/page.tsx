@@ -4,8 +4,6 @@ import { token } from "@/config/tokenConfig";
 import { ethers } from "ethers";
 import Image from 'next/image';
 
-
-
 import { Button } from "@/components/ui/button";
 
 import ERC20 from "@/public/abi/ERC20.json";
@@ -23,7 +21,7 @@ export default function Home() {
           </div>
           {Object.keys(token).map((key) => (
             <StakePool key={key} tok={key} apy={10} tvl={1}/>
-             ))}
+          ))}
         </div>
     </main>
   )

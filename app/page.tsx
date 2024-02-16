@@ -11,10 +11,8 @@ export default function Home() {
   const { provider, switchChain, balance,getTokenBalance } = useWeb3Auth();
 
   const [balances, setBalances] = useState<string[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
 
   async function getBalances() {
-    setLoading(true);
     try {
       const updatedBalances = [];
       for (const key of Object.keys(token)) {
@@ -27,7 +25,6 @@ export default function Home() {
     } catch (error) {
       console.error(error);
     }
-    setLoading(false);
   }
   useEffect(() => {
     if(!provider) return;

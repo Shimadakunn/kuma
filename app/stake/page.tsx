@@ -11,7 +11,7 @@ export default function Home() {
   const { getTokenBalance,writeContract,readContract } = useWeb3Auth();
 
   const dai_address ="0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357";
-  const pool_address = "0x0562453c3DAFBB5e625483af58f4E6D668c44e19";
+  const pool_address = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
   return(
     <main className="flex items-center justify-center h-full w-full">
         <div className="shadow w-[75vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">

@@ -2,17 +2,13 @@ import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
 import { token } from "@/config/tokenConfig";
-import { signPermitSigature } from "ethers-js-permit";
 
-import { Web3Eth } from "web3-eth";
-import { Web3 } from "web3";
 
 // import { json } from "stream/consumers";
 import ERC20 from "@/public/abi/ERC20.json";
 import { IWalletProvider } from "./walletProvider";
 
 import { toast } from "sonner";
-import exp from "constants";
 
 const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
   const getAddress = async (): Promise<string> => {
@@ -181,16 +177,15 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
         owner: address,
         spender: contractAddress,
         value: ethers.parseUnits(amount),
-        nonce: 3,
+        nonce: 4,
         deadline: expiry,
       };
       const signature = await signer.signTypedData(domain, types, message);
       const r = signature.slice(0, 66);
       const s = "0x" + signature.slice(66, 130);
       const v = Number("0x" + signature.slice(130, 132));
-      const balance = await erc20.balanceOf(address);
-      console.log("balance "+ balance);
-      console.log("amount "+ ethers.parseUnits(amount));
+      const balance = await contract.getAddress();
+      console.log("contract "+ contractAddress);
       console.log("tokenAddress " +tokenAddress +" amount " +ethers.parseUnits(amount)+" address "+address+" expiry "+expiry+" v "+v+" r "+r+" s "+s);
       const tx = await contract.supplyWithPermit(
         tokenAddress,
@@ -201,7 +196,9 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
         v,
         r,
         s, {
-          gasLimit: 800000
+          gasLimit: 800000,
+          maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
+          maxFeePerGas: "6000000000000",
         }
       );
       const receipt = await tx.wait();

@@ -346,6 +346,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("provider not initialized yet");
       return;
     }
+    console.log(contractAddress)
     const receipt = await provider.writeContract(contractAddress,tokenAddress, contractABI, amount);
     console.log(receipt);
 

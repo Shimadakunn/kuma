@@ -34,10 +34,8 @@ export const chain: {
   },
   "Polygon Mumbai Testnet": {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x13881", // hex of 80001, polygon testnet
+    chainId: "0x13881",
     rpcTarget: "https://polygon-mumbai.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
-    // Avoid using public rpcTarget in production.
-    // Use services like Infura, Quicknode etc
     displayName: "Polygon Mumbai Testnet",
     blockExplorer: "https://mumbai.polygonscan.com/",
     ticker: "MATIC",

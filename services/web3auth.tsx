@@ -33,13 +33,14 @@ export interface IWeb3AuthContext {
   getAddress: () => Promise<string>;
   getBalance: () => Promise<string>;
   signMessage: (message: string) => Promise<string>;
-  sendTransaction: (amount: number, destination: string) => Promise<string>;
+  sendTransaction: (amount: number, destination: string, setLoading: (loading: boolean) => void) => Promise<string>;
   getPrivateKey: () => Promise<string>;
   getChainId: () => Promise<string>;
-  readContract: (contractAddress: string, contractABI: any) => Promise<string>;
-  writeContract: (contractAddress: string, tokenAddress: string, contractABI: any, updatedValue: string) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
   getTokenBalance: (tok: string) => Promise<string>;
+  getTokenBalanceWithAddress: (address: string) => Promise<string>;
+  supplyAave: (contractAddress: string, tok: string, amount: string) => Promise<string>;
+  withdrawAave: (contractAddress: string, tok: string) => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -63,10 +64,11 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   sendTransaction: async () => "",
   getPrivateKey: async () => "",
   getChainId: async () => "",
-  readContract: async () => "",
-  writeContract: async () => "",
   switchChain: async () => {},
   getTokenBalance: async () => "",
+  getTokenBalanceWithAddress: async () => "",
+  supplyAave: async () => "",
+  withdrawAave: async () => "",
 });
 
 export function useWeb3Auth(): IWeb3AuthContext {
@@ -259,36 +261,42 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return signature;
   };
 
-  const sendTransaction = async (amount: number, destination: string) => {
+  const sendTransaction = async (amount: number, destination: string,setLoading: (loading: boolean) => void) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
       return "";
     }
     if(chainId === "3" || chainId === "2") {
+      setLoading(true);
       const promise = () => solprovider!.sendTransaction(amount, destination);
       toast.promise(promise, {
         loading: 'Sending transaction...',
         success: (data) => {
           //TODO: Receipe can callback and can't handle it
           const hashPattern = /0x[a-fA-F0-9]{64}/;
+          setLoading(false);
           return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
         },
         error: (error) => {
-          return `Error`;
+          setLoading(false);
+          return error;
         },
       });
     }
     else{
+      setLoading(true);
       const promise = () => provider!.sendTransaction(amount, destination);
       toast.promise(promise, {
         loading: 'Sending transaction...',
         success: (data) => {
           //TODO: Receipe can callback and can't handle it
           const hashPattern = /0x[a-fA-F0-9]{64}/;
+          setLoading(false);
           return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
         },
         error: (error) => {
-          return `Error`;
+          setLoading(false);
+          return error;
         },
       });
     }
@@ -317,46 +325,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     }
     await provider!.getChainId();
   };
-
-  const getTokenBalance = async (tok: string) => {
-    if (!provider) {
-      toast.error("provider not initialized yet");
-      return;
-    }
-    if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
-      const balance = await solprovider!.getBalance();
-      return balance;
-    }
-    const balance = await provider.getTokenBalance(tok);
-    return balance;
-  }
-
-  const readContract = async (contractAddress: string, contractABI: any): Promise<string> => {
-    if (!provider) {
-      toast.error("provider not initialized yet");
-      return;
-    }
-    const message = await provider.readContract(contractAddress, contractABI);
-    console.log(message)
-    toast(message);
-  };
-
-  const writeContract = async (contractAddress: string, tokenAddress: string, contractABI: any, amount: string): Promise<string> => {
-    if (!provider) {
-      toast.error("provider not initialized yet");
-      return;
-    }
-    console.log(contractAddress)
-    const receipt = await provider.writeContract(contractAddress,tokenAddress, contractABI, amount);
-    console.log(receipt);
-
-    // if (receipt) {
-    //   setTimeout(async () => {
-    //     await readContract(contractAddress, contractABI);
-    //   }, 2000);
-    // }
-  };
-
+  
   const switchChain = async (tok: string) => {
     if (!provider || !solprovider) {
       toast.error("provider not initialized yet");
@@ -377,6 +346,49 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     setConnectedChain(chain[token[tok].network!]);
     toast.success("Switched chain to " + token[tok].network);
   };
+
+  const getTokenBalance = async (tok: string) => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return;
+    }
+    if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
+      const balance = await solprovider!.getBalance();
+      return balance;
+    }
+    const balance = await provider.getTokenBalance(tok);
+    return balance;
+  };
+
+  const getTokenBalanceWithAddress = async (address: string) => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return;
+    }
+    const balance = await provider.getTokenBalanceWithAddress(address);
+    return balance;
+  };
+
+  const supplyAave = async (contractAddress: string, tok: string, amount: string): Promise<string> => {
+    if(!provider) {
+      toast.error("provider not initialized yet");
+      return "";
+    }
+    const receipt = await provider.supplyAave(contractAddress, tok, amount);
+    console.log(receipt);
+    return receipt;
+  };
+
+  const withdrawAave = async (contractAddress: string, tok: string): Promise<string> => {
+    if(!provider) {
+      toast.error("provider not initialized yet");
+      return "";
+    }
+    const receipt = await provider.withdrawAave(contractAddress, tok);
+    console.log(receipt);
+    return receipt;
+  }
+
 
   const contextProvider = {
     ethersProvider,
@@ -399,10 +411,11 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     sendTransaction,
     getPrivateKey,
     getChainId,
-    readContract,
-    writeContract,
     switchChain,
     getTokenBalance,
+    getTokenBalanceWithAddress,
+    supplyAave,
+    withdrawAave,
   };
   return <Web3AuthContext.Provider value={contextProvider}>
     {isLoading ? <Loading/>:

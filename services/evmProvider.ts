@@ -2,7 +2,7 @@ import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
 import { token } from "@/config/tokenConfig";
-
+import AAVE from "@/public/abi/aave.json";
 
 // import { json } from "stream/consumers";
 import ERC20 from "@/public/abi/ERC20.json";
@@ -124,89 +124,69 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const readContract = async (contractAddress: string, contractABI: any) => {
+  const getTokenBalanceWithAddress = async (address: string) => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
+        address,
+        ERC20,
         signer
       );
-      const address = await signer.getAddress();
-      const message = await contract.getUserAccountData(address);
-      return message;
+      const res = ethers.formatEther(
+        await contract.balanceOf(signer.getAddress())
+      );
+      const balance = (+res).toFixed(4);
+      return balance;
     } catch (error: any) {
       return error as string;
     }
   };
 
-  const writeContract = async (
+  const supplyAave = async (
     contractAddress: string,
-    tokenAddress: string,
-    contractABI: any,
+    tok: string,
     amount: string
   ) => {
     try {
+      console.log(token[tok].address)
+      const expiry = Math.floor(Date.now() / 1000) + 3600;
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       const address = await signer.getAddress();
-      const erc20 = new ethers.Contract(tokenAddress, ERC20, signer);
-      const expiry = Math.floor(Date.now() / 1000) + 4200;
-      const contract = new ethers.Contract(
-        contractAddress,
-        contractABI,
-        signer
-      );
-      const domain = {
-        name: await erc20.name(),
-        version: "1",
-        chainId: (await ethersProvider!.getNetwork()).chainId,
-        verifyingContract: tokenAddress,
-      };
-      const types = {
-        Permit: [
-          { name: "owner", type: "address" },
-          { name: "spender", type: "address" },
-          { name: "value", type: "uint256" },
-          { name: "nonce", type: "uint256" },
-          { name: "deadline", type: "uint256" },
-        ],
-      };
-      const message = {
-        owner: address,
-        spender: contractAddress,
-        value: ethers.parseUnits(amount),
-        nonce: 4,
-        deadline: expiry,
-      };
+      const contract = new ethers.Contract(contractAddress,AAVE,signer);
+      const erc20 = new ethers.Contract(token[tok].address!, ERC20, signer);
+      const nonces = await erc20.nonces(address);
+      const domain = {name: await erc20.name(),version: "1",chainId: (await ethersProvider!.getNetwork()).chainId,verifyingContract: token[tok].address!,};
+      const types = {Permit: [{ name: "owner", type: "address" },{ name: "spender", type: "address" },{ name: "value", type: "uint256" },{ name: "nonce", type: "uint256" },{ name: "deadline", type: "uint256" },],};
+      const message = {owner: address,spender: contractAddress,value: ethers.parseUnits(amount),nonce: nonces,deadline: expiry,};
       const signature = await signer.signTypedData(domain, types, message);
       const r = signature.slice(0, 66);
       const s = "0x" + signature.slice(66, 130);
       const v = Number("0x" + signature.slice(130, 132));
-      const balance = await contract.getAddress();
-      console.log("contract "+ contractAddress);
-      console.log("tokenAddress " +tokenAddress +" amount " +ethers.parseUnits(amount)+" address "+address+" expiry "+expiry+" v "+v+" r "+r+" s "+s);
-      const tx = await contract.supplyWithPermit(
-        tokenAddress,
-        ethers.parseUnits(amount),
-        address,
-        0,
-        expiry,
-        v,
-        r,
-        s, {
-          gasLimit: 800000,
-          maxPriorityFeePerGas: "5000000000", // Max priority fee per gas
-          maxFeePerGas: "6000000000000",
-        }
-      );
+      const tx = await contract.supplyWithPermit(token[tok].address!,ethers.parseUnits(amount),address,0,expiry,v,r,s, {gasLimit: 800000,});
       const receipt = await tx.wait();
       return receipt;
     } catch (error: any) {
       return error as string;
     }
   };
+
+  const withdrawAave = async (contractAddress: string, tok: string) => {
+    try {
+      console.log(contractAddress);
+      const ethersProvider = new ethers.BrowserProvider(provider as any);
+      const signer = await ethersProvider.getSigner();
+      const contract = new ethers.Contract(contractAddress, AAVE, signer);
+      const aerc20 = new ethers.Contract(token[tok].aave!, ERC20, signer);
+      const aerc20Balance = await aerc20.balanceOf(signer.getAddress());
+      const tx = await contract.withdraw(token[tok].address!,aerc20Balance,signer.getAddress());
+      const receipt = await tx.wait();
+      return receipt;
+    } catch (error: any) {
+      return error as string;
+    }
+  }
 
   return {
     getAddress,
@@ -215,9 +195,10 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     signMessage,
     sendTransaction,
     getPrivateKey,
-    readContract,
-    writeContract,
     getTokenBalance,
+    getTokenBalanceWithAddress,
+    supplyAave,
+    withdrawAave,
   };
 };
 

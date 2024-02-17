@@ -1,14 +1,14 @@
 "use client";
 import { token } from "@/config/tokenConfig";
+import { contract } from "@/config/contractConfig";
 import Image from 'next/image';
 import { useWeb3Auth } from "../../services/web3auth";
 
 import { Button } from "@/components/ui/button";
-
-import AAVE from "@/public/abi/aave.json";
+import { useState } from "react";
 
 export default function Home() {
-  const { getTokenBalance,writeContract,readContract } = useWeb3Auth();
+  const { supplyAave, withdrawAave } = useWeb3Auth();
 
   const dai_address ="0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357";
   const pool_address = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
@@ -20,12 +20,17 @@ export default function Home() {
             <div className='w-20 text-center'>APY</div>
             <div className='w-20 text-center'>TVL</div>
             <div className='w-20 text-right'>Earn</div>
-            <Button className="w-20 text-right" onClick={()=>writeContract(pool_address,dai_address,AAVE,"100")}>
+            <Button className="w-20 text-right" onClick={()=>supplyAave(pool_address,"dai-sepolia","100")}>
               Supply
             </Button>
+            <Button className="w-20 text-right" onClick={()=>withdrawAave(pool_address,"dai-sepolia")}>
+              Withdraw
+            </Button>
           </div>
-          {Object.keys(token).map((key) => (
-            <StakePool key={key} tok={key} apy={10} tvl={1}/>
+          {Object.keys(contract).map((key) => (
+            contract[key].tokenArray.map((tok) =>
+              <StakePool key={tok} tok={tok} cont={key} apy={10} tvl={1}/>
+            )
           ))}
         </div>
     </main>
@@ -33,15 +38,14 @@ export default function Home() {
 }
 type Pool = {
   tok: string;
+  cont: string;
   apy: number;
   tvl: number;
 };
-const StakePool: React.FC<Pool> = ({tok,apy,tvl}) => {
-  const { getTokenBalance,writeContract } = useWeb3Auth();
+const StakePool: React.FC<Pool> = ({tok,cont,apy,tvl}) => {
+  const { supplyAave, withdrawAave, getTokenBalanceWithAddress } = useWeb3Auth();
 
-  const dai_address ="0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357";
-  const pool_address = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
-
+  const [aaveBalance, setAaveBalance] = useState("");
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
       <div className="w-28 flex items-center justify-start">
@@ -49,13 +53,16 @@ const StakePool: React.FC<Pool> = ({tok,apy,tvl}) => {
         {token[tok].coin}
       </div>
       <div className='w-20 text-center'>
-        {apy}%
+        {apy}% {}
       </div>
-      <div className='w-20 text-center'>
-        {tvl}M$
-      </div>
-      <Button className="w-20 text-right" onClick={()=>writeContract(pool_address,dai_address,AAVE,"1")}>
-        Supply
+      <Button className='w-20 text-center' onClick={async ()=> setAaveBalance( await getTokenBalanceWithAddress(token[tok].aave!))}>
+        {tvl}M$ {aaveBalance}
+      </Button>
+      <Button className="w-20 text-right" onClick={()=>supplyAave(contract[cont].address,tok,"100")}>
+        Supply 
+      </Button>
+      <Button className="w-20 text-right" onClick={()=>withdrawAave(contract[cont].address,tok)}>
+        Withdraw
       </Button>
     </div>
   );

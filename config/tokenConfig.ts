@@ -5,6 +5,7 @@ export type TokenType = {
     chainId: string;
     network?: string;
     address?: string;
+    aave?: string;
 }
 
 
@@ -40,14 +41,7 @@ export const token: {
         chainId: "0xaa36a7",
         network : "Sepolia Testnet",
         address: "0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357",
-    },
-    "adai-sepolia": {
-        coin: "aDAI SEP",
-        name: "aDai Sepolia",
-        decimals: 18,
-        chainId: "0xaa36a7",
-        network : "Sepolia Testnet",
-        address: "0x29598b72eb5CeBd806C5dCD549490FdA35B13cD8",
+        aave: "0x29598b72eb5CeBd806C5dCD549490FdA35B13cD8"
     },
     matic: {
         coin: "MATIC",

@@ -12,9 +12,10 @@ export interface IWalletProvider {
   signMessage: (message: string) => Promise<string>;
   sendTransaction: (amount: number, destination: string) => Promise<string>;
   getPrivateKey: () => Promise<string>;
-  readContract: (contractAddress: string, contractABI: any) => Promise<string>;
-  writeContract: (contractAddress: string, tokenAddress :string, contractABI: any, updatedValue: string) => Promise<string>;
   getTokenBalance: (tok: string) => Promise<string>;
+  getTokenBalanceWithAddress: (address: string) => Promise<string>;
+  supplyAave: (contractAddress: string, tok :string, amount: string) => Promise<string>;
+  withdrawAave: (contractAddress: string, tok :string) => Promise<string>;
 }
 
 export const getEVMWalletProvider = (provider: IProvider | null): IWalletProvider => {

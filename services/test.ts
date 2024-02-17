@@ -45,7 +45,14 @@ require('dotenv').config()
       chainId: chainId,
       verifyingContract: myToken.address
     };
-  
+
+    400000405514503672921
+    100000000000000000000
+    0x8b5570d4c32c7f5d5c3c0635fdcbb52ccec21a04f8c883a626dfa27f2a989fab 
+    0x1e61c3c9f3e68a554dad2103e566e60f68f26e71b7ab476bb0c3d7f79664d2f7
+
+    0x086abbce36969c4d67738111d4d8e6ff0f53444dfe1c70dcd537a6577cbd7e34
+    0x49c16b1ad3782fed2c197257201c72571ba7995cadbe928933344e4ddfc3970d
     // set the Permit type parameters
     const types = {
       Permit: [{

@@ -40,7 +40,7 @@ const StakePool: React.FC<Pool> = ({tok,apy,tvl}) => {
   const { getTokenBalance,writeContract } = useWeb3Auth();
 
   const dai_address ="0xFF34B3d4Aee8ddCd6F9AFFFB6Fe49bD371b8a357";
-  const pool_address = "0x0562453c3DAFBB5e625483af58f4E6D668c44e19";
+  const pool_address = "0x6Ae43d3271ff6888e7Fc43Fd7321a503ff738951";
 
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
@@ -54,7 +54,7 @@ const StakePool: React.FC<Pool> = ({tok,apy,tvl}) => {
       <div className='w-20 text-center'>
         {tvl}M$
       </div>
-      <Button className="w-20 text-right" onClick={()=>writeContract(pool_address,dai_address,AAVE,"1000000000")}>
+      <Button className="w-20 text-right" onClick={()=>writeContract(pool_address,dai_address,AAVE,"1")}>
         Supply
       </Button>
     </div>

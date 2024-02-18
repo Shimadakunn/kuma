@@ -3,15 +3,6 @@ import { CHAIN_NAMESPACES, CustomChainConfig } from "@web3auth/base";
 export const chain: {
   [key: string]: CustomChainConfig;
 } = {
-  Ethereum: {
-    chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x1",
-    displayName: "Ethereum Mainnet",
-    rpcTarget: "https://mainnet.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
-    blockExplorer: "https://etherscan.io",
-    ticker: "ETH",
-    tickerName: "Ethereum",
-  },
   "Sepolia Testnet": {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0xaa36a7",
@@ -21,6 +12,52 @@ export const chain: {
     rpcTarget: "https://sepolia.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     blockExplorer: "https://sepolia.etherscan.io",
   },
+  "Polygon Mumbai Testnet": {
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0x13881",
+    rpcTarget: "https://polygon-mumbai.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
+    displayName: "Polygon Mumbai Testnet",
+    blockExplorer: "https://mumbai.polygonscan.com/",
+    ticker: "MATIC",
+    tickerName: "Matic",
+  },
+  "Arbitrum Sepolia Testnet": {
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0x66eee",
+    rpcTarget: "https://arbitrum-sepolia.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
+    displayName: "Arbitrum Sepolia Testnet",
+    blockExplorer: "https://sepolia.arbiscan.io/",
+    ticker: "ETH",
+    tickerName: "Ethereum",
+  },
+  "Avalanche Fuji Testnet": {
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0xa869",
+    rpcTarget: "https://avalanche-fuji.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
+    displayName: "Avalanche Fuji Testnet",
+    blockExplorer: "https://cchain.explorer.avax-test.network/",
+    ticker: "AVAX",
+    tickerName: "AVAX",
+  },
+  "Solana Devnet": {
+    chainId: "0x2",
+    displayName: "Solana Testnet",
+    chainNamespace: CHAIN_NAMESPACES.SOLANA,
+    tickerName: "SOLANA",
+    ticker: "SOL",
+    decimals: 18,
+    rpcTarget: "https://api.testnet.solana.com",
+    blockExplorer: "https://explorer.solana.com/?cluster=testnet",
+  },
+  Ethereum: {
+    chainNamespace: CHAIN_NAMESPACES.EIP155,
+    chainId: "0x1",
+    displayName: "Ethereum Mainnet",
+    rpcTarget: "https://mainnet.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
+    blockExplorer: "https://etherscan.io",
+    ticker: "ETH",
+    tickerName: "Ethereum",
+  },
   Polygon: {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x89", // hex of 137, polygon mainnet
@@ -29,15 +66,6 @@ export const chain: {
     // Use services like Infura, Quicknode etc
     displayName: "Polygon Mainnet",
     blockExplorer: "https://polygonscan.com",
-    ticker: "MATIC",
-    tickerName: "Matic",
-  },
-  "Polygon Mumbai Testnet": {
-    chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x13881",
-    rpcTarget: "https://polygon-mumbai.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
-    displayName: "Polygon Mumbai Testnet",
-    blockExplorer: "https://mumbai.polygonscan.com/",
     ticker: "MATIC",
     tickerName: "Matic",
   },
@@ -93,15 +121,5 @@ export const chain: {
     blockExplorer: "https://explorer.solana.com",
     ticker: "SOL",
     tickerName: "SOL",
-  },
-  "Solana Devnet": {
-    chainId: "0x2",
-    displayName: "Solana Testnet",
-    chainNamespace: CHAIN_NAMESPACES.SOLANA,
-    tickerName: "SOLANA",
-    ticker: "SOL",
-    decimals: 18,
-    rpcTarget: "https://api.testnet.solana.com",
-    blockExplorer: "https://explorer.solana.com/?cluster=testnet",
   },
 };

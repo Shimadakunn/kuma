@@ -42,7 +42,7 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
             {value ? <div className="w-full flex items-center justify-center">
             <Image src={`https://cryptofonts.com/img/icons/${token[value].coin.toLowerCase()}.svg`} width={30} height={30} alt={value} className="mr-2"/>
             {token[value].coin}
-          </div> : "Select token"}
+          </div> : <div className="text-sm">Select token</div>}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
@@ -50,7 +50,7 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
         <Command>
         <CommandInput placeholder="Search token..."/>
           <CommandEmpty>No framework found.</CommandEmpty>
-          <ScrollArea className="h-[200px] rounded-md border p-2">
+          <ScrollArea className="h-max-[200px] rounded-md border p-2">
           <CommandGroup>
             {Object.keys(token).map((key) => (
               otherToken !== key && (

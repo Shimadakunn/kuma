@@ -120,7 +120,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
         return balance;
       }
     } catch (error: any) {
-      return error as string;
+      return "";
     }
   };
 
@@ -139,7 +139,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const balance = (+res).toFixed(4);
       return balance;
     } catch (error: any) {
-      return error as string;
+      return "";
     }
   };
 

@@ -17,7 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
@@ -33,7 +33,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken}) => {
   } = useWeb3Auth();
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("ethereum");
+  const [value, setValue] = useState("ethereum-sepolia");
   const [valueInitianilized, setValueInitialized] = useState(false);
 
   useEffect(() => {
@@ -47,6 +47,9 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken}) => {
     }
   }, [chainId]);
 
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

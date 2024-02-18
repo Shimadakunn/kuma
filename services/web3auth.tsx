@@ -39,8 +39,8 @@ export interface IWeb3AuthContext {
   switchChain: (network: string) => Promise<void>;
   getTokenBalance: (tok: string) => Promise<string>;
   getTokenBalanceWithAddress: (address: string) => Promise<string>;
-  supplyAave: (contractAddress: string, tok: string, amount: string) => Promise<string>;
-  withdrawAave: (contractAddress: string, tok: string) => Promise<string>;
+  supplyAave: (contractAddress: string, tok: string, amount: string,setLoading: (loading: boolean) => void) => Promise<string>;
+  withdrawAave: (contractAddress: string, tok: string,setLoading: (loading: boolean) => void) => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -275,11 +275,11 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
           //TODO: Receipe can callback and can't handle it
           const hashPattern = /0x[a-fA-F0-9]{64}/;
           setLoading(false);
-          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
+          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
         },
         error: (error) => {
           setLoading(false);
-          return error;
+          return (<>An error occured</>);
         },
       });
     }
@@ -289,14 +289,12 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.promise(promise, {
         loading: 'Sending transaction...',
         success: (data) => {
-          //TODO: Receipe can callback and can't handle it
-          const hashPattern = /0x[a-fA-F0-9]{64}/;
           setLoading(false);
-          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.match(hashPattern)}`)}/></>); // Display the transaction hash in the success message
+          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
         },
         error: (error) => {
           setLoading(false);
-          return error;
+          return (<>An error occured</>);
         },
       });
     }
@@ -350,7 +348,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const getTokenBalance = async (tok: string) => {
     if (!provider) {
       toast.error("provider not initialized yet");
-      return;
+      return "";
     }
     if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
       const balance = await solprovider!.getBalance();
@@ -363,32 +361,55 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const getTokenBalanceWithAddress = async (address: string) => {
     if (!provider) {
       toast.error("provider not initialized yet");
-      return;
+      return "";
     }
     const balance = await provider.getTokenBalanceWithAddress(address);
     return balance;
   };
 
-  const supplyAave = async (contractAddress: string, tok: string, amount: string): Promise<string> => {
+  const supplyAave = async (contractAddress: string, tok: string, amount: string,setLoading: (loading: boolean) => void): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
     }
-    const receipt = await provider.supplyAave(contractAddress, tok, amount);
-    console.log(receipt);
-    return receipt;
+    setLoading(true);
+    const promise = () => provider.supplyAave(contractAddress, tok, amount);
+    toast.promise(promise, {
+      loading: 'Sending transaction...',
+      success: (data) => {
+        setLoading(false);
+        console.log(data);
+        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
+      },
+      error: (error) => {
+        setLoading(false);
+        return (<>An error occured</>);
+      },
+    });
+    return "supplied";
   };
 
-  const withdrawAave = async (contractAddress: string, tok: string): Promise<string> => {
+  const withdrawAave = async (contractAddress: string, tok: string,setLoading: (loading: boolean) => void): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
     }
-    const receipt = await provider.withdrawAave(contractAddress, tok);
-    console.log(receipt);
-    return receipt;
+    setLoading(true);
+    const promise = () => provider.withdrawAave(contractAddress, tok);
+    toast.promise(promise, {
+      loading: 'Sending transaction...',
+      success: (data) => {
+        setLoading(false);
+        console.log(data);
+        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
+      },
+      error: (error) => {
+        setLoading(false);
+        return (<>An error occured</>);
+      },
+    });
+    return "withdrawn";
   }
-
 
   const contextProvider = {
     ethersProvider,

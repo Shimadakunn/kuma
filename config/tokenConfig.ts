@@ -12,12 +12,12 @@ export type TokenType = {
 export const token: {
     [key: string]: TokenType;
   } = {
-    "ethereum-sepolia": {
+    "ethereum-arbitrum-sepolia": {
         coin: "ETH",
         name: "Ethereum Sepolia",
         decimals: 18,
-        chainId: "0xaa36a7",
-        network : "Sepolia Testnet"
+        chainId: "0x66eee",
+        network : "Arbitrum Sepolia Testnet"
     },
     "matic-mumbai": {
         coin: "MATIC",
@@ -25,6 +25,7 @@ export const token: {
         decimals: 18,
         chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
+        aave : "0xaCA5e6a7117F54B34B476aB95Bf3034c304e7a81"
     },
     "dai-mumbai": {
         coin: "DAI",
@@ -33,7 +34,7 @@ export const token: {
         chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         address: "0xc8c0Cf9436F4862a8F60Ce680Ca5a9f0f99b5ded",
-        aave: "0x9973Ce75946D56fA3B0C6aa3647d67D440BDAec8"
+        aave: "0x8903bbBD684B7ef734c01BEb00273Ff52703514F"
     },
     "usdc-mumbai": {
         coin: "USDC",
@@ -71,6 +72,14 @@ export const token: {
         address: "0x2Fa2e7a6dEB7bb51B625336DBe1dA23511914a8A",
         aave: "0xdA67e6C1171D4f0D522Db7f127B88405eA1535d4"
     },
+    "avax-fuji": {
+        coin: "AVAX",
+        name: "Avalanche Fuji",
+        decimals: 18,
+        chainId: "0xa869",
+        network: "Avalanche Fuji Testnet",
+        aave: "0x339f50bCbd874A892fb2c6A56Cf8D85Dd215Bf8e"
+    },
     "solana-devnet" :{
         coin: "SOL",
         name: "Solana Devnet",
@@ -78,6 +87,13 @@ export const token: {
         chainId: "0x2",
         network: "Solana Devnet",
     },
+    // "ethereum-sepolia": {
+    //     coin: "ETH",
+    //     name: "Ethereum Sepolia",
+    //     decimals: 18,
+    //     chainId: "0xaa36a7",
+    //     network : "Sepolia Testnet"
+    // },
     // "dai-sepolia": {
     //     coin: "DAI",
     //     name: "Dai Sepolia",

@@ -35,7 +35,7 @@ export const chain: {
     chainId: "0xa869",
     rpcTarget: "https://avalanche-fuji.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     displayName: "Avalanche Fuji Testnet",
-    blockExplorer: "https://cchain.explorer.avax-test.network/",
+    blockExplorer: "https://testnet.snowtrace.io/",
     ticker: "AVAX",
     tickerName: "AVAX",
   },

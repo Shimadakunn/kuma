@@ -110,7 +110,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         const clientId = "BCqPWVEYpxRQaQKlTqcoZf3ChePO95Xn2IlfIuxsRJO1zofLmC7637tP0Tth8SWkzxXfkTHCgxSgg1TeihZmlGc";
         const web3AuthInstance = new Web3Auth({
           clientId,
-          chainConfig: chain["Sepolia Testnet"],
+          chainConfig: chain["Polygon Mumbai Testnet"],
           web3AuthNetwork: OPENLOGIN_NETWORK.SAPPHIRE_DEVNET,
           uiConfig: {
             defaultLanguage: "en",
@@ -373,13 +373,14 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return "";
     }
     setLoading(true);
+    await switchChain(tok);
     const promise = () => provider.supplyAave(contractAddress, tok, amount);
     toast.promise(promise, {
       loading: 'Sending transaction...',
       success: (data) => {
         setLoading(false);
         console.log(data);
-        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
+        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
         setLoading(false);
@@ -395,13 +396,14 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return "";
     }
     setLoading(true);
+    await switchChain(tok);
     const promise = () => provider.withdrawAave(contractAddress, tok);
     toast.promise(promise, {
       loading: 'Sending transaction...',
       success: (data) => {
         setLoading(false);
         console.log(data);
-        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
+        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
         setLoading(false);

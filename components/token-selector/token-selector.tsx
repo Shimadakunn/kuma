@@ -33,7 +33,7 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken}) => {
   } = useWeb3Auth();
 
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("ethereum-sepolia");
+  const [value, setValue] = useState("ethereum-arbitrum-sepolia");
   const [valueInitianilized, setValueInitialized] = useState(false);
 
   useEffect(() => {

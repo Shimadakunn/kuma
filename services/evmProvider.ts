@@ -106,8 +106,9 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
           ERC20,
           signer
         );
-        const res = ethers.formatEther(
-          await contract.balanceOf(signer.getAddress())
+        const decimals = await contract.decimals();
+        const res = ethers.formatUnits(
+          await contract.balanceOf(signer.getAddress()),decimals
         );
         const balance = (+res).toFixed(4);
         return balance;
@@ -133,8 +134,9 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
         ERC20,
         signer
       );
-      const res = ethers.formatEther(
-        await contract.balanceOf(signer.getAddress())
+      const decimals = await contract.decimals();
+      const res = ethers.formatUnits(
+        await contract.balanceOf(signer.getAddress()),decimals
       );
       const balance = (+res).toFixed(4);
       return balance;
@@ -157,14 +159,15 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const contract = new ethers.Contract(contractAddress,AAVE,signer);
       const erc20 = new ethers.Contract(token[tok].address!, ERC20, signer);
       const nonces = await erc20.nonces(address);
+      const decimals = await erc20.decimals();
       const domain = {name: await erc20.name(),version: "1",chainId: (await ethersProvider!.getNetwork()).chainId,verifyingContract: token[tok].address!,};
       const types = {Permit: [{ name: "owner", type: "address" },{ name: "spender", type: "address" },{ name: "value", type: "uint256" },{ name: "nonce", type: "uint256" },{ name: "deadline", type: "uint256" },],};
-      const message = {owner: address,spender: contractAddress,value: ethers.parseUnits(amount),nonce: nonces,deadline: expiry,};
+      const message = {owner: address,spender: contractAddress,value: ethers.parseUnits(amount,decimals),nonce: nonces,deadline: expiry,};
       const signature = await signer.signTypedData(domain, types, message);
       const r = signature.slice(0, 66);
       const s = "0x" + signature.slice(66, 130);
       const v = Number("0x" + signature.slice(130, 132));
-      const tx = await contract.supplyWithPermit(token[tok].address!,ethers.parseUnits(amount),address,0,expiry,v,r,s, {gasLimit: 800000,});
+      const tx = await contract.supplyWithPermit(token[tok].address!,ethers.parseUnits(amount,decimals),address,0,expiry,v,r,s, {gasLimit: 800000,});
       const receipt = await tx.wait();
       return receipt;
     } catch (error: any) {

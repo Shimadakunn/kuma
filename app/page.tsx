@@ -24,11 +24,11 @@ export default function Home() {
     setBalances(updatedBalances);
   };
 
-  useEffect(() => {
-    if (provider) {
-      getBalances();
-    }
-  }, [provider]);
+  // useEffect(() => {
+  //   if (provider) {
+  //     getBalances();
+  //   }
+  // }, [provider]);
 
   useEffect(() => {
     console.log(balances);

@@ -31,10 +31,11 @@ export interface IWeb3AuthContext {
   logout: () => Promise<void>;
   getUserInfo: () => Promise<any>;
   getAddress: () => Promise<string>;
+  getAddresses: () => Promise<string[]>;
   getBalance: () => Promise<string>;
   signMessage: (message: string) => Promise<string>;
   sendTransaction: (amount: number, destination: string, setLoading: (loading: boolean) => void) => Promise<string>;
-  getPrivateKey: () => Promise<string>;
+  getPrivateKey: () => Promise<string[]>;
   getChainId: () => Promise<string>;
   switchChain: (network: string) => Promise<void>;
   getTokenBalance: (tok: string) => Promise<string>;
@@ -59,6 +60,7 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   logout: async () => {},
   getUserInfo: async () => null,
   getAddress: async () => "",
+  getAddresses : async () => [""],
   getBalance: async () => "",
   signMessage: async () => "",
   sendTransaction: async () => "",
@@ -234,6 +236,16 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return address;
   };
 
+  const getAddresses = async () : Promise<string[]> => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return [""];
+    }
+    let updatedAddress : string[] = [await provider.getAddress()];
+    updatedAddress.push(await solprovider!.getAddress());
+    return updatedAddress;
+  };
+
   const getBalance = async () => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
@@ -305,12 +317,9 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    let privateKey = await provider!.getPrivateKey();
-    if(chainId === "3" || chainId === "2") {
-      privateKey = await solprovider!.getPrivateKey();
-    }
-    toast("Private Key: "+ privateKey);
-    return privateKey;
+    let privateKeys : string[] = [await provider!.getPrivateKey()];
+    privateKeys.push(await solprovider!.getPrivateKey());
+    return privateKeys;
   };
 
   const getChainId = async () => {
@@ -429,6 +438,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     logout,
     getUserInfo,
     getAddress,
+    getAddresses,
     getBalance,
     signMessage,
     sendTransaction,

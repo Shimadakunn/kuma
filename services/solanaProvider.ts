@@ -121,7 +121,8 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
     
       const getPrivateKey = async (): Promise<string> => {
         try {
-            const privateKey = await provider!.request({
+          const solanaWallet = new SolanaWallet(provider as any);
+            const privateKey = await solanaWallet.request({
                 method: "solanaPrivateKey",
               });
           

@@ -1,34 +1,37 @@
 "use client";
-import { token } from "@/config/tokenConfig";
+import { fiat } from "@/config/fiatConfig";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem
+    Command,
+    CommandEmpty,
+    CommandGroup,
+    CommandInput,
+    CommandItem
 } from "@/components/ui/command";
 import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
 } from "@/components/ui/popover";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";
 
 interface ChildComponentProps {
-  otherToken?: string | undefined;
-  selectedToken: React.Dispatch<React.SetStateAction<string | undefined>>;
+    selectedFiat: React.Dispatch<React.SetStateAction<string | undefined>>;
 }
 
-const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selectedToken}) => {
+const SimpleTokenSelector: React.FC<ChildComponentProps> = ({selectedFiat}) => {
   const [open, setOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState("eur");
+
+  useEffect(() => {
+    selectedFiat(value);
+  }, []);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -40,8 +43,8 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
           className="justify-between text-lg font-[Monument] bg-foreground/90 border-0 text-black"
         >
             {value ? <div className="w-full flex items-center justify-center">
-            <Image src={`https://cryptofonts.com/img/icons/${token[value].coin.toLowerCase()}.svg`} width={30} height={30} alt={value} className="mr-2"/>
-            {token[value].coin}
+            <Image src={`https://cdn.onramper.com/icons/fiats/${fiat[value].coin.toLowerCase()}.svg`} width={30} height={30} alt={value} className="mr-2"/>
+            {fiat[value].coin}
           </div> : <div className="text-sm">Select token</div>}
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -52,14 +55,13 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
           <CommandEmpty>No framework found.</CommandEmpty>
           <ScrollArea className="h-max-[200px] rounded-md border p-2">
           <CommandGroup>
-            {Object.keys(token).map((key) => (
-              otherToken !== key && (
+            {Object.keys(fiat).map((key) => (
                 <CommandItem
                   key={key}
                   value={key}
                   onSelect={(currentValue) => {
                     setValue(currentValue);
-                    selectedToken(currentValue);
+                    selectedFiat(currentValue);
                     setOpen(false);
                   }}
                   className="w-[250px] text-base"
@@ -70,10 +72,9 @@ const SimpleTokenSelector: React.FC<ChildComponentProps> = ({otherToken,selected
                       value === key ? "opacity-100" : "opacity-0"
                     )}
                   />
-                    <Image src={`https://cryptofonts.com/img/icons/${token[key].coin.toLowerCase()}.svg`} width={30} height={30} alt={key} className="mr-2"/>
-                    {token[key].coin}
+                    <Image src={`https://cdn.onramper.com/icons/fiats/${fiat[key].coin.toLowerCase()}.svg`} width={30} height={30} alt={key} className="mr-2"/>
+                    {fiat[key].coin}
                 </CommandItem>
-              )
             ))}
           </CommandGroup>
           </ScrollArea>

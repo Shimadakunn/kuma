@@ -1,13 +1,13 @@
-import { Web3AuthProvider } from "../services/web3auth";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import localFont from 'next/font/local';
+import { Web3AuthProvider } from "../services/web3auth";
 import "./globals.css";
 
-import { Toaster } from 'sonner'
 import Footer from "@/components/footer";
 import Header from "@/components/header";
+import { Toaster } from 'sonner';
 
-const inter = Inter({ subsets: ["latin"] });
+const font = localFont({ src: '../public/fonts/space.ttf' });
 
 export const metadata: Metadata = {
   title: "Kuma",
@@ -21,7 +21,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={font.className}>
         <Web3AuthProvider>
           <div className="flex">
             <Footer />

@@ -115,11 +115,15 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
           chainConfig: chain["Polygon Mumbai Testnet"],
           web3AuthNetwork: OPENLOGIN_NETWORK.SAPPHIRE_DEVNET,
           uiConfig: {
+            appName: "Kuma",
             defaultLanguage: "en",
             mode: "dark",
             theme: {
               primary: "#a56cfe",
+              gray: "#000000",
             },
+            logoDark: "https://emerald-rear-parakeet-3.mypinata.cloud/ipfs/QmaiRcC9vgzQCibCW45ExTXbGuYA9Sf3Hi6dP6pbAwsb6N",
+            logoLight: "https://emerald-rear-parakeet-3.mypinata.cloud/ipfs/QmSZ669ihCSY7fom6YinAmzFEfgnpD4QPay8FN2dHFLHdS",
             loginMethodsOrder: ["twitter"],
           },
         });

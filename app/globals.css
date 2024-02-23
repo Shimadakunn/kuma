@@ -42,7 +42,7 @@
   }
   body {
     @apply bg-background text-foreground font-bold ;
-    font-family: 'SFPro', sans-serif;
+    font-family: 'Space', sans-serif;
   }
 }
 
@@ -54,6 +54,11 @@
 @font-face {
   font-family: SFPro;
   src: url(~/public/fonts/sfpro.OTF) format("woff");
+}
+
+@font-face {
+  font-family: Space;
+  src: url(~/public/fonts/space.ttf) format("woff");
 }
 
 @keyframes dot {

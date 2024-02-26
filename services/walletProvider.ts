@@ -14,8 +14,10 @@ export interface IWalletProvider {
   getPrivateKey: () => Promise<string>;
   getTokenBalance: (tok: string) => Promise<string>;
   getTokenBalanceWithAddress: (address: string) => Promise<string>;
-  supplyAave: (contractAddress: string, tok :string, amount: string) => Promise<string>;
-  withdrawAave: (contractAddress: string, tok :string) => Promise<string>;
+  supplyAave: (cont: string, tok :string, amount: string) => Promise<string>;
+  withdrawAave: (cont: string, tok :string) => Promise<string>;
+  depositETHAave: (cont: string, tok :string, amount: string) => Promise<string>;
+  withdrawETHAave: (cont: string, tok: string) => Promise<string>;
 }
 
 export const getEVMWalletProvider = (provider: IProvider | null): IWalletProvider => {

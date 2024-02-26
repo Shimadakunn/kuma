@@ -6,8 +6,8 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 
 import { chain } from "../config/chainConfig";
 import { token } from "../config/tokenConfig";
+import { contract } from "../config/contractConfig";
 import { getEVMWalletProvider, getSolanaWalletProvider, IWalletProvider } from "./walletProvider";
-
 
 import Loading from "../components/loading-page";
 import Login from "../components/login-page";
@@ -64,7 +64,7 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   getBalance: async () => "",
   signMessage: async () => "",
   sendTransaction: async () => "",
-  getPrivateKey: async () => "",
+  getPrivateKey: async () => [""],
   getChainId: async () => "",
   switchChain: async () => {},
   getTokenBalance: async () => "",
@@ -380,14 +380,17 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return balance;
   };
 
-  const supplyAave = async (contractAddress: string, tok: string, amount: string,setLoading: (loading: boolean) => void): Promise<string> => {
+  const supplyAave = async (cont: string, tok: string, amount: string,setLoading: (loading: boolean) => void): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
     }
     setLoading(true);
     await switchChain(tok);
-    const promise = () => provider.supplyAave(contractAddress, tok, amount);
+    let promise = () => provider.supplyAave(cont, tok, amount);
+    if( contract[cont].wrappedAddress) {
+      promise = () => provider.depositETHAave(cont, tok, amount);
+    }
     toast.promise(promise, {
       loading: 'Sending transaction...',
       success: (data) => {
@@ -397,20 +400,25 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       },
       error: (error) => {
         setLoading(false);
+        console.log(error);
         return (<>An error occured</>);
       },
     });
+
     return "supplied";
   };
 
-  const withdrawAave = async (contractAddress: string, tok: string,setLoading: (loading: boolean) => void): Promise<string> => {
+  const withdrawAave = async (cont: string, tok: string,setLoading: (loading: boolean) => void): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
     }
     setLoading(true);
     await switchChain(tok);
-    const promise = () => provider.withdrawAave(contractAddress, tok);
+    let promise = () => provider.withdrawAave(cont, tok);
+    if( contract[cont].wrappedAddress) {
+      promise = () => provider.withdrawETHAave(cont, tok);
+    }
     toast.promise(promise, {
       loading: 'Sending transaction...',
       success: (data) => {
@@ -420,11 +428,12 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       },
       error: (error) => {
         setLoading(false);
+        console.log(error);
         return (<>An error occured</>);
       },
     });
     return "withdrawn";
-  }
+  };
 
   const contextProvider = {
     ethersProvider,

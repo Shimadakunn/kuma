@@ -76,7 +76,7 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
       <Button
         className="w-20 text-right"
         onClick={async () => {
-          await supplyAave(contract[cont].address, tok, "100",setSupplyLoading);
+          await supplyAave(cont, tok, "0.01",setSupplyLoading);
         }}
       >
         Supply
@@ -84,7 +84,7 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
       <Button
         className="w-20 text-right"
         onClick={async () => {
-          await withdrawAave(contract[cont].address, tok,setWithdrawLoading);
+          await withdrawAave(cont, tok,setWithdrawLoading);
         }}
       >
         Withdraw

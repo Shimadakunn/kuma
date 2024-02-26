@@ -1,11 +1,13 @@
 import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
+import { contract } from "@/config/contractConfig";
 import { token } from "@/config/tokenConfig";
+import ERC20 from "@/public/abi/ERC20.json";
 import AAVE from "@/public/abi/aave.json";
+import AAVEETH from "@/public/abi/aaveETH.json";
 
 // import { json } from "stream/consumers";
-import ERC20 from "@/public/abi/ERC20.json";
 import { IWalletProvider } from "./walletProvider";
 
 import { toast } from "sonner";
@@ -145,29 +147,24 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const supplyAave = async (
-    contractAddress: string,
-    tok: string,
-    amount: string
-  ) => {
+  const supplyAave = async (cont: string,tok: string,amount: string) => {
     try {
-      console.log(token[tok].address)
       const expiry = Math.floor(Date.now() / 1000) + 3600;
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       const address = await signer.getAddress();
-      const contract = new ethers.Contract(contractAddress,AAVE,signer);
+      const contrac = new ethers.Contract(contract[cont].address,AAVE,signer);
       const erc20 = new ethers.Contract(token[tok].address!, ERC20, signer);
       const nonces = await erc20.nonces(address);
       const decimals = await erc20.decimals();
       const domain = {name: await erc20.name(),version: "1",chainId: (await ethersProvider!.getNetwork()).chainId,verifyingContract: token[tok].address!,};
       const types = {Permit: [{ name: "owner", type: "address" },{ name: "spender", type: "address" },{ name: "value", type: "uint256" },{ name: "nonce", type: "uint256" },{ name: "deadline", type: "uint256" },],};
-      const message = {owner: address,spender: contractAddress,value: ethers.parseUnits(amount,decimals),nonce: nonces,deadline: expiry,};
+      const message = {owner: address,spender: contract[cont].address,value: ethers.parseUnits(amount,decimals),nonce: nonces,deadline: expiry,};
       const signature = await signer.signTypedData(domain, types, message);
       const r = signature.slice(0, 66);
       const s = "0x" + signature.slice(66, 130);
       const v = Number("0x" + signature.slice(130, 132));
-      const tx = await contract.supplyWithPermit(token[tok].address!,ethers.parseUnits(amount,decimals),address,0,expiry,v,r,s, {gasLimit: 800000,});
+      const tx = await contrac.supplyWithPermit(token[tok].address!,ethers.parseUnits(amount,decimals),address,0,expiry,v,r,s, {gasLimit: 800000,});
       const receipt = await tx.wait();
       return receipt;
     } catch (error: any) {
@@ -175,21 +172,45 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const withdrawAave = async (contractAddress: string, tok: string) => {
+  const withdrawAave = async (cont: string, tok: string) => {
     try {
-      console.log(contractAddress);
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
-      const contract = new ethers.Contract(contractAddress, AAVE, signer);
+      const contrac = new ethers.Contract(contract[cont].address, AAVE, signer);
       const aerc20 = new ethers.Contract(token[tok].aave!, ERC20, signer);
       const aerc20Balance = await aerc20.balanceOf(signer.getAddress());
-      const tx = await contract.withdraw(token[tok].address!,aerc20Balance,signer.getAddress());
+      const tx = await contrac.withdraw(token[tok].address!,aerc20Balance,signer.getAddress());
       const receipt = await tx.wait();
       return receipt;
     } catch (error: any) {
       return error as string;
     }
-  }
+  };
+
+  const depositETHAave = async (cont: string, tok: string, amount: string) => {
+    const ethersProvider = new ethers.BrowserProvider(provider as any);
+    const signer = await ethersProvider.getSigner();
+    const address = await signer.getAddress();
+    const contrac = new ethers.Contract(contract[cont].address,AAVEETH,signer);
+    const tx = await contrac.depositETH(contract[cont].wrappedAddress,address,0,{value: ethers.parseEther(amount)});
+    console.log(tx);
+    const receipt = await tx.wait();
+    return receipt;
+  };
+
+  const withdrawETHAave = async (cont: string, tok: string) => {
+    const ethersProvider = new ethers.BrowserProvider(provider as any);
+    const signer = await ethersProvider.getSigner();
+    const address = await signer.getAddress();
+    const contrac = new ethers.Contract(contract[cont].address,AAVEETH,signer);
+    const aerc20 = new ethers.Contract(token[tok].aave!, ERC20, signer);
+    const aerc20Balance = await aerc20.balanceOf(signer.getAddress());
+    const approve = await aerc20.approve(contract[cont].address,aerc20Balance);
+    const receiptApprove = await approve.wait();
+    const tx = await contrac.withdrawETH(contract[cont].wrappedAddress,aerc20Balance.toString(),address,{gasLimit: 800000});
+    const receipt = await tx.wait();
+    return receipt;
+  };
 
   return {
     getAddress,
@@ -202,6 +223,8 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     getTokenBalanceWithAddress,
     supplyAave,
     withdrawAave,
+    depositETHAave,
+    withdrawETHAave,
   };
 };
 

@@ -122,4 +122,13 @@ export const chain: {
     ticker: "SOL",
     tickerName: "SOL",
   },
+  Tezos: {
+    chainNamespace: CHAIN_NAMESPACES.OTHER,
+    chainId: "0x4",
+    rpcTarget: "https://rpc.tzbeta.net/",
+    displayName: "Tezos",
+    blockExplorer: "https://tzstats.com",
+    ticker: "XTZ",
+    tickerName: "Tezos"
+  }
 };

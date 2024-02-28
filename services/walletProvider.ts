@@ -1,9 +1,14 @@
 import { IProvider } from "@web3auth/base";
 
 import evmProvider from "./evmProvider";
-import solanaProvider from "./solanaProvider";
 
+import solanaProvider from "./solanaProvider";
 import { SolanaPrivateKeyProvider } from "@web3auth/solana-provider";
+
+import tezosProvider from "./tezosProvider";
+import { hex2buf } from "@taquito/utils";
+import * as tezosCrypto from "@tezos-core-tools/crypto-utils";
+import { CommonPrivateKeyProvider } from "@web3auth/base-provider";
 
 export interface IWalletProvider {
   getAddress: () => Promise<string>;
@@ -46,4 +51,26 @@ export const getSolanaWalletProvider = async (provider: IProvider | null): Promi
     await solanaPrivateKeyProvider.setupProvider(ed25519key);
     console.log(solanaPrivateKeyProvider.provider);
   return solanaProvider(solanaPrivateKeyProvider.provider as any);
+};
+
+export const getTezosWalletProvider = async (provider: IProvider | null): Promise<IWalletProvider> => {
+  const privateKey = await provider?.request({
+    method: "eth_private_key",
+  });
+  const keyPair = tezosCrypto.utils.seedToKeyPair(hex2buf(privateKey));
+  const tezosPrivateKeyProvider = new CommonPrivateKeyProvider({
+    config: {
+      chainConfig: {
+        chainId: "Tezos",
+        rpcTarget: "https://rpc.tzbeta.net/",
+        displayName: "Tezos",
+        blockExplorer: "https://tzstats.com",
+        ticker: "XTZ",
+        tickerName: "Tezos",
+      }
+    }
+  });
+  await tezosPrivateKeyProvider.setupProvider(keyPair!.sk);
+  console.log("tezos: "+keyPair!.sk);
+  return tezosProvider(keyPair!.sk);
 };

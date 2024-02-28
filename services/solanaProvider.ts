@@ -16,9 +16,8 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
 
     const getAddress = async (): Promise<string> => {
         try {
-
           const solanaWallet = new SolanaWallet(provider as any);
-        const acc = await solanaWallet.requestAccounts();
+          const acc = await solanaWallet.requestAccounts();
         return acc[0];
         } catch (error: any) {
           toast.error(error);

@@ -18,10 +18,6 @@ export default function Home() {
 
   const [loading, setLoading] = useState<boolean>(false);
 
-  useEffect(() => {
-    console.log("loading "+loading)
-  }, [loading]);
-
   return(
       <main className="flex items-center justify-center h-full w-full">
         <div className="shadow w-[30vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
@@ -55,7 +51,7 @@ export default function Home() {
               </div>
             </div>
           <Button className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest" 
-            onClick={async () => {await sendTransaction(amount!, toAddress!, setLoading);}}
+            onClick={async () => {await sendTransaction(amount!, toAddress!, tokenSend! ,setLoading);}}
             disabled={ !amount || !toAddress || parseFloat(balance!) < amount || loading}
           >
             SEND<Send className="ml-1" size={20}/>

@@ -49,6 +49,15 @@ export const chain: {
     rpcTarget: "https://api.testnet.solana.com",
     blockExplorer: "https://explorer.solana.com/?cluster=testnet",
   },
+  "Tezos Ghostnet":{
+    chainNamespace: CHAIN_NAMESPACES.OTHER,
+    chainId: "Tezos",
+    rpcTarget: "https://ghostnet.tezos.marigold.dev/",
+    displayName: "Tezos",
+    blockExplorer: "https://ghost.tzstats.com/",
+    ticker: "XTZ",
+    tickerName: "Tezos",
+  },
   Ethereum: {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x1",

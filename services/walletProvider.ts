@@ -15,14 +15,14 @@ export interface IWalletProvider {
   getBalance: () => Promise<string>;
   getChainId: () => Promise<string>;
   signMessage: (message: string) => Promise<string>;
-  sendTransaction: (amount: number, destination: string) => Promise<string>;
+  sendTransaction: (amount: number, destination: string, tok?: string) => Promise<string>;
   getPrivateKey: () => Promise<string>;
-  getTokenBalance: (tok: string) => Promise<string>;
-  getTokenBalanceWithAddress: (address: string) => Promise<string>;
-  supplyAave: (cont: string, tok :string, amount: string) => Promise<string>;
-  withdrawAave: (cont: string, tok :string) => Promise<string>;
-  depositETHAave: (cont: string, tok :string, amount: string) => Promise<string>;
-  withdrawETHAave: (cont: string, tok: string) => Promise<string>;
+  getTokenBalance?: (tok: string) => Promise<string>;
+  getTokenBalanceWithAddress?: (address: string) => Promise<string>;
+  supplyAave?: (cont: string, tok :string, amount: string) => Promise<string>;
+  withdrawAave?: (cont: string, tok :string) => Promise<string>;
+  depositETHAave?: (cont: string, tok :string, amount: string) => Promise<string>;
+  withdrawETHAave?: (cont: string, tok: string) => Promise<string>;
 }
 
 export const getEVMWalletProvider = (provider: IProvider | null): IWalletProvider => {
@@ -49,7 +49,7 @@ export const getSolanaWalletProvider = async (provider: IProvider | null): Promi
       },  
     });
     await solanaPrivateKeyProvider.setupProvider(ed25519key);
-    console.log(solanaPrivateKeyProvider.provider);
+    console.log("Solana Provider: "+solanaPrivateKeyProvider.provider);
   return solanaProvider(solanaPrivateKeyProvider.provider as any);
 };
 
@@ -58,19 +58,20 @@ export const getTezosWalletProvider = async (provider: IProvider | null): Promis
     method: "eth_private_key",
   });
   const keyPair = tezosCrypto.utils.seedToKeyPair(hex2buf(privateKey));
-  const tezosPrivateKeyProvider = new CommonPrivateKeyProvider({
-    config: {
-      chainConfig: {
-        chainId: "Tezos",
-        rpcTarget: "https://rpc.tzbeta.net/",
-        displayName: "Tezos",
-        blockExplorer: "https://tzstats.com",
-        ticker: "XTZ",
-        tickerName: "Tezos",
-      }
-    }
-  });
-  await tezosPrivateKeyProvider.setupProvider(keyPair!.sk);
-  console.log("tezos: "+keyPair!.sk);
-  return tezosProvider(keyPair!.sk);
+  // const tezosPrivateKeyProvider = new CommonPrivateKeyProvider({
+  //   config: {
+  //     chainConfig: {
+  //       chainId: "Tezos",
+  //       rpcTarget: "https://ghostnet.tezos.marigold.dev/",
+  //       displayName: "Tezos",
+  //       blockExplorer: "https://ghost.tzstats.com/",
+  //       ticker: "XTZ",
+  //       tickerName: "Tezos",
+  //     }
+  //   }
+  // });
+  // await tezosPrivateKeyProvider.setupProvider(keyPair!.sk);
+  console.log("tezos: "+typeof keyPair);
+  console.log("public key: "+keyPair!.pkh);
+  return tezosProvider(keyPair as any);
 };

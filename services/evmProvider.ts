@@ -51,12 +51,23 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
 
   const sendTransaction = async (
     amount: number,
-    destination: string
+    destination: string,
+    tok?: string
   ): Promise<string> => {
     try {
+      console.log("Evm sending transaction")
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
-      const amountBigInt = ethers.parseEther(amount.toString());
+      let amountBigInt = ethers.parseEther(amount.toString());
+      if(token[tok!].address){
+        console.log("Token transfer")
+        const erc20 = new ethers.Contract(token[tok!].address!, ERC20, signer);
+        const decimals = await erc20.decimals();
+        amountBigInt = ethers.parseUnits(amount.toString(),decimals);
+        const tx = await erc20.transfer(destination, amountBigInt);
+        await tx.wait();
+        return tx.hash;
+      }
       const tx = await signer.sendTransaction({
         to: destination,
         value: amountBigInt,
@@ -64,7 +75,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
         maxFeePerGas: "6000000000000", // Max fee per gas
       });
       await tx.wait();
-      return `Transaction Hash: ${tx.hash}`;
+      return tx.hash;
     } catch (error: any) {
       return error as string;
     }

@@ -87,6 +87,13 @@ export const token: {
         chainId: "0x2",
         network: "Solana Devnet",
     },
+    "tezos-ghostnet" :{
+        coin: "XTZ",
+        name: "Tezos Ghostnet",
+        decimals: 9,
+        chainId: "Tezos",
+        network: "Tezos Ghostnet",
+    },
     // "ethereum-sepolia": {
     //     coin: "ETH",
     //     name: "Ethereum Sepolia",

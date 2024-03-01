@@ -7,7 +7,7 @@ import { use, useEffect, useState } from "react";
 import { Copy } from 'lucide-react';
 
 export default function Home() {
-  const { provider, user, logout, getPrivateKey, getAddresses } = useWeb3Auth();
+  const { provider, user, logout, getPrivateKeys, getAddresses } = useWeb3Auth();
   const [privateKey, setPrivateKey] = useState<string[]>([]);
   const [addresses, setAddresses] = useState<string[]>([]);
   async function pk() {
@@ -27,7 +27,7 @@ export default function Home() {
   }, [provider]);
   return(
     <main className="flex items-center justify-center h-full w-full">
-        <div className="shadow w-[35vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
+        <div className="shadow w-[50vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
           <div className='p-1'>
             Profile
           </div>
@@ -44,14 +44,23 @@ export default function Home() {
               </div>
               <div className="w-full justify-around flex font-normal text-sm">
                 <div className="rounded-lg bg-gray-600 py-1 px-4 flex items-center justify-center">
+                  <Image src={`https://cryptofonts.com/img/icons/eth.svg`} width={20} height={20} alt="eth" className="mr-2"/>
                   <div className="truncate w-32">
                     {addresses[0]}
                   </div> 
                   <Copy className="ml-2" size={16}/>
                 </div>
                 <div className="rounded-lg bg-gray-600 py-1 px-4 flex items-center justify-center">
+                <Image src={`https://cryptofonts.com/img/icons/sol.svg`} width={20} height={20} alt="sol" className="mr-2"/>
                   <div className="truncate w-32">
                     {addresses[1]} 
+                  </div>
+                  <Copy className="ml-2" size={16}/>
+                </div>
+                <div className="rounded-lg bg-gray-600 py-1 px-4 flex items-center justify-center">
+                  <Image src={`https://cryptofonts.com/img/icons/xtz.svg`} width={20} height={20} alt="xtz" className="mr-2"/>
+                  <div className="truncate w-32">
+                    {addresses[2]} 
                   </div>
                   <Copy className="ml-2" size={16}/>
                 </div>

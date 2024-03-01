@@ -32,8 +32,8 @@ export interface IWeb3AuthContext {
   signMessage: (message: string) => Promise<string>;
   sendTransaction: (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
-  supplyAave: (contractAddress: string, tok: string, amount: string,setLoading: (loading: boolean) => void) => Promise<string>;
-  withdrawAave: (contractAddress: string, tok: string,setLoading: (loading: boolean) => void) => Promise<string>;
+  supplyAave: (contractAddress: string, tok: string, amount: string) => Promise<string>;
+  withdrawAave: (contractAddress: string, tok: string, amount: string) => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -172,7 +172,6 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     const fetchData = async () => {
       if (connected && provider && solprovider && tezosprovider) {
         await getBalances();
-        console.log("Get Balance")
         setIsLoading(false);
       }
     };
@@ -231,6 +230,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
+    console.log("Getting Balances...")
     const balancePromises = Object.keys(token).map(async (key) => {
       if (token[key].network === "Solana Devnet") {
         return solprovider!.getBalance(key);
@@ -280,7 +280,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       if(connectedChain.chainId === "Tezos") { promise = () => tezosprovider!.sendTransaction(amount, destination);}
       toast.promise(promise, {
         loading: 'Sending transaction...',
-        success: (data) => {
+        success: async (data) => {
+          await getBalances();
           setLoading(false);
           if(connectedChain.chainId === "Tezos"){return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}${data}`)}/></>);}
           return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}tx/${data}`)}/></>);
@@ -298,6 +299,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("provider not initialized yet");
       return;
     }
+    if(connectedChain.chainId === chain[token[tok].network!].chainId) {return;}
     if(chain[token[tok].network!].chainId !== "0x2" && chain[token[tok].network!].chainId !== "Tezos") {
       await web3Auth!.addChain(chain[token[tok].network!]);
       await web3Auth!.switchChain(chain[token[tok].network!]);
@@ -306,12 +308,11 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     toast.success("Switched chain to " + token[tok].network);
   };
 
-  const supplyAave = async (cont: string, tok: string, amount: string,setLoading: (loading: boolean) => void): Promise<string> => {
+  const supplyAave = async (cont: string, tok: string, amount: string): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
     }
-    setLoading(true);
     await switchChain(tok);
     let promise = () => provider!.supplyAave!(cont, tok, amount);
     if(contract[cont].wrappedAddress) {
@@ -319,46 +320,41 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     }
     toast.promise(promise, {
       loading: 'Sending transaction...',
-      success: (data) => {
-        setLoading(false);
+      success: async (data) => {
+        await getBalances();
         console.log(data);
         return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
-        setLoading(false);
         console.log(error);
         return (<>An error occured</>);
       },
     });
-    await getBalances();
     return "supplied";
   };
 
-  const withdrawAave = async (cont: string, tok: string,setLoading: (loading: boolean) => void): Promise<string> => {
+  const withdrawAave = async (cont: string, tok: string, amount: string): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
     }
-    setLoading(true);
     await switchChain(tok);
-    let promise = () => provider.withdrawAave!(cont, tok);
+    let promise = () => provider.withdrawAave!(cont, tok, amount);
     if( contract[cont].wrappedAddress) {
-      promise = () => provider.withdrawETHAave!(cont, tok);
+      promise = () => provider.withdrawETHAave!(cont, tok, amount);
     }
     toast.promise(promise, {
       loading: 'Sending transaction...',
-      success: (data) => {
-        setLoading(false);
+      success: async (data) => {
         console.log(data);
+        await getBalances();
         return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
-        setLoading(false);
         console.log(error);
         return (<>An error occured</>);
       },
     });
-    await getBalances();
     return "withdrawn";
   };
 

@@ -155,14 +155,15 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const withdrawAave = async (cont: string, tok: string) => {
+  const withdrawAave = async (cont: string, tok: string,amount: string) => {
     try {
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       const contrac = new ethers.Contract(contract[cont].address, AAVE, signer);
       const aerc20 = new ethers.Contract(token[tok].aave!, ERC20, signer);
+      const decimals = await aerc20.decimals();
       const aerc20Balance = await aerc20.balanceOf(signer.getAddress());
-      const tx = await contrac.withdraw(token[tok].address!,aerc20Balance,signer.getAddress());
+      const tx = await contrac.withdraw(token[tok].address!,ethers.parseUnits(amount,decimals),signer.getAddress());
       const receipt = await tx.wait();
       return receipt;
     } catch (error: any) {
@@ -181,16 +182,15 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     return receipt;
   };
 
-  const withdrawETHAave = async (cont: string, tok: string) => {
+  const withdrawETHAave = async (cont: string, tok: string,amount: string) => {
     const ethersProvider = new ethers.BrowserProvider(provider as any);
     const signer = await ethersProvider.getSigner();
     const address = await signer.getAddress();
     const contrac = new ethers.Contract(contract[cont].address,AAVEETH,signer);
     const aerc20 = new ethers.Contract(token[tok].aave!, ERC20, signer);
-    const aerc20Balance = await aerc20.balanceOf(signer.getAddress());
-    const approve = await aerc20.approve(contract[cont].address,aerc20Balance);
+    const approve = await aerc20.approve(contract[cont].address,ethers.parseEther(amount));
     const receiptApprove = await approve.wait();
-    const tx = await contrac.withdrawETH(contract[cont].wrappedAddress,aerc20Balance.toString(),address,{gasLimit: 800000});
+    const tx = await contrac.withdrawETH(contract[cont].wrappedAddress,ethers.parseEther(amount),address,{gasLimit: 800000});
     const receipt = await tx.wait();
     return receipt;
   };

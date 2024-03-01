@@ -3,9 +3,11 @@ export type TokenType = {
     name: string;
     decimals?: number;
     chainId: string;
-    network?: string;
+    network: string;
     address?: string;
+    balance?: string;
     aave?: string;
+    aaveBalance?: string;
 }
 
 
@@ -17,7 +19,7 @@ export const token: {
         name: "Ethereum Sepolia",
         decimals: 18,
         chainId: "0x66eee",
-        network : "Arbitrum Sepolia Testnet"
+        network : "Arbitrum Sepolia Testnet",
     },
     "matic-mumbai": {
         coin: "MATIC",

@@ -14,14 +14,15 @@ export default function Home() {
   const [balances, setBalances] = useState<string[]>([]);
 
   const getBalances = async () => {
-    const updatedBalances = [];
-    for (const key of Object.keys(token)) {
-      await switchChain(key);
-      const balance = await getTokenBalance(key);
-      console.log("key " + key + " balance " + balance);
-      updatedBalances.push(balance);
-    }
-    setBalances(updatedBalances);
+    // const updatedBalances = [];
+    // for (const key of Object.keys(token)) {
+    //   await switchChain(key);
+    //   const balance = await getTokenBalance(key);
+    //   console.log("key " + key + " balance " + balance);
+    //   updatedBalances.push(balance);
+    // }
+    // setBalances(updatedBalances);
+    await getTokenBalance("dai-mumbai");
   };
 
   // useEffect(() => {

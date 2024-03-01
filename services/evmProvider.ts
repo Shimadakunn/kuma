@@ -1,7 +1,9 @@
+import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
 import { contract } from "@/config/contractConfig";
+import {chain} from "@/config/chainConfig";
 import { token } from "@/config/tokenConfig";
 import ERC20 from "@/public/abi/ERC20.json";
 import AAVE from "@/public/abi/aave.json";
@@ -111,8 +113,11 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
 
   const getTokenBalance = async (tok: string) => {
     try {
-      const ethersProvider = new ethers.BrowserProvider(provider as any);
-      const signer = await ethersProvider.getSigner();
+      const privateKey = await provider?.request({
+        method: "eth_private_key",
+      });
+      const ethersProvider = new ethers.JsonRpcProvider(chain[token[tok].network].rpcTarget);
+      const signer = new ethers.Wallet(privateKey as string, ethersProvider);
       if (token[tok].address) {
         const contract = new ethers.Contract(
           token[tok].address!,
@@ -124,17 +129,33 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
           await contract.balanceOf(signer.getAddress()),decimals
         );
         const balance = (+res).toFixed(4);
-        return balance;
+        console.log("Balance: ",balance)
+        token[tok].balance = balance;
       } else {
         const address = signer.getAddress();
         const res = ethers.formatEther(
           await ethersProvider.getBalance(address)
         );
         const balance = (+res).toFixed(4);
-        return balance;
+        token[tok].balance = balance;
       }
+      if (token[tok].aave) {
+        const contract = new ethers.Contract(
+          token[tok].aave!,
+          ERC20,
+          signer
+        );
+        const decimals = await contract.decimals();
+        const res = ethers.formatUnits(
+          await contract.balanceOf(signer.getAddress()),decimals
+        );
+        const balance = (+res).toFixed(4);
+        token[tok].aaveBalance = balance;
+        console.log("Aave Balance: ",balance)
+      }
+      return;
     } catch (error: any) {
-      return "";
+      return;
     }
   };
 

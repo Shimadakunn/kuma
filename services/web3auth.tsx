@@ -263,6 +263,39 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return balance;
   };
 
+  const getTokenBalance = async (tok: string) => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return "";
+    }
+    console.log(tok);
+    let balance = await provider.getTokenBalance!(tok);
+    if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
+      balance = await solprovider!.getBalance();
+    }
+    else if(token[tok].network! === "Tezos Ghostnet") {
+      balance = await tezosprovider!.getBalance();
+    }
+    return balance;
+  };
+
+  const getTokenBalanceWithAddress = async (address: string) => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return "";
+    }
+    const balance = await provider.getTokenBalanceWithAddress!(address);
+    return balance;
+  };
+
+  const getAllBalances = async () => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return;
+    }
+    await provider!.getBalance();
+  }
+
   const signMessage = async (message: string) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
@@ -346,30 +379,6 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     }
     setConnectedChain(chain[token[tok].network!]);
     toast.success("Switched chain to " + token[tok].network);
-  };
-
-  const getTokenBalance = async (tok: string) => {
-    if (!provider) {
-      toast.error("provider not initialized yet");
-      return "";
-    }
-    let balance = await provider.getTokenBalance(tok);
-    if(token[tok].network! === "Solana" || token[tok].network! === "Solana Devnet") {
-      balance = await solprovider!.getBalance();
-    }
-    else if(token[tok].network! === "Tezos Ghostnet") {
-      balance = await tezosprovider!.getBalance();
-    }
-    return balance;
-  };
-
-  const getTokenBalanceWithAddress = async (address: string) => {
-    if (!provider) {
-      toast.error("provider not initialized yet");
-      return "";
-    }
-    const balance = await provider.getTokenBalanceWithAddress(address);
-    return balance;
   };
 
   const supplyAave = async (cont: string, tok: string, amount: string,setLoading: (loading: boolean) => void): Promise<string> => {

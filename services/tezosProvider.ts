@@ -3,11 +3,13 @@ import { CommonJRPCProvider } from "@web3auth/base-provider";
 import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from "@taquito/signer";
 
+import {chain} from "../config/chainConfig";
+
 import { IWalletProvider } from "./walletProvider";
 
 import { toast } from "sonner";
 
-const Tezos = new TezosToolkit('https://ghostnet.tezos.marigold.dev/');
+const Tezos = new TezosToolkit(chain["Tezos Ghostnet"].rpcTarget as string);
 
 const ethersWeb3Provider = (keyPair: any): IWalletProvider => {
   const getAddress = async (): Promise<string> => {

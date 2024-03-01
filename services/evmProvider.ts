@@ -28,14 +28,49 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     }
   };
 
-  const getChainId = async (): Promise<string> => {
+  const getBalance = async (tok: string): Promise<string> => {
     try {
-      const ethersProvider = new ethers.BrowserProvider(provider as any);
-
-      return (await ethersProvider.getNetwork()).chainId.toString(16);
+      const privateKey = await provider?.request({
+        method: "eth_private_key",
+      });
+      const ethersProvider = new ethers.JsonRpcProvider(chain[token[tok].network].rpcTarget);
+      const signer = new ethers.Wallet(privateKey as string, ethersProvider);
+      if (token[tok].address) {
+        const contract = new ethers.Contract(
+          token[tok].address!,
+          ERC20,
+          signer
+        );
+        const decimals = await contract.decimals();
+        const res = ethers.formatUnits(
+          await contract.balanceOf(signer.getAddress()),decimals
+        );
+        const balance = (+res).toFixed(4);
+        token[tok].balance = balance;
+      } else {
+        const address = signer.getAddress();
+        const res = ethers.formatEther(
+          await ethersProvider.getBalance(address)
+        );
+        const balance = (+res).toFixed(4);
+        token[tok].balance = balance;
+      }
+      if (token[tok].aave) {
+        const contract = new ethers.Contract(
+          token[tok].aave!,
+          ERC20,
+          signer
+        );
+        const decimals = await contract.decimals();
+        const res = ethers.formatUnits(
+          await contract.balanceOf(signer.getAddress()),decimals
+        );
+        const balance = (+res).toFixed(4);
+        token[tok].aaveBalance = balance;
+      }
+      return "success";
     } catch (error: any) {
-      toast.error(error);
-      return error.toString();
+      return error as string;
     }
   };
 
@@ -92,90 +127,6 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       return privateKey as string;
     } catch (error: any) {
       return error as string;
-    }
-  };
-
-  const getBalance = async (): Promise<string> => {
-    try {
-      const ethersProvider = new ethers.BrowserProvider(provider as any);
-      const signer = await ethersProvider.getSigner();
-      const address = signer.getAddress();
-      const res = ethers.formatEther(
-        await ethersProvider.getBalance(address) // Balance is in wei
-      );
-      const balance = (+res).toFixed(4);
-      return balance;
-    } catch (error: any) {
-      toast.error(error);
-      return error.toString();
-    }
-  };
-
-  const getTokenBalance = async (tok: string) => {
-    try {
-      const privateKey = await provider?.request({
-        method: "eth_private_key",
-      });
-      const ethersProvider = new ethers.JsonRpcProvider(chain[token[tok].network].rpcTarget);
-      const signer = new ethers.Wallet(privateKey as string, ethersProvider);
-      if (token[tok].address) {
-        const contract = new ethers.Contract(
-          token[tok].address!,
-          ERC20,
-          signer
-        );
-        const decimals = await contract.decimals();
-        const res = ethers.formatUnits(
-          await contract.balanceOf(signer.getAddress()),decimals
-        );
-        const balance = (+res).toFixed(4);
-        console.log("Balance: ",balance)
-        token[tok].balance = balance;
-      } else {
-        const address = signer.getAddress();
-        const res = ethers.formatEther(
-          await ethersProvider.getBalance(address)
-        );
-        const balance = (+res).toFixed(4);
-        token[tok].balance = balance;
-      }
-      if (token[tok].aave) {
-        const contract = new ethers.Contract(
-          token[tok].aave!,
-          ERC20,
-          signer
-        );
-        const decimals = await contract.decimals();
-        const res = ethers.formatUnits(
-          await contract.balanceOf(signer.getAddress()),decimals
-        );
-        const balance = (+res).toFixed(4);
-        token[tok].aaveBalance = balance;
-        console.log("Aave Balance: ",balance)
-      }
-      return;
-    } catch (error: any) {
-      return;
-    }
-  };
-
-  const getTokenBalanceWithAddress = async (address: string) => {
-    try {
-      const ethersProvider = new ethers.BrowserProvider(provider as any);
-      const signer = await ethersProvider.getSigner();
-      const contract = new ethers.Contract(
-        address,
-        ERC20,
-        signer
-      );
-      const decimals = await contract.decimals();
-      const res = ethers.formatUnits(
-        await contract.balanceOf(signer.getAddress()),decimals
-      );
-      const balance = (+res).toFixed(4);
-      return balance;
-    } catch (error: any) {
-      return "";
     }
   };
 
@@ -246,13 +197,10 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
 
   return {
     getAddress,
-    getBalance,
-    getChainId,
     signMessage,
     sendTransaction,
     getPrivateKey,
-    getTokenBalance,
-    getTokenBalanceWithAddress,
+    getBalance,
     supplyAave,
     withdrawAave,
     depositETHAave,

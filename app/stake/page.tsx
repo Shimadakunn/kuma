@@ -3,7 +3,7 @@ import { token } from "@/config/tokenConfig";
 import { contract } from "@/config/contractConfig";
 import Image from "next/image";
 import { useWeb3Auth } from "../../services/web3auth";
-
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { use, useEffect, useState } from "react";
 
@@ -33,30 +33,18 @@ type Pool = {
   tvl: number;
 };
 const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
-  const { provider, supplyAave, withdrawAave, getTokenBalanceWithAddress } =
+  const { supplyAave, withdrawAave, getBalances } =
     useWeb3Auth();
 
-  const [aaveBalance, setAaveBalance] = useState("");
   const [supplyLoading, setSupplyLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
 
-  useEffect(() => {
-    if(provider) {
-      const getBalance = async () => {
-        const balance = await getTokenBalanceWithAddress(token[tok].aave!);
-        setAaveBalance(balance);
-      };
-      getBalance();
-    }
-  }, [provider]);
-
-  useEffect(() => {
-    const updateBalance = async () => {
-      setAaveBalance(await getTokenBalanceWithAddress(token[tok].aave!));
-      setAaveBalance(await getTokenBalanceWithAddress(token[tok].aave!));
-    };
-    updateBalance();
-  },[supplyLoading,withdrawLoading]);
+  // useEffect(() => {
+  //   const updateBalance = async () => {
+  //     await getBalance();
+  //   };
+  //   updateBalance();
+  // },[supplyLoading,withdrawLoading]);
   
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
@@ -71,10 +59,11 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
         {tvl}M$
       </div>
       <div className="w-20 text-center">
-        {aaveBalance}
+        {token[tok].aaveBalance ? token[tok].aaveBalance : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
       <Button
         className="w-20 text-right"
+        variant={"secondary"}
         onClick={async () => {
           await supplyAave(cont, tok, "0.01",setSupplyLoading);
         }}

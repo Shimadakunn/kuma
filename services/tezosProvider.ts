@@ -4,6 +4,7 @@ import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from "@taquito/signer";
 
 import {chain} from "../config/chainConfig";
+import {token} from "../config/tokenConfig";
 
 import { IWalletProvider } from "./walletProvider";
 
@@ -22,18 +23,10 @@ const ethersWeb3Provider = (keyPair: any): IWalletProvider => {
     }
   };
 
-  const getChainId = async (): Promise<string> => {
-    try {
-      return "Tezos";
-    } catch (error: any) {
-      toast.error(error);
-      return error.toString();
-    }
-  };
-
-  const getBalance = async (): Promise<string> => {
+  const getBalance = async (tok: string): Promise<string> => {
     try {
       const balance = await Tezos.tz.getBalance(keyPair!.pkh);
+      token["tezos-ghostnet"].balance = balance.dividedBy(1000000).toFixed(3).toString();
       return balance.dividedBy(1000000).toFixed(3).toString();
     } catch (error: any) {
       toast.error(error);
@@ -80,7 +73,6 @@ const ethersWeb3Provider = (keyPair: any): IWalletProvider => {
     return {
         getAddress,
         getBalance,
-        getChainId,
         getPrivateKey,
         signMessage,
         sendTransaction,

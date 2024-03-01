@@ -6,34 +6,18 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 export default function Home() {
-  const { provider, switchChain, chainId, getTokenBalance } = useWeb3Auth();
+  const { getBalances } = useWeb3Auth();
 
-  const [balances, setBalances] = useState<string[]>([]);
-
-  const getBalances = async () => {
-    // const updatedBalances = [];
-    // for (const key of Object.keys(token)) {
-    //   await switchChain(key);
-    //   const balance = await getTokenBalance(key);
-    //   console.log("key " + key + " balance " + balance);
-    //   updatedBalances.push(balance);
-    // }
-    // setBalances(updatedBalances);
-    await getTokenBalance("dai-mumbai");
+  const getBa = async () => {
+    await getBalances();
+    for (const key of Object.keys(token)) {
+      console.log("Token: "+ token[key].coin + " Balance: "+ token[key].balance);
+    }
   };
 
-  // useEffect(() => {
-  //   if (provider) {
-  //     getBalances();
-  //   }
-  // }, [provider]);
-
-  useEffect(() => {
-    console.log(balances);
-  }, [balances]);
   return (
     <main className="flex items-center justify-center h-full w-full">
       <div className="shadow w-[75vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
@@ -41,10 +25,10 @@ export default function Home() {
           <div className="w-28">Token</div>
           <div className="w-20 text-center">APY</div>
           <div className="w-20 text-center">TVL</div>
-          <Button onClick={getBalances}>Refresh</Button>
+          <Button onClick={getBa}>Refresh</Button>
         </div>
-        {Object.keys(token).map((key, i) => (
-          <StakePool key={key} tok={key} balance={balances[i]} />
+        {Object.keys(token).map((key) => (
+          <StakePool key={key} tok={key}/>
         ))}
       </div>
     </main>
@@ -52,9 +36,8 @@ export default function Home() {
 }
 type Pool = {
   tok: string;
-  balance: string;
 };
-const StakePool: React.FC<Pool> = ({ tok, balance }) => {
+const StakePool: React.FC<Pool> = ({ tok }) => {
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
       <div className="w-28 flex items-center justify-start">
@@ -70,7 +53,7 @@ const StakePool: React.FC<Pool> = ({ tok, balance }) => {
         {token[tok].coin}
       </div>
       <div className="w-20 text-center">
-        {balance ? balance : <Skeleton className="w-14 h-4 bg-gray-600" />}
+        {token[tok].balance ? token[tok].balance : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
     </div>
   );

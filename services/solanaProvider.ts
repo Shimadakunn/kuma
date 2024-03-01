@@ -10,6 +10,8 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { IWalletProvider } from "./walletProvider";
 
+import { token } from "../config/tokenConfig";
+
 import { toast } from "sonner";
 
 const ethersWeb3Provider = (provider: any): IWalletProvider => {
@@ -25,16 +27,7 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
         }
       };
     
-      const getChainId = async (): Promise<string> => {
-        try {
-          return "2";
-        } catch (error: any) {
-          toast.error(error);
-          return error.toString();
-        }
-      };
-    
-      const getBalance = async (): Promise<string> => {
+      const getBalance = async (tok: string): Promise<string> => {
         try {
             const solanaWallet = new SolanaWallet(provider as any);
             const connectionConfig = await solanaWallet.request<string[], CustomChainConfig>({
@@ -42,9 +35,9 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
               params: [],
             });
             const conn = new Connection(connectionConfig.rpcTarget);
-      
             const accounts = await solanaWallet.requestAccounts();
             const balance = await conn.getBalance(new PublicKey(accounts[0]));
+            token["solana-devnet"].balance = balance.toString();
             return balance.toString();
         } catch (error: any) {
           toast.error(error);
@@ -114,28 +107,9 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
         }
       };
     
-      const readContract = async (contractAddress: string, contractABI: any) => {
-        try {
-          return "todo";
-        } catch (error: any) {
-          toast.error(error);
-          return error as string;
-        }
-      };
-    
-      const writeContract = async (contractAddress: string, contractABI: any, updatedValue: string) => {
-        try {
-            return "todo";
-        } catch (error: any) {
-          toast.error(error);
-          return error as string;
-        }
-      };
-    
       return {
         getAddress,
         getBalance,
-        getChainId,
         signMessage,
         sendTransaction,
         getPrivateKey,

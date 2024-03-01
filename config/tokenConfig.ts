@@ -1,8 +1,6 @@
 export type TokenType = {
     coin: string;
     name: string;
-    decimals?: number;
-    chainId: string;
     network: string;
     address?: string;
     balance?: string;
@@ -17,23 +15,17 @@ export const token: {
     "ethereum-arbitrum-sepolia": {
         coin: "ETH",
         name: "Ethereum Sepolia",
-        decimals: 18,
-        chainId: "0x66eee",
         network : "Arbitrum Sepolia Testnet",
     },
     "matic-mumbai": {
         coin: "MATIC",
         name: "Matic",
-        decimals: 18,
-        chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         aave : "0xaCA5e6a7117F54B34B476aB95Bf3034c304e7a81"
     },
     "dai-mumbai": {
         coin: "DAI",
         name: "Dai Mumbai",
-        decimals: 18,
-        chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         address: "0xc8c0Cf9436F4862a8F60Ce680Ca5a9f0f99b5ded",
         aave: "0x8903bbBD684B7ef734c01BEb00273Ff52703514F"
@@ -41,8 +33,6 @@ export const token: {
     "usdc-mumbai": {
         coin: "USDC",
         name: "USD Coin Mumbai",
-        decimals: 6,
-        chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         address: "0x52D800ca262522580CeBAD275395ca6e7598C014",
         aave: "0x4086fabeE92a080002eeBA1220B9025a27a40A49"
@@ -50,8 +40,6 @@ export const token: {
     "eurs-mumbai": {
         coin: "EURS",
         name: "EURS Mumbai",
-        decimals: 2,
-        chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         address: "0xB516d30421d2A0524769A243BBE5e193E78ab35c",
         aave: "0x6fD1376295392f1F6F9EcCc89bff0e26dDB2aE74"
@@ -59,8 +47,6 @@ export const token: {
     "weth-mumbai": {
         coin: "WETH",
         name: "Wrapped Ether Mumbai",
-        decimals: 18,
-        chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         address: "0xc199807AF4fEDB02EE567Ed0FeB814A077de4802",
         aave: "0xAba444af64ad33A6d8575b8A353226997d6A126a"
@@ -68,8 +54,6 @@ export const token: {
     "wbtc-mumbai": {
         coin: "WBTC",
         name: "Wrapped Bitcoin Mumbai",
-        decimals: 8,
-        chainId: "0x13881",
         network: "Polygon Mumbai Testnet",
         address: "0x2Fa2e7a6dEB7bb51B625336DBe1dA23511914a8A",
         aave: "0xdA67e6C1171D4f0D522Db7f127B88405eA1535d4"
@@ -77,23 +61,17 @@ export const token: {
     "avax-fuji": {
         coin: "AVAX",
         name: "Avalanche Fuji",
-        decimals: 18,
-        chainId: "0xa869",
         network: "Avalanche Fuji Testnet",
         aave: "0x339f50bCbd874A892fb2c6A56Cf8D85Dd215Bf8e"
     },
     "solana-devnet" :{
         coin: "SOL",
         name: "Solana Devnet",
-        decimals: 9,
-        chainId: "0x2",
         network: "Solana Devnet",
     },
     "tezos-ghostnet" :{
         coin: "XTZ",
         name: "Tezos Ghostnet",
-        decimals: 9,
-        chainId: "Tezos",
         network: "Tezos Ghostnet",
     },
     // "ethereum-sepolia": {

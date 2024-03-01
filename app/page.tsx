@@ -12,7 +12,7 @@ export default function Home() {
   const { getBalances } = useWeb3Auth();
 
   const getBa = async () => {
-    await getBalances();
+    // await getBalances();
     for (const key of Object.keys(token)) {
       console.log("Token: "+ token[key].coin + " Balance: "+ token[key].balance);
     }
@@ -52,8 +52,8 @@ const StakePool: React.FC<Pool> = ({ tok }) => {
         />
         {token[tok].coin}
       </div>
-      <div className="w-20 text-center">
-        {token[tok].balance ? token[tok].balance : <Skeleton className="w-14 h-4 bg-gray-600" />}
+      <div className="w-20 text-right">
+        {token[tok].balance ? token[tok].balance!.slice(0, 6) : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
     </div>
   );

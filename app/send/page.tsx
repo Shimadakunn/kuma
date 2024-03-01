@@ -2,17 +2,21 @@
 import { useWeb3Auth } from "../../services/web3auth";
 import TokenSelector from "@/components/token-selector/token-selector";
 import { token } from "@/config/tokenConfig";
+import { chain } from "@/config/chainConfig";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useEffect, useState } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 
 import { Send } from 'lucide-react';
 
 export default function Home() {
-  const { balance, sendTransaction, getTokenBalance } = useWeb3Auth();
+  const { connectedChain,sendTransaction } = useWeb3Auth();
 
-  const [tokenSend, setTokenSend] = useState<string>();
+  const [tokenSend, setTokenSend] = useState<string | undefined>(Object.keys(token).find((key) => {
+    return chain[token[key].network] === connectedChain;
+  }));
   const [amount, setAmount] = useState<number>();
   const [toAddress, setToAddress] = useState<string>();
 
@@ -34,7 +38,8 @@ export default function Home() {
                 <TokenSelector selectedToken={setTokenSend}/>
               </div>
               <div className='absolute bottom-2 right-4 font-semibold text-gray-500 text-sm'>
-                Solde:{ balance } <span className="text-secondary/80 cursor-pointer" onClick={()=>setAmount(parseFloat(balance!))}>Max</span>
+                Solde: {token[tokenSend!].balance ? token[tokenSend!].balance : <Skeleton className="w-14 h-4 bg-gray-600" />} 
+                <span className="ml-1 text-secondary/80 cursor-pointer" onClick={()=>setAmount(parseFloat(token[tokenSend!].balance!))}>Max</span>
               </div>
               <div className='absolute top-2 left-2 font-semibold text-gray-500 text-sm'>
                 You send
@@ -52,7 +57,7 @@ export default function Home() {
             </div>
           <Button className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest" 
             onClick={async () => {await sendTransaction(amount!, toAddress!, tokenSend! ,setLoading);}}
-            disabled={ !amount || !toAddress || parseFloat(balance!) < amount || loading}
+            disabled={ !amount || !toAddress || parseFloat(token[tokenSend!].balance!) < amount || loading}
           >
             SEND<Send className="ml-1" size={20}/>
           </Button>

@@ -15,7 +15,7 @@ export const chain: {
   "Polygon Mumbai Testnet": {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x13881",
-    rpcTarget: "https://polygon-mumbai.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
+    rpcTarget: "https://polygon-mumbai.infura.io/v3/374405c0b13c48908b557fb6b621038a",
     displayName: "Polygon Mumbai Testnet",
     blockExplorer: "https://mumbai.polygonscan.com/",
     ticker: "MATIC",

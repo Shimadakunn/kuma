@@ -39,12 +39,13 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
   const [supplyLoading, setSupplyLoading] = useState(false);
   const [withdrawLoading, setWithdrawLoading] = useState(false);
 
-  // useEffect(() => {
-  //   const updateBalance = async () => {
-  //     await getBalance();
-  //   };
-  //   updateBalance();
-  // },[supplyLoading,withdrawLoading]);
+  useEffect(() => {
+    const updateBalance = async () => {
+      await getBalances();
+      console.log("update balance")
+    };
+    updateBalance();
+  },[supplyLoading,withdrawLoading]);
   
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
@@ -59,13 +60,17 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
         {tvl}M$
       </div>
       <div className="w-20 text-center">
+        {token[tok].balance ? token[tok].balance?.slice(0,6) : <Skeleton className="w-14 h-4 bg-gray-600" />}
+      </div>
+      <div className="w-20 text-center">
         {token[tok].aaveBalance ? token[tok].aaveBalance : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
       <Button
         className="w-20 text-right"
         variant={"secondary"}
         onClick={async () => {
-          await supplyAave(cont, tok, "0.01",setSupplyLoading);
+          await supplyAave(cont, tok, "100",setSupplyLoading);
+          await getBalances();
         }}
       >
         Supply
@@ -74,6 +79,7 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
         className="w-20 text-right"
         onClick={async () => {
           await withdrawAave(cont, tok,setWithdrawLoading);
+          await getBalances();
         }}
       >
         Withdraw

@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { token } from "@/config/tokenConfig";
+import {chain} from "@/config/chainConfig";
 import { useWeb3Auth } from "../../services/web3auth";
 
 import { Button } from "@/components/ui/button";
@@ -28,7 +29,7 @@ interface ChildComponentProps {
 
 const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken}) => {
   const {
-    chainId,
+    connectedChain,
     switchChain,
   } = useWeb3Auth();
 
@@ -37,19 +38,15 @@ const TokenSelector: React.FC<ChildComponentProps> = ({selectedToken}) => {
   const [valueInitianilized, setValueInitialized] = useState(false);
 
   useEffect(() => {
-    if (chainId !== null && !valueInitianilized) {
+    if (connectedChain !== null && !valueInitianilized) {
       const key = Object.keys(token).find((key) => {
-        return token[key].chainId === "0x" + chainId;
+        return chain[token[key].network] === connectedChain;
       });
       setValue(key!);
       selectedToken(key!);
       setValueInitialized(true);
     }
-  }, [chainId]);
-
-  useEffect(() => {
-    console.log(value);
-  }, [value]);
+  }, [connectedChain]);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>

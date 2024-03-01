@@ -155,21 +155,30 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
           setWalletProvider(web3AuthInstance.provider);
           setUser(await web3AuthInstance.getUserInfo());
           setConnected(true);
-          setTimeout(() => {
-            setIsLoading(false);
-            toast.success('Logged in successfully!');
-          }, 750);
+        }
+        else{
+          setIsLoading(false);
         }
         setWeb3Auth(web3AuthInstance);
       } catch (error) {
         toast.error("error");
         console.log(error);
-      } finally {
-          setIsLoading(false);
       }
     }
     init();
   }, [setWalletProvider]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (connected && provider && solprovider && tezosprovider) {
+        await getBalances();
+        console.log("Get Balance")
+        setIsLoading(false);
+      }
+    };
+  
+    fetchData();
+  }, [connected,provider,solprovider,tezosprovider]);
 
   const login = async () => {
     if (!web3Auth) {
@@ -236,6 +245,17 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return "balance updated";
   };
 
+  const getPrivateKeys = async () => {
+    if (!web3Auth) {
+      toast.error("web3auth not initialized yet");
+      return "";
+    }
+    let privateKeys : string[] = [await provider!.getPrivateKey()];
+    privateKeys.push(await solprovider!.getPrivateKey());
+    privateKeys.push(await tezosprovider!.getPrivateKey());
+    return privateKeys;
+  };
+
   const signMessage = async (message: string) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
@@ -272,24 +292,13 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         },
       });
   };
-
-  const getPrivateKeys = async () => {
-    if (!web3Auth) {
-      toast.error("web3auth not initialized yet");
-      return "";
-    }
-    let privateKeys : string[] = [await provider!.getPrivateKey()];
-    privateKeys.push(await solprovider!.getPrivateKey());
-    privateKeys.push(await tezosprovider!.getPrivateKey());
-    return privateKeys;
-  };
   
   const switchChain = async (tok: string) => {
     if (!provider || !solprovider) {
       toast.error("provider not initialized yet");
       return;
     }
-    if(connectedChain.chainId !== "0x3" && connectedChain.chainId !== "Tezos") {
+    if(chain[token[tok].network!].chainId !== "0x2" && chain[token[tok].network!].chainId !== "Tezos") {
       await web3Auth!.addChain(chain[token[tok].network!]);
       await web3Auth!.switchChain(chain[token[tok].network!]);
     }
@@ -305,7 +314,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     setLoading(true);
     await switchChain(tok);
     let promise = () => provider!.supplyAave!(cont, tok, amount);
-    if( contract[cont].wrappedAddress) {
+    if(contract[cont].wrappedAddress) {
       promise = () => provider!.depositETHAave!(cont, tok, amount);
     }
     toast.promise(promise, {
@@ -321,7 +330,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         return (<>An error occured</>);
       },
     });
-
+    await getBalances();
     return "supplied";
   };
 
@@ -349,6 +358,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         return (<>An error occured</>);
       },
     });
+    await getBalances();
     return "withdrawn";
   };
 
@@ -372,6 +382,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     supplyAave,
     withdrawAave,
   };
+
   return <Web3AuthContext.Provider value={contextProvider}>
     {isLoading ? <Loading/>:
       connected ? children : <Login/>

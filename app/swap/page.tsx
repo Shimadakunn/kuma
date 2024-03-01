@@ -5,20 +5,27 @@ import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
 import { SendToShift } from "@/lib/sideShift/swapToken";
 import { useWeb3Auth } from "../../services/web3auth";
 
+import {token} from "@/config/tokenConfig";
+import {chain} from "@/config/chainConfig";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 import { ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
 
 
 export default function Home() {
-  const { balance, address } = useWeb3Auth();
-
+  const {
+    connectedChain,
+    switchChain,
+  } = useWeb3Auth();
   const [amountSend, setAmountSend] = useState<number>();
-  const [tokenSend, setTokenSend] = useState<string>();
+  const [tokenSend, setTokenSend] = useState<string | undefined>(Object.keys(token).find((key) => {
+    return chain[token[key].network] === connectedChain;
+  }));
   const [tokenSendQuote, setTokenSendQuote] = useState<number>();
   const [tokenSendQuoteLoading, setTokenSendQuoteLoading] = useState<boolean>(false);
 
@@ -28,7 +35,7 @@ export default function Home() {
   const [tokenReceiveQuoteLoading, setTokenReceiveQuoteLoading] = useState<boolean>(false);
 
   const [swapLoading, setSwapLoading] = useState<boolean>(false);
-  
+
   useEffect(() => {
     const fetchSendTokenQuote = async () => {
       if(amountSend){
@@ -97,10 +104,10 @@ export default function Home() {
             }
           </div>
           <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
-            Solde: {balance}{" "}
+            Solde: {token[tokenSend!].balance ? token[tokenSend!].balance : <Skeleton className="w-14 h-4 bg-gray-600" />}
             <span
-              className="text-secondary/80 cursor-pointer"
-              onClick={() => setAmountSend(parseFloat(balance!))}
+              className="ml-1 text-secondary/80 cursor-pointer"
+              onClick={() => setAmountSend(parseFloat(token[tokenSend!].balance!))}
             >
               Max
             </span>
@@ -131,7 +138,7 @@ export default function Home() {
         </div>
         <Button
           className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest"
-          onClick={() => SendToShift(tokenSend!, amountSend!, tokenReceive!, address!, setSwapLoading)}
+          // onClick={() => SendToShift(tokenSend!, amountSend!, tokenReceive!, address!, setSwapLoading)}
           disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading}
         >
           SWAP <ArrowRightLeft className="ml-1" size={20} />

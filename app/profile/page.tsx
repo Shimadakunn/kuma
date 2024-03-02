@@ -1,28 +1,30 @@
 "use client";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { useWeb3Auth } from "../../services/web3auth";
-import { use, useEffect, useState } from "react";
 
 import { Copy } from 'lucide-react';
+
+import { toast } from 'sonner';
 
 export default function Home() {
   const { provider, user, logout, getPrivateKeys, getAddresses } = useWeb3Auth();
   const [privateKey, setPrivateKey] = useState<string[]>([]);
   const [addresses, setAddresses] = useState<string[]>([]);
   async function pk() {
-    const privatekeys = await getPrivateKey();
-    setPrivateKey(privatekeys);
+    
   }
 
   useEffect(() => {
     if(provider){
-      const getAdd = async () => {
+      const getInfo = async () => {
         const addresses = await getAddresses();
         setAddresses(addresses);
-        console.log(user)
+        const privatekeys = await getPrivateKeys();
+        setPrivateKey(privatekeys);
       }
-      getAdd();
+      getInfo();
     }
   }, [provider]);
   return(
@@ -31,7 +33,7 @@ export default function Home() {
           <div className='p-1'>
             Profile
           </div>
-           <div className="bg-primary/30 rounded-xl p-2 flex space-x-4">
+           <div className="bg-primary/30 rounded-xl p-2 flex space-x-4 space-y-2">
             <Image src={`${user.profileImage}`} alt="profile" width={75} height={75} className="rounded-xl"/>
             <div className="w-full flex flex-col justify-between">
               <div className="flex justify-between">
@@ -43,26 +45,80 @@ export default function Home() {
                 </div>
               </div>
               <div className="w-full justify-around flex font-normal text-sm">
-                <div className="rounded-lg bg-gray-600 py-1 px-4 flex items-center justify-center">
-                  <Image src={`https://cryptofonts.com/img/icons/eth.svg`} width={20} height={20} alt="eth" className="mr-2"/>
-                  <div className="truncate w-32">
-                    {addresses[0]}
-                  </div> 
-                  <Copy className="ml-2" size={16}/>
-                </div>
-                <div className="rounded-lg bg-gray-600 py-1 px-4 flex items-center justify-center">
-                <Image src={`https://cryptofonts.com/img/icons/sol.svg`} width={20} height={20} alt="sol" className="mr-2"/>
-                  <div className="truncate w-32">
-                    {addresses[1]} 
+                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
+                  <Image src={`https://cryptofonts.com/img/icons/eth.svg`} width={30} height={30} alt="eth" className="mr-2"/>
+                  <div className="flex items-center justify-center flex-col space-y-2">
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {addresses[0]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(addresses[0]);
+                          toast.success('EVM address copied to clipboard');
+                        }}/>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {privateKey[0]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(privateKey[0]);
+                          toast.success('EVM private key copied to clipboard');
+                        }}/>
+                    </div>
                   </div>
-                  <Copy className="ml-2" size={16}/>
                 </div>
-                <div className="rounded-lg bg-gray-600 py-1 px-4 flex items-center justify-center">
-                  <Image src={`https://cryptofonts.com/img/icons/xtz.svg`} width={20} height={20} alt="xtz" className="mr-2"/>
-                  <div className="truncate w-32">
-                    {addresses[2]} 
+                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
+                <Image src={`https://cryptofonts.com/img/icons/sol.svg`} width={30} height={30} alt="eth" className="mr-2"/>
+                  <div className="flex items-center justify-center flex-col space-y-2">
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {addresses[1]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(addresses[1]);
+                          toast.success('Solana address copied to clipboard');
+                        }}/>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {privateKey[1]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(privateKey[1]);
+                          toast.success('Solana private key copied to clipboard');
+                        }}/>
+                    </div>
                   </div>
-                  <Copy className="ml-2" size={16}/>
+                </div>
+                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
+                <Image src={`https://cryptofonts.com/img/icons/xtz.svg`} width={30} height={30} alt="eth" className="mr-2"/>
+                  <div className="flex items-center justify-center flex-col space-y-2">
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {addresses[2]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(addresses[2]);
+                          toast.success('Tezos address copied to clipboard');
+                        }}/>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {privateKey[2]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(privateKey[2]);
+                          toast.success('Tezos private key copied to clipboard');
+                        }}/>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -72,14 +128,5 @@ export default function Home() {
            </div>
         </div>
       </main>
-
-        // <p className="font-light">EVM Address <span className="font-bold">{addresses[0]}</span></p>
-        // <p className="font-light">SOL Adress <span className="font-bold">{addresses[1]}</span></p>
-        // <p className="font-light">Email: <span className="font-bold">{user.email}</span></p>
-        // {/* <div className="font-extralight tracking-tight">{privateKey}</div> */}
-        // <Button onClick={logout} className="border-2 border-foreground bg-primary text-foreground">Logout</Button>
-        // <Button onClick={pk} className="border-2 border-foreground bg-primary text-foreground">Private key</Button>
-        // <div>{privateKey[0]}</div>
-        // <div>{privateKey[1]}</div>
   )
 }

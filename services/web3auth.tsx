@@ -30,7 +30,7 @@ export interface IWeb3AuthContext {
   getBalances: () => Promise<string>;
   getPrivateKeys: () => Promise<string[]>;
   signMessage: (message: string) => Promise<string>;
-  sendTransaction: (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void) => Promise<string>;
+  sendTransaction: (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void, dispatch?: Function) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
   supplyAave: (contractAddress: string, tok: string, amount: string, dispatch?: Function) => Promise<string>;
   withdrawAave: (contractAddress: string, tok: string, amount: string, dispatch?: Function) => Promise<string>;
@@ -268,7 +268,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return signature;
   };
 
-  const sendTransaction = async (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void) => {
+  const sendTransaction = async (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void, dispatch?: Function ) => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
       return "";
@@ -283,8 +283,9 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         success: async (data) => {
           await getBalances();
           setLoading(false);
-          if(connectedChain.chainId === "Tezos"){return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}${data}`)}/></>);}
-          return (<>Transaction successfully sent <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${connectedChain.blockExplorer}tx/${data}`)}/></>);
+          if(dispatch !== undefined){dispatch();}
+          if(connectedChain.chainId === "Tezos"){return (<div className="flex">Transaction successfully sent <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${connectedChain.blockExplorer}${data}`)}/></div>);}
+          return (<div className="flex">Transaction successfully sent <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${connectedChain.blockExplorer}tx/${data}`)}/></div>);
         },
         error: (error) => {
           console.log(error);
@@ -322,10 +323,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       loading: 'Sending transaction...',
       success: async (data) => {
         await getBalances();
-        console.log(token[tok].aaveBalance)
         dispatch!();
-        // console.log(data);
-        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
+        return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></div>);
       },
       error: (error) => {
         console.log(error);
@@ -348,10 +347,9 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     toast.promise(promise, {
       loading: 'Sending transaction...',
       success: async (data) => {
-        console.log(data);
         await getBalances();
         dispatch!();
-        return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
+        return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></div>);
       },
       error: (error) => {
         console.log(error);

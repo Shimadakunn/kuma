@@ -1,4 +1,5 @@
 "use client";
+import axios from 'axios';
 import SimpleTokenSelector from "@/components/token-selector/simple-token-selector";
 import TokenSelector from "@/components/token-selector/token-selector";
 import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
@@ -22,60 +23,42 @@ export default function Home() {
     connectedChain,
     switchChain,
   } = useWeb3Auth();
-  const [amountSend, setAmountSend] = useState<number>();
+
   const [tokenSend, setTokenSend] = useState<string | undefined>(Object.keys(token).find((key) => {
     return chain[token[key].network] === connectedChain;
   }));
+  const [tokenReceive, setTokenReceive] = useState<string>();
+  const [amountSend, setAmountSend] = useState<number>();
+  const [amountReceive, setAmountReceive] = useState<number>();
+
+  const [quoteLoading, setQuoteLoading] = useState<boolean>(false);
+
   const [tokenSendQuote, setTokenSendQuote] = useState<number>();
   const [tokenSendQuoteLoading, setTokenSendQuoteLoading] = useState<boolean>(false);
-
-  const [amountReceive, setAmountReceive] = useState<number>();  
-  const [tokenReceive, setTokenReceive] = useState<string>();
   const [tokenReceiveQuote, setTokenReceiveQuote] = useState<number>();
   const [tokenReceiveQuoteLoading, setTokenReceiveQuoteLoading] = useState<boolean>(false);
-
   const [swapLoading, setSwapLoading] = useState<boolean>(false);
 
+
   useEffect(() => {
-    const fetchSendTokenQuote = async () => {
-      if(amountSend){
-        setTokenSendQuoteLoading(true);
-        await fetchTokenQuote(tokenSend!, amountSend) 
-        .then((fetchedRate) => {
-          toast("fetchedRate:"+fetchedRate);
-          setTokenSendQuote(fetchedRate);
-        })
-        .catch((error) => {
-          console.error('Error fetching token quote:', error);
-          toast.error('Failed to fetch token quote');
-        });
-        setTokenSendQuoteLoading(false);
-
-        await fetchTokenQuote(tokenSend!, amountSend, tokenReceive!) 
-        .then((fetchedRate) => {
-          toast("fetchedRate:"+fetchedRate);
-          setAmountReceive(parseFloat(fetchedRate));
-        })
-        .catch((error) => {
-          console.error('Error fetching token quote:', error);
-          toast.error('Failed to fetch token quote');
-        });
-
-        setTokenReceiveQuoteLoading(true);
-        fetchTokenQuote(tokenReceive!, amountReceive!) 
-        .then((fetchedRate) => {
-          toast("fetchedRate:"+fetchedRate);
-          setTokenReceiveQuote(fetchedRate);
-        })
-        .catch((error) => {
-          console.error('Error fetching token quote:', error);
-          toast.error('Failed to fetch token quote');
-        });
-        setTokenReceiveQuoteLoading(false);
+    const fetchQuote = async () => {
+      try {
+        if(amountSend && tokenSend && tokenReceive && !quoteLoading){
+          setQuoteLoading(true);
+          const settleAmount = await fetchTokenQuote(tokenSend!, amountSend!, tokenReceive!);
+          if (axios.isAxiosError(settleAmount)) {
+            setQuoteLoading(false);
+            return;
+          }
+          setAmountReceive(settleAmount);
+          setQuoteLoading(false);
+        }
+      } catch (error) {
+        return error;
       }
-    }
-    fetchSendTokenQuote();
-  },[amountSend, tokenReceive,tokenSend]);
+    };
+    fetchQuote();
+  }, [amountSend, tokenSend, tokenReceive]);
 
   return (
     <main className="flex items-center justify-center h-full w-full">
@@ -95,16 +78,16 @@ export default function Home() {
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl">
             <TokenSelector selectedToken={setTokenSend}/>
           </div>
-          <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
+          {/* <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
             {tokenSendQuote && amountSend ? 
               tokenSendQuoteLoading ? 
               <Skeleton className="w-14 h-4 bg-gray-600" /> : 
               Number.parseFloat(tokenSendQuote.toString()).toFixed(2) + " $"
              :""
             }
-          </div>
+          </div> */}
           <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
-            Solde: {token[tokenSend!].balance ? token[tokenSend!].balance : <Skeleton className="w-14 h-4 bg-gray-600" />}
+            {tokenSend ? "Solde: "+token[tokenSend!].balance : <></>}
             <span
               className="ml-1 text-secondary/80 cursor-pointer"
               onClick={() => setAmountSend(parseFloat(token[tokenSend!].balance!))}
@@ -117,20 +100,26 @@ export default function Home() {
           <div className="absolute top-2 left-2 font-semibold text-gray-500 text-sm">
             You receive
           </div>
-          <Input
+          {/* <Input
             className="h-[15vh] border-0 text-4xl font-medium bg-primary/15"
             placeholder="0"
             type="number"
-            value={amountReceive ? Number.parseFloat((amountReceive!).toString()).toFixed(2) : amountReceive}
-            onChange={(e) => setAmountReceive(parseFloat(e.target.value))}
-          />
-          <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
+            value={quoteLoading ? "00000000" : amountReceive ? amountReceive : ""}
+            // onChange={(e) => setAmountReceive(parseFloat(e.target.value))}
+          /> */}
+          <div className='h-[15vh] border-0 text-4xl font-medium bg-primary/15 flex items-center justify-start'>
+            {quoteLoading ?  <Skeleton className="ml-2 w-36 h-8 bg-gray-600" /> : amountReceive ? <span className="ml-2">{amountReceive}</span> : <span className="ml-2 text-muted-foreground">0</span>}
+          </div>
+          {/* <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
             {tokenReceiveQuote && amountReceive ? 
               tokenReceiveQuoteLoading ? 
               <Skeleton className="w-14 h-4 bg-gray-600" /> : 
               Number.parseFloat(tokenReceiveQuote.toString()).toFixed(2) + " $"
              :""
             }
+          </div> */}
+          <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
+           {tokenReceive ? "Solde: "+ token[tokenReceive!].balance : <></>}
           </div>
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl font-[Monument]">
             <SimpleTokenSelector otherToken={tokenSend} selectedToken={setTokenReceive}/>
@@ -139,7 +128,7 @@ export default function Home() {
         <Button
           className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest"
           // onClick={() => SendToShift(tokenSend!, amountSend!, tokenReceive!, address!, setSwapLoading)}
-          disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading}
+          disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading || quoteLoading || amountSend > parseFloat(token[tokenSend!].balance!)}
         >
           SWAP <ArrowRightLeft className="ml-1" size={20} />
         </Button>

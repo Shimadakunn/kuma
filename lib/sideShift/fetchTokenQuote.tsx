@@ -3,27 +3,14 @@ import { token } from "@/config/tokenConfig";
 import {chain } from "@/config/chainConfig";
 import { toast } from "sonner";
 
-export const fetchTokenQuote = async (sendToken:string, sendAmount:number, receiveToken?:string) => {
-  const sendTokenTicker = token[sendToken].coin;
-  
-  const sendTokenChain = Object.keys(chain).find((key) => {
-    return chain[key].chainId === token[sendToken].chainId;
-  });
-  let receiveTokenTicker = "usdc";
-  let receiveTokenChain = "polygon";
-
-  if(receiveToken){
-    receiveTokenTicker = token[receiveToken!].coin;
-    receiveTokenChain = Object.keys(chain).find((key) => {
-      return chain[key].chainId === token[receiveToken!].chainId;
-    });
-  }
+export const fetchTokenQuote = async (sendToken:string, sendAmount:number, receiveToken:string) => {
+  console.log(token[sendToken].coin,token[sendToken].network.split(" ")[0].toLowerCase(),token[receiveToken].coin,token[receiveToken].network.split(" ")[0].toLowerCase())
 
     const data = JSON.stringify({
-      depositCoin: sendTokenTicker,
-      depositNetwork: sendTokenChain,
-      settleCoin: receiveTokenTicker,
-      settleNetwork: receiveTokenChain,
+      depositCoin: token[sendToken].coin,
+      depositNetwork: token[sendToken].network.split(" ")[0].toLowerCase(),
+      settleCoin: token[receiveToken].coin,
+      settleNetwork: token[receiveToken].network.split(" ")[0].toLowerCase(),
       depositAmount: sendAmount.toString(),
       settleAmount: null,
       affiliateId: "w3SGv4itW",
@@ -44,7 +31,15 @@ export const fetchTokenQuote = async (sendToken:string, sendAmount:number, recei
       const response = await axios(config);
       return response.data.settleAmount;
     } catch (error) {
-      console.error(error);
+      console.log("error catched",error)
+      if(error.response){
+        console.error(error.response.data.error.message);
+        toast.error(error.response.data.error.message);
+      }
+      else{
+        console.error(error);
+        toast.error(error);
+      }
       return error;
     }
 };

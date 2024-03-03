@@ -32,8 +32,8 @@ export interface IWeb3AuthContext {
   signMessage: (message: string) => Promise<string>;
   sendTransaction: (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
-  supplyAave: (contractAddress: string, tok: string, amount: string) => Promise<string>;
-  withdrawAave: (contractAddress: string, tok: string, amount: string) => Promise<string>;
+  supplyAave: (contractAddress: string, tok: string, amount: string, dispatch?: Function) => Promise<string>;
+  withdrawAave: (contractAddress: string, tok: string, amount: string, dispatch?: Function) => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -308,7 +308,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     toast.success("Switched chain to " + token[tok].network);
   };
 
-  const supplyAave = async (cont: string, tok: string, amount: string): Promise<string> => {
+  const supplyAave = async (cont: string, tok: string, amount: string, dispatch?: Function ): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
@@ -322,7 +322,9 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       loading: 'Sending transaction...',
       success: async (data) => {
         await getBalances();
-        console.log(data);
+        console.log(token[tok].aaveBalance)
+        dispatch!();
+        // console.log(data);
         return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {
@@ -333,7 +335,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return "supplied";
   };
 
-  const withdrawAave = async (cont: string, tok: string, amount: string): Promise<string> => {
+  const withdrawAave = async (cont: string, tok: string, amount: string, dispatch?: Function): Promise<string> => {
     if(!provider) {
       toast.error("provider not initialized yet");
       return "";
@@ -348,6 +350,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       success: async (data) => {
         console.log(data);
         await getBalances();
+        dispatch!();
         return (<>Successfully Staked <ExternalLink size={15} className="cursor-pointer" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data.hash}`)}/></>); // Display the transaction hash in the success message
       },
       error: (error) => {

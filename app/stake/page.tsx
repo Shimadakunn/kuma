@@ -18,7 +18,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 
 export default function Home() {
   return (
@@ -36,7 +36,7 @@ export default function Home() {
         </div>
         {Object.keys(contract).map((key) =>
           contract[key].tokenArray.map((tok) => (
-            <StakePool key={tok} tok={tok} cont={key} apy={10} tvl={1} />
+            <StakePool key={token[tok].aaveBalance} tok={tok} cont={key} apy={10} tvl={1} />
           ))
         )}
       </div>
@@ -55,10 +55,17 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
 
   const [supplyAmount, setSupplyAmount] = useState<number>();
   const [withdrawAmount, setWithdrawAmount] = useState<number>();
+
+  const [reducer, dispatch] = useReducer(x => x+1, 0);
+
+  const [balance, setBalance] = useState<string | undefined>(token[tok].balance);
+  const [aaveBalance, setAaveBalance] = useState<string | undefined>(token[tok].aaveBalance);
   
   useEffect(() => {
-    console.log(token[tok].balance, token[tok].aaveBalance)
-  },[token[tok].balance, token[tok].aaveBalance])
+    setBalance(token[tok].balance);
+    setAaveBalance(token[tok].aaveBalance);
+    console.log("reducer", reducer);
+  },[reducer])
 
   return (
     <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
@@ -76,10 +83,10 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
         {tvl}M$
       </div>
       <div className="w-20 text-center">
-        {token[tok].balance ? token[tok].balance?.slice(0,6) : <Skeleton className="w-14 h-4 bg-gray-600" />}
+        {balance ? balance.slice(0,6) : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
       <div className="w-20 text-center">
-        {token[tok].aaveBalance ? token[tok].aaveBalance!.slice(0,6) : <Skeleton className="w-14 h-4 bg-gray-600" />}
+        {aaveBalance ? aaveBalance.slice(0,6) : <Skeleton className="w-14 h-4 bg-gray-600" />}
       </div>
       <AlertDialog>
         <AlertDialogTrigger>
@@ -124,7 +131,7 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction className="bg-secondary/90 text-primary-foreground hover:bg-secondary/60" onClick={async () => {
-              await supplyAave(cont, tok, supplyAmount!.toString());
+              await supplyAave(cont, tok, supplyAmount!.toString(),dispatch);
             }}>
             Supply
             </AlertDialogAction>
@@ -173,7 +180,7 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction  onClick={async () => {
-                await withdrawAave(cont, tok, withdrawAmount!.toString());
+                await withdrawAave(cont, tok, withdrawAmount!.toString(),dispatch);
               }}>
               Withdraw
             </AlertDialogAction>

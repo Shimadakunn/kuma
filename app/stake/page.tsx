@@ -36,7 +36,7 @@ export default function Home() {
         </div>
         {Object.keys(contract).map((key) =>
           contract[key].tokenArray.map((tok) => (
-            <StakePool key={token[tok].aaveBalance} tok={tok} cont={key} apy={10} tvl={1} />
+            <StakePool key={tok} tok={tok} cont={key} apy={10} tvl={1} />
           ))
         )}
       </div>

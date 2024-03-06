@@ -10,7 +10,7 @@ import { SolanaWallet } from "@web3auth/solana-provider";
 
 import { IWalletProvider } from "./walletProvider";
 
-import { token } from "../config/tokenConfig";
+import { token } from "@/config/tokenConfig";
 
 import { toast } from "sonner";
 

@@ -4,13 +4,13 @@ import { Web3Auth } from "@web3auth/modal";
 import { OPENLOGIN_NETWORK, OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from "react";
 
-import { chain } from "../config/chainConfig";
-import { contract } from "../config/contractConfig";
-import { token } from "../config/tokenConfig";
-import { getEVMWalletProvider, getSolanaWalletProvider, getTezosWalletProvider, IWalletProvider } from "./walletProvider";
+import { chain } from "@/config/chainConfig";
+import { contract } from "@/config/contractConfig";
+import { token } from "@/config/tokenConfig";
+import { getEVMWalletProvider, getSolanaWalletProvider, getTezosWalletProvider, getStarknetWalletProvider ,IWalletProvider } from "./walletProvider";
 
-import Loading from "../components/loading-page";
-import Login from "../components/login-page";
+import Loading from "@/components/loading-page";
+import Login from "@/components/login-page";
 
 import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
@@ -81,6 +81,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     const walletProvider = getEVMWalletProvider(web3authProvider);
     const solWalletProvider = await getSolanaWalletProvider(web3authProvider);
     const tezosWalletProvider = await getTezosWalletProvider(web3authProvider);
+    const starknetWalletProvider = await getStarknetWalletProvider(web3authProvider);
     setSolProvider(solWalletProvider);
     setTezosProvider(tezosWalletProvider);
     setProvider(walletProvider);

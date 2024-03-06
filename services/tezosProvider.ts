@@ -3,8 +3,8 @@ import { CommonJRPCProvider } from "@web3auth/base-provider";
 import { TezosToolkit } from '@taquito/taquito';
 import { InMemorySigner } from "@taquito/signer";
 
-import {chain} from "../config/chainConfig";
-import {token} from "../config/tokenConfig";
+import {chain} from "@/config/chainConfig";
+import {token} from "@/config/tokenConfig";
 
 import { IWalletProvider } from "./walletProvider";
 

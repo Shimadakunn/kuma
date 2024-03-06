@@ -2,8 +2,8 @@
 import Image from "next/image";
 
 import { Label } from '@radix-ui/react-label';
-import Background from "../public/images/3.png";
-import Background2 from "../public/images/4.png";
+import Background from "@/public/images/3.png";
+import Background2 from "@/public/images/4.png";
 
 
 const LoadingPage = () => {

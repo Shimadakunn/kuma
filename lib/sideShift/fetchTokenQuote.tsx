@@ -1,11 +1,8 @@
 import axios from "axios";
 import { token } from "@/config/tokenConfig";
-import {chain } from "@/config/chainConfig";
 import { toast } from "sonner";
 
 export const fetchTokenQuote = async (sendToken:string, sendAmount:number, receiveToken:string) => {
-  console.log(token[sendToken].coin,token[sendToken].network.split(" ")[0].toLowerCase(),token[receiveToken].coin,token[receiveToken].network.split(" ")[0].toLowerCase())
-
     const data = JSON.stringify({
       depositCoin: token[sendToken].coin,
       depositNetwork: token[sendToken].network.split(" ")[0].toLowerCase(),
@@ -32,13 +29,16 @@ export const fetchTokenQuote = async (sendToken:string, sendAmount:number, recei
       return response.data.settleAmount;
     } catch (error) {
       console.log("error catched",error)
-      if(error.response){
-        console.error(error.response.data.error.message);
-        toast.error(error.response.data.error.message);
-      }
-      else{
+      if (error instanceof Error) {
+        console.error(error.message);
+        toast.error(error.message);
+      } else if (typeof error === 'object' && error !== null && 'response' in error) {
+        const axiosError = error as { response: { data: { error: { message: string } } } };
+        console.error(axiosError.response.data.error.message);
+        toast.error(axiosError.response.data.error.message);
+      } else {
         console.error(error);
-        toast.error(error);
+        toast.error(String(error));
       }
       return error;
     }

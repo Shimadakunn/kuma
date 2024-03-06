@@ -2,7 +2,7 @@
 import { token } from "@/config/tokenConfig";
 import { contract } from "@/config/contractConfig";
 import Image from "next/image";
-import { useWeb3Auth } from "../../services/web3auth";
+import { useWeb3Auth } from "@/services/web3auth";
 
 import {
   AlertDialog,

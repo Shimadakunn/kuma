@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useWeb3Auth } from "../../services/web3auth";
+import { useWeb3Auth } from "@/services/web3auth";
 
 import { Copy } from 'lucide-react';
 

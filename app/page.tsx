@@ -1,5 +1,5 @@
 "use client";
-import { useWeb3Auth } from "../services/web3auth";
+import { useWeb3Auth } from "@/services/web3auth";
 import { token } from "@/config/tokenConfig";
 import {chain} from "@/config/chainConfig";
 import Image from "next/image";

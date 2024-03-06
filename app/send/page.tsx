@@ -1,5 +1,5 @@
 "use client";
-import { useWeb3Auth } from "../../services/web3auth";
+import { useWeb3Auth } from "@/services/web3auth";
 import TokenSelector from "@/components/token-selector/token-selector";
 import { token } from "@/config/tokenConfig";
 import { chain } from "@/config/chainConfig";

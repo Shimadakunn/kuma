@@ -2,7 +2,7 @@
 import Image from "next/image";
 import { token } from "@/config/tokenConfig";
 import {chain} from "@/config/chainConfig";
-import { useWeb3Auth } from "../../services/web3auth";
+import { useWeb3Auth } from "@/services/web3auth";
 
 import { Button } from "@/components/ui/button";
 import {

@@ -1,6 +1,6 @@
 "use client";
-import { useWeb3Auth } from "../services/web3auth";
-import { chain } from "../config/chainConfig";
+import { useWeb3Auth } from "@/services/web3auth";
+import { chain } from "@/config/chainConfig";
 import { usePathname } from "next/navigation";
 
 import { cn } from "@/lib/utils";

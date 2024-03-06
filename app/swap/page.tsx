@@ -4,7 +4,7 @@ import SimpleTokenSelector from "@/components/token-selector/simple-token-select
 import TokenSelector from "@/components/token-selector/token-selector";
 import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
 import { SendToShift } from "@/lib/sideShift/swapToken";
-import { useWeb3Auth } from "../../services/web3auth";
+import { useWeb3Auth } from "@/services/web3auth";
 
 import {token} from "@/config/tokenConfig";
 import {chain} from "@/config/chainConfig";
@@ -21,7 +21,6 @@ import { toast } from "sonner";
 export default function Home() {
   const {
     connectedChain,
-    switchChain,
   } = useWeb3Auth();
 
   const [tokenSend, setTokenSend] = useState<string | undefined>(Object.keys(token).find((key) => {
@@ -33,10 +32,6 @@ export default function Home() {
 
   const [quoteLoading, setQuoteLoading] = useState<boolean>(false);
 
-  const [tokenSendQuote, setTokenSendQuote] = useState<number>();
-  const [tokenSendQuoteLoading, setTokenSendQuoteLoading] = useState<boolean>(false);
-  const [tokenReceiveQuote, setTokenReceiveQuote] = useState<number>();
-  const [tokenReceiveQuoteLoading, setTokenReceiveQuoteLoading] = useState<boolean>(false);
   const [swapLoading, setSwapLoading] = useState<boolean>(false);
 
 
@@ -78,14 +73,6 @@ export default function Home() {
           <div className="absolute top-1/2 right-4 -translate-y-1/2 text-2xl">
             <TokenSelector selectedToken={setTokenSend}/>
           </div>
-          {/* <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
-            {tokenSendQuote && amountSend ? 
-              tokenSendQuoteLoading ? 
-              <Skeleton className="w-14 h-4 bg-gray-600" /> : 
-              Number.parseFloat(tokenSendQuote.toString()).toFixed(2) + " $"
-             :""
-            }
-          </div> */}
           <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
             {tokenSend ? "Solde: "+token[tokenSend!].balance : <></>}
             <span
@@ -100,24 +87,9 @@ export default function Home() {
           <div className="absolute top-2 left-2 font-semibold text-gray-500 text-sm">
             You receive
           </div>
-          {/* <Input
-            className="h-[15vh] border-0 text-4xl font-medium bg-primary/15"
-            placeholder="0"
-            type="number"
-            value={quoteLoading ? "00000000" : amountReceive ? amountReceive : ""}
-            // onChange={(e) => setAmountReceive(parseFloat(e.target.value))}
-          /> */}
           <div className='h-[15vh] border-0 text-4xl font-medium bg-primary/15 flex items-center justify-start'>
             {quoteLoading ?  <Skeleton className="ml-2 w-36 h-8 bg-gray-600" /> : amountReceive ? <span className="ml-2">{amountReceive}</span> : <span className="ml-2 text-muted-foreground">0</span>}
           </div>
-          {/* <div className="absolute bottom-2 left-4 font-semibold text-gray-500 text-sm">
-            {tokenReceiveQuote && amountReceive ? 
-              tokenReceiveQuoteLoading ? 
-              <Skeleton className="w-14 h-4 bg-gray-600" /> : 
-              Number.parseFloat(tokenReceiveQuote.toString()).toFixed(2) + " $"
-             :""
-            }
-          </div> */}
           <div className="absolute bottom-2 right-4 font-semibold text-gray-500 text-sm">
            {tokenReceive ? "Solde: "+ token[tokenReceive!].balance : <></>}
           </div>
@@ -127,8 +99,9 @@ export default function Home() {
         </div>
         <Button
           className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest"
-          // onClick={() => SendToShift(tokenSend!, amountSend!, tokenReceive!, address!, setSwapLoading)}
-          disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading || quoteLoading || amountSend > parseFloat(token[tokenSend!].balance!)}
+          onClick={async () => await SendToShift(tokenSend!, amountSend!, tokenReceive!, setSwapLoading)}
+          // disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading || quoteLoading }
+          // || amountSend > parseFloat(token[tokenSend!].balance!)
         >
           SWAP <ArrowRightLeft className="ml-1" size={20} />
         </Button>

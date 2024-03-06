@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import localFont from 'next/font/local';
-import { Web3AuthProvider } from "../services/web3auth";
+import { Web3AuthProvider } from "@/services/web3auth";
 import "./globals.css";
 
 import Footer from "@/components/footer";

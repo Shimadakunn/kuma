@@ -58,6 +58,15 @@ export const chain: {
     ticker: "XTZ",
     tickerName: "Tezos",
   },
+  "Starknet Goerli":{
+    chainNamespace: CHAIN_NAMESPACES.OTHER,
+    chainId: "Starknet",
+    rpcTarget: "https://starknet-goerli.infura.io/v3/fef6114208154b03830e05a4683f9299",
+    displayName: "Starknet Goerli",
+    blockExplorer: "https://goerli.etherscan.io/",
+    ticker: "STRK",
+    tickerName: "Starknet",
+  },
   Ethereum: {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x1",

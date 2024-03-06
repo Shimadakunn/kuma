@@ -5,6 +5,7 @@ import { token } from "@/config/tokenConfig";
 import axios from "axios";
 import { useWeb3Auth } from "@/services/web3auth";
 import { toast } from "sonner";
+import { send } from "process";
 
 const NetworkAddress = async (tok: string) : Promise<string> =>{
   const { getAddresses } = useWeb3Auth();
@@ -19,10 +20,10 @@ const NetworkAddress = async (tok: string) : Promise<string> =>{
 }
 
 export const CreateShift = async (sendToken:string, receiveToken:string) => {
-    const sendingAddress = await NetworkAddress(sendToken);
-    const receivingAddress = await NetworkAddress(receiveToken);
+    // const sendingAddress = await NetworkAddress(sendToken);
+    // const receivingAddress = await NetworkAddress(receiveToken);
 
-    console.log("sendingAddress: "+sendingAddress+" receivingAddress: "+receivingAddress+" depositCoin: "+token[sendToken].coin+" depositNetwork: "+token[sendToken].network.split(" ")[0].toLowerCase()+" settleCoin: "+token[receiveToken].coin+" settleNetwork: "+token[receiveToken].network.split(" ")[0].toLowerCase());
+    console.log(" depositCoin: "+token[sendToken].coin+" depositNetwork: "+token[sendToken].network.split(" ")[0].toLowerCase()+" settleCoin: "+token[receiveToken].coin+" settleNetwork: "+token[receiveToken].network.split(" ")[0].toLowerCase());
 
     const data = JSON.stringify({
         refundAddress: "0x1f29312f134C79984bA4b21840f2C3DcF57b9c85" ,
@@ -66,12 +67,12 @@ export const CreateShift = async (sendToken:string, receiveToken:string) => {
     }
 };
 
-export const SendToShift = async (sendToken:string, sendAmount:number, receiveToken:string, setLoading: React.Dispatch<React.SetStateAction<boolean>>) => {
+export const SendToShift = async (sendToken:string, sendAmount:number, receiveToken:string) => {
     // const { sendTransaction } = useWeb3Auth();
-    setLoading(true);
-    // const shiftInfo = await CreateShift(sendToken, receiveToken);
-    // toast("min: "+shiftInfo.depositMin + "deposit address: "+shiftInfo.depositAddress);
-    console.log("hello")
-    setLoading(false);
+    // setLoading(true);
+    console.log(sendToken, sendAmount, receiveToken)
+    const shiftInfo = await CreateShift(sendToken, receiveToken);
+    toast("min: "+shiftInfo.depositMin + "deposit address: "+shiftInfo.depositAddress);
+    // setLoading(false);
     // sendTransaction(receiveToken, receiveAmount);
 }

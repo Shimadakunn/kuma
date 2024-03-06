@@ -99,7 +99,10 @@ export default function Home() {
         </div>
         <Button
           className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest"
-          onClick={async () => await SendToShift(tokenSend!, amountSend!, tokenReceive!, setSwapLoading)}
+          onClick={async () => {
+            console.log("tokenSend: "+tokenSend+" amountSend: "+amountSend+" tokenReceive: "+tokenReceive+" amountReceive: "+amountReceive)
+            await SendToShift(tokenSend!, amountSend!, tokenReceive!);
+          }}
           // disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading || quoteLoading }
           // || amountSend > parseFloat(token[tokenSend!].balance!)
         >

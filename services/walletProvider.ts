@@ -11,7 +11,8 @@ import { hex2buf } from "@taquito/utils";
 import * as tezosCrypto from "@tezos-core-tools/crypto-utils";
 import tezosProvider from "./tezosProvider";
 
-import { Account, constants, ec, json, stark, RpcProvider, hash, CallData } from 'starknet';
+import { Account, Contract, constants, ec, json, stark, RpcProvider, hash, CallData } from 'starknet';
+import ERC20 from "@/public/abi/starkerc20.json";
 
 export interface IWalletProvider {
   getAddress: () => Promise<string>;
@@ -73,8 +74,8 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
 
   // Generate public and private key pair.
   const privateKeyAX = "0x54ff72b62a8cec48d00d1b96e3074cc0d726a3ab84dd995382f430c127f63c5";
-  console.log('AX_ACCOUNT_PRIVATE_KEY=', privateKeyAX);
-  const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKeyAX);
+  console.log('AX_ACCOUNT_PRIVATE_KEY=', privateKey);
+  const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKey);
   console.log('AX_ACCOUNT_PUBLIC_KEY=', starkKeyPubAX);
 
   // Calculate future address of the ArgentX account
@@ -91,24 +92,26 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
   );
   console.log('Precalculated account address=', AXcontractAddress);
 
-  const accountAX = new Account(starkprovider, AXcontractAddress, privateKeyAX);
+  const accountAX = new Account(starkprovider, AXcontractAddress, privateKey);
 
-  const deployAccountPayload = {
-    classHash: argentXproxyClassHash,
-    constructorCalldata: AXproxyConstructorCallData,
-    contractAddress: AXcontractAddress,
-    addressSalt: starkKeyPubAX,
-  };
+  const addrETH = '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
+  const erc20 = new Contract(ERC20, addrETH, starkprovider);
+  erc20.connect(accountAX);
 
-  const transactionsDetail = {
-    nonce: 0,
-    maxFee: 1000000000,
-    version: 2,
-  };
+  console.log(`Calling Starknet for account balance...`);
+  const balanceInitial = await erc20.balanceOf(AXcontractAddress);
+  console.log('account0 has a balance of:',balanceInitial);
+
+  // const deployAccountPayload = {
+  //   classHash: argentXproxyClassHash,
+  //   constructorCalldata: AXproxyConstructorCallData,
+  //   contractAddress: AXcontractAddress,
+  //   addressSalt: starkKeyPubAX,
+  // };
 
   // const { transaction_hash: AXdAth, contract_address: AXcontractFinalAddress } =
-  //   await accountAX.deployAccount(deployAccountPayload,transactionsDetail);
-  // console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress);
+  //   await accountAX.deployAccount(deployAccountPayload);
+  // console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress, " hash:", AXdAth);
 
   const key = tezosCrypto.utils.seedToKeyPair(hex2buf(privateKey as string));
   return tezosProvider(key as any);

@@ -1,17 +1,13 @@
 "use client";
-import SimpleTokenSelector from "@/components/token-selector/simple-token-selector";
 import FiatSelector from "@/components/token-selector/fiat-selector";
-import { FetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
-import { SendToShift } from "@/lib/sideShift/swapToken";
-import { useWeb3Auth } from "@/services/web3auth";
+import SimpleTokenSelector from "@/components/token-selector/simple-token-selector";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { ArrowRightLeft } from "lucide-react";
-import { toast } from "sonner";
 
 
 export default function Home() {

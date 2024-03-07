@@ -40,7 +40,7 @@ export const chain: {
     tickerName: "AVAX",
   },
   "Solana Devnet": {
-    chainId: "0x2",
+    chainId: "Solana",
     displayName: "Solana Testnet",
     chainNamespace: CHAIN_NAMESPACES.SOLANA,
     tickerName: "SOLANA",
@@ -63,7 +63,7 @@ export const chain: {
     chainId: "Starknet",
     rpcTarget: "https://starknet-goerli.infura.io/v3/fef6114208154b03830e05a4683f9299",
     displayName: "Starknet Goerli",
-    blockExplorer: "https://goerli.etherscan.io/",
+    blockExplorer: "https://testnet.starkscan.co/",
     ticker: "STRK",
     tickerName: "Starknet",
   },

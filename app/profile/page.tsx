@@ -9,24 +9,8 @@ import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Home() {
-  const { provider, user, logout, getPrivateKeys, getAddresses } = useWeb3Auth();
-  const [privateKey, setPrivateKey] = useState<string[]>([]);
-  const [addresses, setAddresses] = useState<string[]>([]);
-  async function pk() {
-    
-  }
+  const { provider, user, logout, addresses, privateKeys } = useWeb3Auth();
 
-  useEffect(() => {
-    if(provider){
-      const getInfo = async () => {
-        const addresses = await getAddresses();
-        setAddresses(addresses);
-        const privatekeys = await getPrivateKeys();
-        setPrivateKey(privatekeys);
-      }
-      getInfo();
-    }
-  }, [provider]);
   return(
     <main className="flex items-center justify-center h-full w-full">
         <div className="shadow w-[50vw] p-2 rounded-xl border border-primary/20 space-y-2 tracking-tight">
@@ -60,11 +44,11 @@ export default function Home() {
                     </div>
                     <div className="flex items-center justify-center">
                       <div className="truncate w-32">
-                        {privateKey[0]}
+                        {privateKeys[0]}
                       </div> 
                       <Copy className="ml-2 cursor-pointer" size={16} 
                         onClick={()=>{
-                          navigator.clipboard.writeText(privateKey[0]);
+                          navigator.clipboard.writeText(privateKeys[0]);
                           toast.success('EVM private key copied to clipboard');
                         }}/>
                     </div>
@@ -85,11 +69,11 @@ export default function Home() {
                     </div>
                     <div className="flex items-center justify-center">
                       <div className="truncate w-32">
-                        {privateKey[1]}
+                        {privateKeys[1]}
                       </div> 
                       <Copy className="ml-2 cursor-pointer" size={16} 
                         onClick={()=>{
-                          navigator.clipboard.writeText(privateKey[1]);
+                          navigator.clipboard.writeText(privateKeys[1]);
                           toast.success('Solana private key copied to clipboard');
                         }}/>
                     </div>
@@ -110,11 +94,11 @@ export default function Home() {
                     </div>
                     <div className="flex items-center justify-center">
                       <div className="truncate w-32">
-                        {privateKey[2]}
+                        {privateKeys[2]}
                       </div> 
                       <Copy className="ml-2 cursor-pointer" size={16} 
                         onClick={()=>{
-                          navigator.clipboard.writeText(privateKey[2]);
+                          navigator.clipboard.writeText(privateKeys[2]);
                           toast.success('Tezos private key copied to clipboard');
                         }}/>
                     </div>

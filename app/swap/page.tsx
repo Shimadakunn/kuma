@@ -1,26 +1,27 @@
 "use client";
-import axios from 'axios';
 import SimpleTokenSelector from "@/components/token-selector/simple-token-selector";
 import TokenSelector from "@/components/token-selector/token-selector";
-import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
-import { SendToShift } from "@/lib/sideShift/swapToken";
+// import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
+import { fetchTokenQuote, CreateShift}  from "@/lib/sideShiftUtils";
 import { useWeb3Auth } from "@/services/web3auth";
+import axios from 'axios';
 
-import {token} from "@/config/tokenConfig";
-import {chain} from "@/config/chainConfig";
+import { chain } from "@/config/chainConfig";
+import { token } from "@/config/tokenConfig";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { use, useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 import { ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";
 
-
 export default function Home() {
   const {
     connectedChain,
+    addresses,
+    sendTransaction,
   } = useWeb3Auth();
 
   const [tokenSend, setTokenSend] = useState<string | undefined>(Object.keys(token).find((key) => {
@@ -29,9 +30,7 @@ export default function Home() {
   const [tokenReceive, setTokenReceive] = useState<string>();
   const [amountSend, setAmountSend] = useState<number>();
   const [amountReceive, setAmountReceive] = useState<number>();
-
   const [quoteLoading, setQuoteLoading] = useState<boolean>(false);
-
   const [swapLoading, setSwapLoading] = useState<boolean>(false);
 
 
@@ -100,10 +99,16 @@ export default function Home() {
         <Button
           className="bg-foreground rounded-xl font-extrabold hover:bg-foreground/90 text-lg w-full h-[7vh] tracking-widest"
           onClick={async () => {
-            console.log("tokenSend: "+tokenSend+" amountSend: "+amountSend+" tokenReceive: "+tokenReceive+" amountReceive: "+amountReceive)
-            await SendToShift(tokenSend!, amountSend!, tokenReceive!);
+            setSwapLoading(true);
+            const shiftInfo = await CreateShift(tokenSend!, tokenReceive!,addresses);
+            if (axios.isAxiosError(shiftInfo)) {
+              setSwapLoading(false);
+              return;
+            }
+            toast("min: "+shiftInfo.depositMin + "deposit address: "+shiftInfo.depositAddress);
+            setSwapLoading(false);
           }}
-          // disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading || quoteLoading }
+          disabled={ !tokenSend || !amountSend || !tokenReceive || !amountReceive || swapLoading || quoteLoading }
           // || amountSend > parseFloat(token[tokenSend!].balance!)
         >
           SWAP <ArrowRightLeft className="ml-1" size={20} />

@@ -25,10 +25,10 @@ export interface IWeb3AuthContext {
   connectedChain: CustomChainConfig;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  addresses: string[];
+  privateKeys: string[];
   getUserInfo: () => Promise<any>;
-  getAddresses: () => Promise<string[]>;
   getBalances: () => Promise<string>;
-  getPrivateKeys: () => Promise<string[]>;
   signMessage: (message: string) => Promise<string>;
   sendTransaction: (amount: number, destination: string, tok: string,setLoading: (loading: boolean) => void, dispatch?: Function) => Promise<string>;
   switchChain: (network: string) => Promise<void>;
@@ -46,10 +46,10 @@ export const Web3AuthContext = createContext<IWeb3AuthContext>({
   connectedChain: chain["Polygon Mumbai Testnet"],
   login: async () => {},
   logout: async () => {},
+  addresses: [],
+  privateKeys: [],
   getUserInfo: async () => null,
-  getAddresses : async () => [""],
   getBalances: async () => "",
-  getPrivateKeys: async () => [""],
   signMessage: async () => "",
   sendTransaction: async () => "",
   switchChain: async () => {},
@@ -73,6 +73,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const [tezosprovider, setTezosProvider] = useState<IWalletProvider | null>(null);
   const [user, setUser] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [addresses, setAddresses] = useState<string[]>([]);
+  const [privateKeys, setPrivateKeys] = useState<string[]>([]);
   const [connectedChain, setConnectedChain] = useState<CustomChainConfig>(chain["Polygon Mumbai Testnet"]);
   const [connected, setConnected] = useState<boolean>(false);
 
@@ -173,6 +175,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     const fetchData = async () => {
       if (connected && provider && solprovider && tezosprovider) {
         await getBalances();
+        await getAddresses();
+        await getPrivateKeys();
         setIsLoading(false);
       }
     };
@@ -215,17 +219,6 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return userInfo;
   };
 
-  const getAddresses = async () : Promise<string[]> => {
-    if (!provider) {
-      toast.error("provider not initialized yet");
-      return [""];
-    }
-    let updatedAddress : string[] = [await provider.getAddress()];
-    updatedAddress.push(await solprovider!.getAddress());
-    updatedAddress.push(await tezosprovider!.getAddress());
-    return updatedAddress;
-  };
-
   const getBalances = async () => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
@@ -246,6 +239,18 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return "balance updated";
   };
 
+  const getAddresses = async () : Promise<string[]> => {
+    if (!provider) {
+      toast.error("provider not initialized yet");
+      return [""];
+    }
+    let updatedAddress : string[] = [await provider.getAddress()];
+    updatedAddress.push(await solprovider!.getAddress());
+    updatedAddress.push(await tezosprovider!.getAddress());
+    setAddresses(updatedAddress);
+    return updatedAddress;
+  };
+
   const getPrivateKeys = async () => {
     if (!web3Auth) {
       toast.error("web3auth not initialized yet");
@@ -254,6 +259,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     let privateKeys : string[] = [await provider!.getPrivateKey()];
     privateKeys.push(await solprovider!.getPrivateKey());
     privateKeys.push(await tezosprovider!.getPrivateKey());
+    setPrivateKeys(privateKeys);
     return privateKeys;
   };
 
@@ -263,7 +269,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return "";
     }
     let signature = await provider!.signMessage(message);
-    if(connectedChain.chainId === "0x3") {signature = await solprovider!.signMessage(message);}
+    if(connectedChain.chainId === "Solana") {signature = await solprovider!.signMessage(message);}
     if(connectedChain.chainId === "Tezos") {signature = await tezosprovider!.signMessage(message);}
     toast(signature);
     return signature;
@@ -277,7 +283,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
 
       setLoading(true);
       let promise = () => provider!.sendTransaction(amount, destination, tok);
-      if(connectedChain.chainId === "0x3"){ promise = () => solprovider!.sendTransaction(amount, destination);}
+      if(connectedChain.chainId === "Solana"){ promise = () => solprovider!.sendTransaction(amount, destination);}
       if(connectedChain.chainId === "Tezos") { promise = () => tezosprovider!.sendTransaction(amount, destination);}
       toast.promise(promise, {
         loading: 'Sending transaction...',
@@ -302,7 +308,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return;
     }
     if(connectedChain.chainId === chain[token[tok].network!].chainId) {return;}
-    if(chain[token[tok].network!].chainId !== "0x2" && chain[token[tok].network!].chainId !== "Tezos") {
+    if(chain[token[tok].network!].chainId !== "Solana" && chain[token[tok].network!].chainId !== "Tezos") {
       await web3Auth!.addChain(chain[token[tok].network!]);
       await web3Auth!.switchChain(chain[token[tok].network!]);
     }
@@ -370,10 +376,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     connected,
     login,
     logout,
+    addresses,
+    privateKeys,
     getUserInfo,
-    getAddresses,
     getBalances,
-    getPrivateKeys,
     signMessage,
     sendTransaction,
     switchChain,

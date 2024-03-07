@@ -89,10 +89,8 @@ export const chain: {
   },
   "BNB Chain": {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
-    chainId: "0x38", // hex of 56
+    chainId: "0x38",
     rpcTarget: "https://rpc.ankr.com/bsc",
-    // Avoid using public rpcTarget in production.
-    // Use services like Infura, Quicknode etc
     displayName: "Binance SmartChain Mainnet",
     blockExplorer: "https://bscscan.com/",
     ticker: "BNB",

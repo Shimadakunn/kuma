@@ -74,6 +74,12 @@ export const token: {
         name: "Tezos Ghostnet",
         network: "Tezos Ghostnet",
     },
+    "starknet-goerli" :{
+        coin: "STRK",
+        name: "Starknet Goerli",
+        network: "Starknet Goerli",
+        address: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d"
+    },
     // "ethereum-sepolia": {
     //     coin: "ETH",
     //     name: "Ethereum Sepolia",

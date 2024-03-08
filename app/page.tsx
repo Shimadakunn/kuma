@@ -6,6 +6,7 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ScrollArea } from "@/components/ui/scroll-area"
 import { use, useEffect, useState } from "react";
 
 export default function Home() {
@@ -27,9 +28,11 @@ export default function Home() {
           <div className="w-20 text-center">TVL</div>
           <Button onClick={getBa}>Refresh</Button>
         </div>
-        {Object.keys(token).map((key) => (
-          <StakePool key={key} tok={key}/>
-        ))}
+        <ScrollArea className="h-[75vh]">
+          {Object.keys(token).map((key) => (
+            <StakePool key={key} tok={key}/>
+          ))}
+        </ScrollArea>
       </div>
     </main>
   );
@@ -39,7 +42,7 @@ type Pool = {
 };
 const StakePool: React.FC<Pool> = ({ tok }) => {
   return (
-    <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4">
+    <div className="h-[7vh] border-0 text-lg font-medium bg-primary/15 rounded-xl flex items-center justify-between px-4 my-1">
       <div className="w-28 flex items-center justify-start">
         <Image
           src={`https://cryptofonts.com/img/icons/${token[

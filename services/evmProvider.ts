@@ -1,13 +1,12 @@
-import { EthereumPrivateKeyProvider } from "@web3auth/ethereum-provider";
 import type { IProvider } from "@web3auth/base";
 import { ethers } from "ethers";
 
+import { chain } from "@/config/chainConfig";
 import { contract } from "@/config/contractConfig";
-import {chain} from "@/config/chainConfig";
 import { token } from "@/config/tokenConfig";
 import ERC20 from "@/public/abi/ERC20.json";
-import AAVE from "@/public/abi/aave.json";
-import AAVEETH from "@/public/abi/aaveETH.json";
+import AAVEETH from "@/public/abi/aave-native-pool.json";
+import AAVE from "@/public/abi/aave-pool.json";
 
 // import { json } from "stream/consumers";
 import { IWalletProvider } from "./walletProvider";

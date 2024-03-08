@@ -1,6 +1,7 @@
 import { IProvider } from "@web3auth/base";
 
 import { chain } from "@/config/chainConfig";
+import {toast} from "sonner";
 
 import evmProvider from "./evmProvider";
 
@@ -11,8 +12,10 @@ import { hex2buf } from "@taquito/utils";
 import * as tezosCrypto from "@tezos-core-tools/crypto-utils";
 import tezosProvider from "./tezosProvider";
 
-import { Account, Contract, constants, ec, json, stark, RpcProvider, hash, CallData } from 'starknet';
-import ERC20 from "@/public/abi/starkerc20.json";
+import ERC20 from "@/public/abi/starknet-erc20.json";
+import ArgentWallet from "@/public/abi/argent-wallet.json";
+import { Account, CallData, Contract, RpcProvider, ec, hash, stark } from 'starknet';
+import starknetProvider from "./starknetProvider";
 
 export interface IWalletProvider {
   getAddress: () => Promise<string>;
@@ -60,25 +63,18 @@ export const getTezosWalletProvider = async (provider: IProvider | null): Promis
   return tezosProvider(keyPair as any);
 };
 
-export const getStarknetWalletProvider = async(provider: IProvider | null): Promise<IWalletProvider> => {
-  // connect provider
-  const starkprovider = new RpcProvider({
-    nodeUrl: chain["Starknet Goerli"].rpcTarget,
-  });
+export const getStarknetWalletProvider = async(provider: IProvider | null): Promise<IWalletProvider | undefined> => {
+  const starkprovider = new RpcProvider({ nodeUrl: chain["Starknet Goerli"].rpcTarget });
+  const argentXproxyClassHash = '0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918';
+  const argentXaccountClassHash = '0x033434ad846cdd5f23eb73ff09fe6fddd568284a0fb7d1be20ee482f044dabe2';
+
   let privateKey = await provider?.request({ method: "eth_private_key" });
   privateKey = "0x"+privateKey as string;
-  //new Argent X account v0.2.3
-  const argentXproxyClassHash = '0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918';
-  const argentXaccountClassHash =
-    '0x033434ad846cdd5f23eb73ff09fe6fddd568284a0fb7d1be20ee482f044dabe2';
 
-  // Generate public and private key pair.
-  const privateKeyAX = "0x54ff72b62a8cec48d00d1b96e3074cc0d726a3ab84dd995382f430c127f63c5";
-  console.log('AX_ACCOUNT_PRIVATE_KEY=', privateKeyAX);
-  const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKeyAX);
-  console.log('AX_ACCOUNT_PUBLIC_KEY=', starkKeyPubAX);
+  // const privateKey = "0x1bc26b49f7059b9d5aed7b79d8090796e1e26a9271a838e2171f4845e94de0b"
 
-  // Calculate future address of the ArgentX account
+  const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKey as string);
+
   const AXproxyConstructorCallData = CallData.compile({
     implementation: argentXaccountClassHash,
     selector: hash.getSelectorFromName('initialize'),
@@ -90,29 +86,29 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
     AXproxyConstructorCallData,
     0
   );
-  console.log('Precalculated account address=', AXcontractAddress);
 
-  const accountAX = new Account(starkprovider, AXcontractAddress, privateKeyAX);
+  const accountAX = new Account(starkprovider, AXcontractAddress, privateKey as string);
 
-  const addrETH = '0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7';
-  const erc20 = new Contract(ERC20, addrETH, starkprovider);
-  erc20.connect(accountAX);
-
-  console.log(`Calling Starknet for account balance...`);
-  const balanceInitial = await erc20.balanceOf(AXcontractAddress);
-  console.log('account0 has a balance of:',balanceInitial);
-
-  // const deployAccountPayload = {
-  //   classHash: argentXproxyClassHash,
-  //   constructorCalldata: AXproxyConstructorCallData,
-  //   contractAddress: AXcontractAddress,
-  //   addressSalt: starkKeyPubAX,
-  // };
-
-  // const { transaction_hash: AXdAth, contract_address: AXcontractFinalAddress } =
-  //   await accountAX.deployAccount(deployAccountPayload);
-  // console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress, " hash:", AXdAth);
-
-  const key = tezosCrypto.utils.seedToKeyPair(hex2buf(privateKey as string));
-  return tezosProvider(key as any);
+  try{
+    const argentWallet = new Contract(ArgentWallet, AXcontractAddress, starkprovider);
+    const deployed = await argentWallet.getSigner();
+    return starknetProvider(privateKey as string,AXcontractAddress);
+  }
+  catch (error: any) {
+    try{
+      const deployAccountPayload = {
+        classHash: argentXproxyClassHash,
+        constructorCalldata: AXproxyConstructorCallData,
+        contractAddress: AXcontractAddress,
+        addressSalt: starkKeyPubAX,
+      };
+      const { transaction_hash: AXdAth, contract_address: AXcontractFinalAddress } =
+        await accountAX.deployAccount(deployAccountPayload);
+      console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress, " hash:", AXdAth);
+    }
+    catch (error: any) {
+      toast.error("Please fund your starknet wallet with ETH to be able to use it "+ AXcontractAddress);
+      return;
+    }
+  }
 };

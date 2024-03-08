@@ -80,7 +80,7 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
-                <Image src={`https://cryptofonts.com/img/icons/xtz.svg`} width={30} height={30} alt="eth" className="mr-2"/>
+                  <Image src={`https://cryptofonts.com/img/icons/xtz.svg`} width={30} height={30} alt="eth" className="mr-2"/>
                   <div className="flex items-center justify-center flex-col space-y-2">
                     <div className="flex items-center justify-center">
                       <div className="truncate w-32">
@@ -99,6 +99,31 @@ export default function Home() {
                       <Copy className="ml-2 cursor-pointer" size={16} 
                         onClick={()=>{
                           navigator.clipboard.writeText(privateKeys[2]);
+                          toast.success('Tezos private key copied to clipboard');
+                        }}/>
+                    </div>
+                  </div>
+                </div>
+                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
+                  <Image src={`https://cryptofonts.com/img/icons/strk.svg`} width={30} height={30} alt="eth" className="mr-2"/>
+                  <div className="flex items-center justify-center flex-col space-y-2">
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {addresses[3]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(addresses[3]);
+                          toast.success('Tezos address copied to clipboard');
+                        }}/>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <div className="truncate w-32">
+                        {privateKeys[3]}
+                      </div> 
+                      <Copy className="ml-2 cursor-pointer" size={16} 
+                        onClick={()=>{
+                          navigator.clipboard.writeText(privateKeys[3]);
                           toast.success('Tezos private key copied to clipboard');
                         }}/>
                     </div>

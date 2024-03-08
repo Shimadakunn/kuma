@@ -71,6 +71,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
   const [provider, setProvider] = useState<IWalletProvider | null>(null);
   const [solprovider, setSolProvider] = useState<IWalletProvider | null>(null);
   const [tezosprovider, setTezosProvider] = useState<IWalletProvider | null>(null);
+  const [starknetProvider, setStarknetProvider] = useState<IWalletProvider | undefined>();
   const [user, setUser] = useState<any | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [addresses, setAddresses] = useState<string[]>([]);
@@ -84,6 +85,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     const solWalletProvider = await getSolanaWalletProvider(web3authProvider);
     const tezosWalletProvider = await getTezosWalletProvider(web3authProvider);
     const starknetWalletProvider = await getStarknetWalletProvider(web3authProvider);
+    setStarknetProvider(starknetWalletProvider);
     setSolProvider(solWalletProvider);
     setTezosProvider(tezosWalletProvider);
     setProvider(walletProvider);
@@ -230,6 +232,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         return solprovider!.getBalance(key);
       } else if (token[key].network === "Tezos Ghostnet") {
         return tezosprovider!.getBalance(key);
+      } else if (token[key].network === "Starknet Goerli") {
+        return starknetProvider!.getBalance(key);
       } else {
         return provider!.getBalance(key);
       }
@@ -247,6 +251,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     let updatedAddress : string[] = [await provider.getAddress()];
     updatedAddress.push(await solprovider!.getAddress());
     updatedAddress.push(await tezosprovider!.getAddress());
+    updatedAddress.push(await starknetProvider!.getAddress());
     setAddresses(updatedAddress);
     return updatedAddress;
   };
@@ -259,6 +264,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     let privateKeys : string[] = [await provider!.getPrivateKey()];
     privateKeys.push(await solprovider!.getPrivateKey());
     privateKeys.push(await tezosprovider!.getPrivateKey());
+    privateKeys.push(await starknetProvider!.getPrivateKey());
     setPrivateKeys(privateKeys);
     return privateKeys;
   };
@@ -271,6 +277,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     let signature = await provider!.signMessage(message);
     if(connectedChain.chainId === "Solana") {signature = await solprovider!.signMessage(message);}
     if(connectedChain.chainId === "Tezos") {signature = await tezosprovider!.signMessage(message);}
+    if(connectedChain.chainId === "Starknet") {signature = await starknetProvider!.signMessage(message);}
     toast(signature);
     return signature;
   };
@@ -285,6 +292,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       let promise = () => provider!.sendTransaction(amount, destination, tok);
       if(connectedChain.chainId === "Solana"){ promise = () => solprovider!.sendTransaction(amount, destination);}
       if(connectedChain.chainId === "Tezos") { promise = () => tezosprovider!.sendTransaction(amount, destination);}
+      if(connectedChain.chainId === "Starknet") { promise = () => starknetProvider!.sendTransaction(amount, destination);}
       toast.promise(promise, {
         loading: 'Sending transaction...',
         success: async (data) => {
@@ -308,7 +316,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       return;
     }
     if(connectedChain.chainId === chain[token[tok].network!].chainId) {return;}
-    if(chain[token[tok].network!].chainId !== "Solana" && chain[token[tok].network!].chainId !== "Tezos") {
+    if(chain[token[tok].network!].chainId !== "Solana" && chain[token[tok].network!].chainId !== "Tezos" && chain[token[tok].network!].chainId !== "Starknet") {
       await web3Auth!.addChain(chain[token[tok].network!]);
       await web3Auth!.switchChain(chain[token[tok].network!]);
     }

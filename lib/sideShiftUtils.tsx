@@ -29,7 +29,7 @@ export const fetchTokenQuote = async (sendToken:string, sendAmount:number, recei
   try {
     const response = await axios(config);
     return response.data.settleAmount;
-  } catch (error) {
+  } catch (error: any) {
     console.log("error catched",error)
     console.error(error.response.data.error.message);
     toast.error(error.response.data.error.message);

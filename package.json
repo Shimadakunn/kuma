@@ -40,6 +40,7 @@
     "lucide": "^0.320.0",
     "lucide-react": "^0.320.0",
     "next": "14.1.0",
+    "pino-pretty": "^10.3.1",
     "react": "^18",
     "react-chartjs-2": "^5.2.0",
     "react-dom": "^18",

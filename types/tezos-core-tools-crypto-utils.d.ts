@@ -1,0 +1,1 @@
+declare module '@tezos-core-tools/crypto-utils';

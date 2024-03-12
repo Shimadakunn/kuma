@@ -17,6 +17,7 @@ export default function Home() {
           <div className='p-1'>
             Profile
           </div>
+          
            <div className="bg-primary/30 rounded-xl p-2 flex space-x-4 space-y-2">
             <Image src={`${user.profileImage}`} alt="profile" width={75} height={75} className="rounded-xl"/>
             <div className="w-full flex flex-col justify-between">
@@ -29,106 +30,10 @@ export default function Home() {
                 </div>
               </div>
               <div className="w-full justify-around flex font-normal text-sm">
-                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
-                  <Image src={`https://cryptofonts.com/img/icons/eth.svg`} width={30} height={30} alt="eth" className="mr-2"/>
-                  <div className="flex items-center justify-center flex-col space-y-2">
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {addresses[0]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(addresses[0]);
-                          toast.success('EVM address copied to clipboard');
-                        }}/>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {privateKeys[0]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(privateKeys[0]);
-                          toast.success('EVM private key copied to clipboard');
-                        }}/>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
-                <Image src={`https://cryptofonts.com/img/icons/sol.svg`} width={30} height={30} alt="eth" className="mr-2"/>
-                  <div className="flex items-center justify-center flex-col space-y-2">
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {addresses[1]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(addresses[1]);
-                          toast.success('Solana address copied to clipboard');
-                        }}/>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {privateKeys[1]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(privateKeys[1]);
-                          toast.success('Solana private key copied to clipboard');
-                        }}/>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
-                  <Image src={`https://cryptofonts.com/img/icons/xtz.svg`} width={30} height={30} alt="eth" className="mr-2"/>
-                  <div className="flex items-center justify-center flex-col space-y-2">
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {addresses[2]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(addresses[2]);
-                          toast.success('Tezos address copied to clipboard');
-                        }}/>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {privateKeys[2]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(privateKeys[2]);
-                          toast.success('Tezos private key copied to clipboard');
-                        }}/>
-                    </div>
-                  </div>
-                </div>
-                <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
-                  <Image src={`https://cryptofonts.com/img/icons/strk.svg`} width={30} height={30} alt="eth" className="mr-2"/>
-                  <div className="flex items-center justify-center flex-col space-y-2">
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {addresses[3]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(addresses[3]);
-                          toast.success('Tezos address copied to clipboard');
-                        }}/>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <div className="truncate w-32">
-                        {privateKeys[3]}
-                      </div> 
-                      <Copy className="ml-2 cursor-pointer" size={16} 
-                        onClick={()=>{
-                          navigator.clipboard.writeText(privateKeys[3]);
-                          toast.success('Tezos private key copied to clipboard');
-                        }}/>
-                    </div>
-                  </div>
-                </div>
+              <Keys address={addresses[0]} privateKey={privateKeys[0]} ticker="eth"/>
+              <Keys address={addresses[1]} privateKey={privateKeys[1]} ticker="sol"/>
+              <Keys address={addresses[2]} privateKey={privateKeys[2]} ticker="xtz"/>
+              <Keys address={addresses[3]} privateKey={privateKeys[3]} ticker="strk"/>
               </div>
             </div>
            </div>
@@ -137,5 +42,35 @@ export default function Home() {
            </div>
         </div>
       </main>
+  )
+}
+
+const Keys : React.FC<{address: string, privateKey: string, ticker: string}> = ({address, privateKey,ticker}) => {
+  return (
+    <div className="rounded-lg bg-gray-600 p-2 flex items-center justify-center">
+      <Image src={`https://cryptofonts.com/img/icons/${ticker}.svg`} width={30} height={30} alt="eth" className="mr-2"/>
+      <div className="flex items-center justify-center flex-col space-y-2">
+        <div className="flex items-center justify-center">
+          <div className="truncate w-32">
+            {address}
+          </div> 
+          <Copy className="ml-2 cursor-pointer" size={16} 
+            onClick={()=>{
+              navigator.clipboard.writeText(address);
+              toast.success(ticker+' address copied to clipboard');
+            }}/>
+        </div>
+        <div className="flex items-center justify-center">
+          <div className="truncate w-32">
+            {privateKey}
+          </div> 
+          <Copy className="ml-2 cursor-pointer" size={16} 
+            onClick={()=>{
+              navigator.clipboard.writeText(privateKey);
+              toast.success(ticker+' private key copied to clipboard');
+            }}/>
+        </div>
+      </div>
+    </div>
   )
 }

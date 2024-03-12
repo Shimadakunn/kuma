@@ -34,6 +34,7 @@ export interface IWeb3AuthContext {
   switchChain: (network: string) => Promise<void>;
   supplyAave: (contractAddress: string, tok: string, amount: string, dispatch?: Function) => Promise<string>;
   withdrawAave: (contractAddress: string, tok: string, amount: string, dispatch?: Function) => Promise<string>;
+  interactTezosContract?: () => Promise<string>;
 }
 
 export const Web3AuthContext = createContext<IWeb3AuthContext>({
@@ -233,7 +234,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       } else if (token[key].network === "Tezos Ghostnet") {
         return tezosprovider!.getBalance(key);
       } else if (token[key].network === "Starknet Goerli") {
-        return starknetProvider!.getBalance(key);
+        if(starknetProvider){return starknetProvider!.getBalance(key);}
       } else {
         return provider!.getBalance(key);
       }
@@ -251,7 +252,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     let updatedAddress : string[] = [await provider.getAddress()];
     updatedAddress.push(await solprovider!.getAddress());
     updatedAddress.push(await tezosprovider!.getAddress());
-    updatedAddress.push(await starknetProvider!.getAddress());
+    if(starknetProvider){updatedAddress.push(await starknetProvider!.getAddress());}
     setAddresses(updatedAddress);
     return updatedAddress;
   };
@@ -264,7 +265,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     let privateKeys : string[] = [await provider!.getPrivateKey()];
     privateKeys.push(await solprovider!.getPrivateKey());
     privateKeys.push(await tezosprovider!.getPrivateKey());
-    privateKeys.push(await starknetProvider!.getPrivateKey());
+    if(starknetProvider){privateKeys.push(await starknetProvider!.getPrivateKey());}
     setPrivateKeys(privateKeys);
     return privateKeys;
   };
@@ -374,6 +375,25 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     return "withdrawn";
   };
 
+  const interactTezosContract = async (): Promise<string> => {
+    if(!tezosprovider) {
+      toast.error("provider not initialized yet");
+      return "";
+    }
+    let promise = () => tezosprovider!.interactTezosContract!();
+    toast.promise(promise, {
+      loading: 'Interacting Tezos Contract...',
+      success: async (data) => {
+        return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${chain[token["tezos-ghostnet"].network].blockExplorer}${data}`)}/></div>);
+      },
+      error: (error) => {
+        console.log(error);
+        return (<>An error occured</>);
+      },
+    });
+    return "interacted";
+  }
+
   const contextProvider = {
     ethersProvider,
     web3Auth,
@@ -393,6 +413,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
     switchChain,
     supplyAave,
     withdrawAave,
+    interactTezosContract
   };
 
   return <Web3AuthContext.Provider value={contextProvider}>

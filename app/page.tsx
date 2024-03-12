@@ -10,14 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { use, useEffect, useState } from "react";
 
 export default function Home() {
-  const { getBalances } = useWeb3Auth();
-
-  const getBa = async () => {
-    // await getBalances();
-    for (const key of Object.keys(token)) {
-      console.log("Token: "+ token[key].coin + " Balance: "+ token[key].balance);
-    }
-  };
+  const { interactTezosContract } = useWeb3Auth();
 
   return (
     <main className="flex items-center justify-center h-full w-full">
@@ -26,7 +19,7 @@ export default function Home() {
           <div className="w-28">Token</div>
           <div className="w-20 text-center">APY</div>
           <div className="w-20 text-center">TVL</div>
-          <Button onClick={getBa}>Refresh</Button>
+          <Button onClick={interactTezosContract}>Refresh</Button>
         </div>
         <ScrollArea className="h-[75vh]">
           {Object.keys(token).map((key) => (

@@ -74,6 +74,11 @@ export const token: {
         name: "Tezos Ghostnet",
         network: "Tezos Ghostnet",
     },
+    "tezos-etherlink" :{
+        coin: "XTZ",
+        name: "Tezos Etherlink",
+        network: "Etherlink Testnet",
+    },
     "starknet-goerli" :{
         coin: "STRK",
         name: "Starknet Goerli",

@@ -27,6 +27,7 @@ export interface IWalletProvider {
   withdrawAave?: (cont: string, tok :string, amount: string) => Promise<string>;
   depositETHAave?: (cont: string, tok :string, amount: string) => Promise<string>;
   withdrawETHAave?: (cont: string, tok: string, amount: string) => Promise<string>;
+  interactTezosContract?: () => Promise<string>;
 }
 
 export const getEVMWalletProvider = (provider: IProvider | null): IWalletProvider => {
@@ -70,8 +71,6 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
 
   let privateKey = await provider?.request({ method: "eth_private_key" });
   privateKey = "0x"+privateKey as string;
-
-  // const privateKey = "0x1bc26b49f7059b9d5aed7b79d8090796e1e26a9271a838e2171f4845e94de0b"
 
   const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKey as string);
 

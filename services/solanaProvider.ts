@@ -36,7 +36,8 @@ const ethersWeb3Provider = (provider: any): IWalletProvider => {
             });
             const conn = new Connection(connectionConfig.rpcTarget);
             const accounts = await solanaWallet.requestAccounts();
-            const balance = await conn.getBalance(new PublicKey(accounts[0]));
+            let balance = await conn.getBalance(new PublicKey(accounts[0]));
+            balance = balance / LAMPORTS_PER_SOL;
             token["solana-devnet"].balance = balance.toString();
             return balance.toString();
         } catch (error: any) {

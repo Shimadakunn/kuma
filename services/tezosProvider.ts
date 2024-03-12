@@ -70,12 +70,26 @@ const ethersWeb3Provider = (keyPair: any): IWalletProvider => {
   }
   }
 
+  const interactTezosContract = async (): Promise<string> => {
+    try {
+      console.log("Interacting with contract");
+      Tezos.setSignerProvider(await InMemorySigner.fromSecretKey(keyPair?.sk as string));
+      const contract = await Tezos.wallet.at("KT1KAUbe1gsdw5BeVQfgjh9xZFrHrKVs8ApD");
+      const op = await contract.methodsObject.increment(2).send();
+      console.log("Operation hash:", op.opHash);
+      return op.opHash;
+    } catch (error: any) {
+      return error.toString();
+    }
+  }
+
     return {
         getAddress,
         getBalance,
         getPrivateKey,
         signMessage,
         sendTransaction,
+        interactTezosContract
       };
     };
     

@@ -74,9 +74,18 @@ const ethersWeb3Provider = (keyPair: any): IWalletProvider => {
     try {
       console.log("Interacting with contract");
       Tezos.setSignerProvider(await InMemorySigner.fromSecretKey(keyPair?.sk as string));
-      const contract = await Tezos.wallet.at("KT1KAUbe1gsdw5BeVQfgjh9xZFrHrKVs8ApD");
-      const op = await contract.methodsObject.increment(2).send();
+      const contract = await Tezos.wallet.at("KT1VEjeQfDBSfpDH5WeBM5LukHPGM2htYEh3");
+      const op = await contract.methodsObject.deposit(
+        
+{
+  "l2_address":
+  "1f29312f134c79984ba4b21840f2c3dcf57b9c85",
+  "evm_address":
+  "sr18wx6ezkeRjt1SZSeZ2UQzQN3Uc3YLMLqg"
+  }).send();
+        // console.log(JSON.stringify(op, null, 2));
       console.log("Operation hash:", op.opHash);
+
       return op.opHash;
     } catch (error: any) {
       return error.toString();

@@ -1,4 +1,5 @@
 // web3auth.tsx
+"use client"
 import dynamic from 'next/dynamic';
 import { ReactNode } from "react";
 

@@ -164,7 +164,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
       const aerc20Balance = await aerc20.balanceOf(signer.getAddress());
       const tx = await contrac.withdraw(token[tok].address!,ethers.parseUnits(amount,decimals),signer.getAddress());
       const receipt = await tx.wait();
-      return receipt;
+      return receipt.hash;
     } catch (error: any) {
       return error as string;
     }
@@ -178,7 +178,7 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     const tx = await contrac.depositETH(contract[cont].wrappedAddress,address,0,{value: ethers.parseEther(amount)});
     console.log(tx);
     const receipt = await tx.wait();
-    return receipt;
+    return receipt.hash;
   };
 
   const withdrawETHAave = async (cont: string, tok: string,amount: string) => {

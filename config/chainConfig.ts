@@ -27,7 +27,7 @@ export const chain: {
     rpcTarget: "https://arbitrum-sepolia.infura.io/v3/a78ea67f650a46e8bd97f3262d1cef43",
     displayName: "Arbitrum Sepolia Testnet",
     blockExplorer: "https://sepolia.arbiscan.io/",
-    ticker: "ETH",
+    ticker: "ARB",
     tickerName: "Ethereum",
   },
   "Avalanche Fuji Testnet": {

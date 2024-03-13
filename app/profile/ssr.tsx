@@ -18,7 +18,9 @@ export default function Home() {
           </div>
           
            <div className="bg-primary/30 rounded-xl p-2 flex space-x-4 space-y-2">
-            <Image src={`${user.profileImage}`} alt="profile" width={75} height={75} className="rounded-xl"/>
+            <div className='h-fullflex justify-center items-center'>
+              <Image src={`${user.profileImage}`} alt="profile" width={75} height={75} className="rounded-xl"/>
+            </div>
             <div className="w-full flex flex-col justify-between">
               <div className="flex justify-between">
                 <div className="text-2xl">
@@ -29,10 +31,14 @@ export default function Home() {
                 </div>
               </div>
               <div className="w-full justify-around flex font-normal text-sm">
-              <Keys address={addresses[0]} privateKey={privateKeys[0]} ticker="eth"/>
-              <Keys address={addresses[1]} privateKey={privateKeys[1]} ticker="sol"/>
-              <Keys address={addresses[2]} privateKey={privateKeys[2]} ticker="xtz"/>
-              <Keys address={addresses[3]} privateKey={privateKeys[3]} ticker="strk"/>
+                <div className='space-y-4'>
+                  <Keys address={addresses[0]} privateKey={privateKeys[0]} ticker="eth"/>
+                  <Keys address={addresses[1]} privateKey={privateKeys[1]} ticker="sol"/>
+                </div>
+                <div className='space-y-4'>
+                  <Keys address={addresses[2]} privateKey={privateKeys[2]} ticker="xtz"/>
+                  <Keys address={addresses[3]} privateKey={privateKeys[3]} ticker="strk"/>
+                </div>
               </div>
             </div>
            </div>

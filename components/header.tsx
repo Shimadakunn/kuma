@@ -27,7 +27,6 @@ const Header = () => {
       <div className="font-[Monument] text-2xl tracking-tight flex space-x-2 items-center justify-center">
         <div className="text-secondary">
           {connectedChain.displayName}
-          hello
         </div>
       </div>
       

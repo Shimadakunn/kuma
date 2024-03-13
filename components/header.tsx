@@ -1,25 +1,6 @@
-"use client";
+"use client"
 import { useWeb3Auth } from "@/services/web3auth";
-import { chain } from "@/config/chainConfig";
 import { usePathname } from "next/navigation";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Check, ChevronsUpDown } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
 
 const Header = () => {
   const { connectedChain } = useWeb3Auth();

@@ -15,6 +15,7 @@ import Login from "@/components/login-page";
 
 import { ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
+import dynamic from 'next/dynamic';
 
 export interface IWeb3AuthContext {
   ethersProvider: IProvider | null;

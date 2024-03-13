@@ -25,8 +25,8 @@ export default function RootLayout({
         {/* <Web3AuthProvider> */}
           <div className="flex">
             <Footer />
-            <div className="flex flex-col w-full">
               <Header />
+            <div className="flex flex-col w-full">
               {children}
             </div>
           </div>

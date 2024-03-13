@@ -1,8 +1,8 @@
 "use client";
-import Image from "next/image";
+import { chain } from "@/config/chainConfig";
 import { token } from "@/config/tokenConfig";
-import {chain} from "@/config/chainConfig";
-import { useWeb3Auth } from "@/services/web3auth";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -17,8 +17,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { use, useEffect, useState } from "react";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useEffect, useState } from "react";
 
 import { cn } from "@/lib/utils";
 import { Check, ChevronsUpDown } from "lucide-react";

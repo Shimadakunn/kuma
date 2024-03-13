@@ -1,8 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { useWeb3Auth } from "@/services/web3auth";
 
 import { Copy } from 'lucide-react';
 

@@ -2,8 +2,8 @@
 import SimpleTokenSelector from "@/components/token-selector/simple-token-selector";
 import TokenSelector from "@/components/token-selector/token-selector";
 // import { fetchTokenQuote } from "@/lib/sideShift/fetchTokenQuote";
-import { fetchTokenQuote, CreateShift}  from "@/lib/sideShiftUtils";
-import { useWeb3Auth } from "@/services/web3auth";
+import { CreateShift, fetchTokenQuote } from "@/lib/sideShiftUtils";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 import axios from 'axios';
 
 import { chain } from "@/config/chainConfig";
@@ -12,7 +12,7 @@ import { token } from "@/config/tokenConfig";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 
 import { ArrowRightLeft } from "lucide-react";
 import { toast } from "sonner";

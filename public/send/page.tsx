@@ -1,13 +1,13 @@
 "use client";
-import { useWeb3Auth } from "@/services/web3auth";
 import TokenSelector from "@/components/token-selector/token-selector";
-import { token } from "@/config/tokenConfig";
 import { chain } from "@/config/chainConfig";
+import { token } from "@/config/tokenConfig";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useEffect, useState } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useState } from "react";
 
 import { Send } from 'lucide-react';
 

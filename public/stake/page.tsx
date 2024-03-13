@@ -1,8 +1,8 @@
 "use client";
-import { token } from "@/config/tokenConfig";
 import { contract } from "@/config/contractConfig";
+import { token } from "@/config/tokenConfig";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 import Image from "next/image";
-import { useWeb3Auth } from "@/services/web3auth";
 
 import {
   AlertDialog,
@@ -14,10 +14,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Input } from "@/components/ui/input"
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useReducer, useState } from "react";
 
 export default function Home() {

@@ -1,6 +1,6 @@
+import { Web3AuthProvider } from "@/services/Web3AuthProviderWithWindow";
 import type { Metadata } from "next";
 import localFont from 'next/font/local';
-import { Web3AuthProvider } from "@/services/web3auth";
 import "./globals.css";
 
 import Footer from "@/components/footer";
@@ -26,7 +26,7 @@ export default function RootLayout({
           <div className="flex">
             <Footer />
             <div className="flex flex-col w-full">
-              {/* <Header /> */}
+              <Header />
               {children}
             </div>
           </div>

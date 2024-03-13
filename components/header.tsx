@@ -1,6 +1,6 @@
 "use client";
 
-import { useWeb3Auth } from "@/services/web3auth";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 import { usePathname } from "next/navigation";
 
 const Header = () => {

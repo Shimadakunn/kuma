@@ -1,13 +1,11 @@
 "use client";
-import { useWeb3Auth } from "@/services/web3auth";
 import { token } from "@/config/tokenConfig";
-import {chain} from "@/config/chainConfig";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { use, useEffect, useState } from "react";
 
 export default function Home() {
   const { interactTezosContract } = useWeb3Auth();

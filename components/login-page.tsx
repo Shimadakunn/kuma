@@ -1,8 +1,8 @@
 "use client";
-import { useWeb3Auth } from "@/services/web3auth";
+import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
 
-import Image from "next/image";
 import Background from "@/public/images/2-white.png";
+import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 

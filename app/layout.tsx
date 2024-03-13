@@ -22,7 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={font.className}>
-        <Web3AuthProvider>
+        {/* <Web3AuthProvider> */}
           <div className="flex">
             <Footer />
             <div className="flex flex-col w-full">
@@ -30,7 +30,7 @@ export default function RootLayout({
               {children}
             </div>
           </div>
-        </Web3AuthProvider>
+        {/* </Web3AuthProvider> */}
         <Toaster richColors/>
       </body>
     </html>

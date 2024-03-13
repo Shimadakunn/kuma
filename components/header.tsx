@@ -1,4 +1,5 @@
-"use client"
+"use client";
+
 import { useWeb3Auth } from "@/services/web3auth";
 import { usePathname } from "next/navigation";
 

@@ -8,7 +8,7 @@ import { Copy } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Home() {
-  const { provider, user, logout, addresses, privateKeys } = useWeb3Auth();
+  const { user, logout, addresses, privateKeys } = useWeb3Auth();
 
   return(
     <main className="flex items-center justify-center h-full w-full">

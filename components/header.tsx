@@ -1,10 +1,10 @@
 "use client";
 
-import { useWeb3Auth } from "@/services/web3auth";
+// import { useWeb3Auth } from "@/services/web3auth";
 import { usePathname } from "next/navigation";
 
 const Header = () => {
-  const { connectedChain } = useWeb3Auth();
+  // const { connectedChain } = useWeb3Auth();
   const path = usePathname();
 
   return (
@@ -25,8 +25,12 @@ const Header = () => {
           : ""}
       </div>
       <div className="font-[Monument] text-2xl tracking-tight flex space-x-2 items-center justify-center">
-        <div className="text-secondary">{connectedChain.displayName}</div>
+        <div className="text-secondary">
+          {/* {connectedChain.displayName} */}
+          hello
+        </div>
       </div>
+      
     </header>
   );
 };

@@ -302,10 +302,10 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
           setLoading(false);
           if(dispatch !== undefined){dispatch();}
           if(connectedChain.chainId === "Tezos"){return (<div className="flex">Transaction successfully sent <ExternalLink size={15} className="cursor-pointer ml-1" 
-            onClick={()=>window.open(`${connectedChain.blockExplorer}${data}`)}
+            // onClick={()=>window.open(`${connectedChain.blockExplorer}${data}`)}
             /></div>);}
           return (<div className="flex">Transaction successfully sent <ExternalLink size={15} className="cursor-pointer ml-1" 
-            onClick={()=>window.open(`${connectedChain.blockExplorer}tx/${data}`)}
+            // onClick={()=>window.open(`${connectedChain.blockExplorer}tx/${data}`)}
             /></div>);
         },
         error: (error) => {
@@ -347,7 +347,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         await getBalances();
         dispatch!();
         return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" 
-        onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data}`)}
+        // onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data}`)}
         /></div>);
       },
       error: (error) => {
@@ -374,7 +374,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         await getBalances();
         dispatch!();
         return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" 
-        onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data}`)}
+        // onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data}`)}
         /></div>);
       },
       error: (error) => {
@@ -395,7 +395,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       loading: 'Interacting Tezos Contract...',
       success: async (data) => {
         return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1"
-         onClick={()=>window.open(`${chain[token["tezos-ghostnet"].network].blockExplorer}${data}`)}
+        //  onClick={()=>window.open(`${chain[token["tezos-ghostnet"].network].blockExplorer}${data}`)}
          /></div>);
       },
       error: (error) => {

@@ -64,7 +64,6 @@ const StakePool: React.FC<Pool> = ({ tok, cont, apy, tvl }) => {
   useEffect(() => {
     setBalance(token[tok].balance);
     setAaveBalance(token[tok].aaveBalance);
-    console.log("reducer", reducer);
   },[reducer])
 
   return (

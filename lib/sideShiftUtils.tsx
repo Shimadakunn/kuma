@@ -30,7 +30,6 @@ export const fetchTokenQuote = async (sendToken:string, sendAmount:number, recei
     const response = await axios(config);
     return response.data.settleAmount;
   } catch (error: any) {
-    console.log("error catched",error)
     console.error(error.response.data.error.message);
     toast.error(error.response.data.error.message);
     return error;
@@ -50,8 +49,6 @@ const NetworkAddress = async (tok: string, addresses:string[]): Promise<string> 
 export const CreateShift = async (sendToken:string, receiveToken:string, addresses: string[]) => {
   const sendingAddress = await NetworkAddress(sendToken,addresses);
   const receivingAddress = await NetworkAddress(receiveToken,addresses);
-
-  console.log("sendingAddress: "+ sendingAddress+" depositCoin: "+token[sendToken].coin+" depositNetwork: "+token[sendToken].network.split(" ")[0].toLowerCase()+"settleAddress: "+receivingAddress+" settleCoin: "+token[receiveToken].coin+" settleNetwork: "+token[receiveToken].network.split(" ")[0].toLowerCase());
 
   const data = JSON.stringify({
       refundAddress: sendingAddress ,
@@ -76,10 +73,8 @@ export const CreateShift = async (sendToken:string, receiveToken:string, address
 
   try {
     const response = await axios(config);
-    console.log("Swap data",response.data)
     return response.data;
   } catch (error) {
-    console.log("error catched",error)
     if (error instanceof Error) {
       console.error(error.message);
       toast.error(error.message);

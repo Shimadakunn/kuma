@@ -168,7 +168,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         setWeb3Auth(web3AuthInstance);
       } catch (error) {
         toast.error("error");
-        console.log(error);
+        // console.log(error);
       }
     }
     init();
@@ -227,7 +227,6 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
       toast.error("web3auth not initialized yet");
       return "";
     }
-    console.log("Getting Balances...")
     const balancePromises = Object.keys(token).map(async (key) => {
       if (token[key].network === "Solana Devnet") {
         return solprovider!.getBalance(key);
@@ -304,7 +303,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
           return (<div className="flex">Transaction successfully sent <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${connectedChain.blockExplorer}tx/${data}`)}/></div>);
         },
         error: (error) => {
-          console.log(error);
+          // console.log(error);
           setLoading(false);
           return (<>An error occured</>);
         },
@@ -344,7 +343,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data}`)}/></div>);
       },
       error: (error) => {
-        console.log(error);
+        // console.log(error);
         return (<>An error occured</>);
       },
     });
@@ -369,7 +368,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${chain[token[tok].network].blockExplorer}/tx/${data}`)}/></div>);
       },
       error: (error) => {
-        console.log(error);
+        // console.log(error);
         return (<>An error occured</>);
       },
     });
@@ -388,7 +387,7 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
         return (<div className="flex">Successfully Staked <ExternalLink size={15} className="cursor-pointer ml-1" onClick={()=>window.open(`${chain[token["tezos-ghostnet"].network].blockExplorer}${data}`)}/></div>);
       },
       error: (error) => {
-        console.log(error);
+        // console.log(error);
         return (<>An error occured</>);
       },
     });

@@ -91,12 +91,10 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     tok?: string
   ): Promise<string> => {
     try {
-      console.log("Evm sending transaction")
       const ethersProvider = new ethers.BrowserProvider(provider as any);
       const signer = await ethersProvider.getSigner();
       let amountBigInt = ethers.parseEther(amount.toString());
       if(token[tok!].address){
-        console.log("Token transfer")
         const erc20 = new ethers.Contract(token[tok!].address!, ERC20, signer);
         const decimals = await erc20.decimals();
         amountBigInt = ethers.parseUnits(amount.toString(),decimals);
@@ -176,7 +174,6 @@ const ethersWeb3Provider = (provider: IProvider | null): IWalletProvider => {
     const address = await signer.getAddress();
     const contrac = new ethers.Contract(contract[cont].address,AAVEETH,signer);
     const tx = await contrac.depositETH(contract[cont].wrappedAddress,address,0,{value: ethers.parseEther(amount)});
-    console.log(tx);
     const receipt = await tx.wait();
     return receipt.hash;
   };

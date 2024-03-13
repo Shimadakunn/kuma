@@ -103,7 +103,6 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
       };
       const { transaction_hash: AXdAth, contract_address: AXcontractFinalAddress } =
         await accountAX.deployAccount(deployAccountPayload);
-      console.log('✅ ArgentX wallet deployed at:', AXcontractFinalAddress, " hash:", AXdAth);
     }
     catch (error: any) {
       toast.error("Please fund your starknet wallet with ETH to be able to use it "+ AXcontractAddress);

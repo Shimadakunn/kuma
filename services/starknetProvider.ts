@@ -32,7 +32,6 @@ const ethersWeb3Provider = (signer: string, contract: string): IWalletProvider =
         );
         const balance = (+res).toFixed(4);
         token["starknet-goerli"].balance = balance;
-        console.log('✅ ArgentX wallet balance:', balance);
         return balance;
     } catch (error: any) {
       toast.error(error);
@@ -69,7 +68,6 @@ const ethersWeb3Provider = (signer: string, contract: string): IWalletProvider =
       });
       const { transaction_hash: transferTxHash } = await erc20.transfer(transferCallData.calldata);
       
-      console.log(`Waiting for Tx to be Accepted on Starknet - Transfer...`);
       await starkprovider.waitForTransaction(transferTxHash);
       return signer;
     } catch (error: any) {

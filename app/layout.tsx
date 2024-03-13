@@ -1,4 +1,4 @@
-import { Web3AuthProvider } from "@/services/Web3AuthProviderWithWindow";
+import { Web3AuthProvider } from "@/services/web3auth";
 import type { Metadata } from "next";
 import localFont from 'next/font/local';
 import "./globals.css";

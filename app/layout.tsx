@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={font.className}>
         {/* <Web3AuthProvider> */}
           <div className="flex">
-            {/* <Footer /> */}
+            <Footer />
             <div className="flex flex-col w-full">
               {/* <Header /> */}
               {children}

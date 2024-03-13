@@ -1,6 +1,7 @@
 "use client";
 import { token } from "@/config/tokenConfig";
-// import { useWeb3Auth } from "@/services/Web3AuthProviderWithWindow";
+
+import { useWeb3Auth } from "@/services/web3auth";
 import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
@@ -8,13 +9,11 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
 
-const ClientSideComponent = dynamic(() => import("./interact"), {
-    ssr: false,
-  });
 
 export default function Home() {
-//   const { interactTezosContract } = useWeb3Auth();
+  const { interactTezosContract } = useWeb3Auth();
 
   return (
     <main className="flex items-center justify-center h-full w-full">
@@ -23,8 +22,7 @@ export default function Home() {
           <div className="w-28">Token</div>
           <div className="w-20 text-center">APY</div>
           <div className="w-20 text-center">TVL</div>
-          {/* <Button onClick={interactTezosContract}>Refresh</Button> */}
-            <ClientSideComponent />
+          <Button onClick={interactTezosContract}>Refresh</Button>
         </div>
         <ScrollArea className="h-[75vh]">
           {Object.keys(token).map((key) => (

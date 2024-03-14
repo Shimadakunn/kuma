@@ -109,8 +109,8 @@ export const Web3AuthProvider = ({ children }: IWeb3AuthProps) => {
               primary: "#a56cfe",
               gray: "#000000",
             },
-            logoDark: "https://emerald-rear-parakeet-3.mypinata.cloud/ipfs/QmSnwo9MrkzkPxGvFsCvusEDHZuSuCkdFiCiEofkPNLngA",
-            logoLight: "https://emerald-rear-parakeet-3.mypinata.cloud/ipfs/QmYde3LAdBxKA3YQkkvq28o5GtzTChNre4LsYysVC8W3Pu",
+            logoLight: "https://emerald-rear-parakeet-3.mypinata.cloud/ipfs/QmSnwo9MrkzkPxGvFsCvusEDHZuSuCkdFiCiEofkPNLngA",
+            logoDark: "https://emerald-rear-parakeet-3.mypinata.cloud/ipfs/QmYde3LAdBxKA3YQkkvq28o5GtzTChNre4LsYysVC8W3Pu",
             loginMethodsOrder: ["twitter"],
           },
         });

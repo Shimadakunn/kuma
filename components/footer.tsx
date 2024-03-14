@@ -20,12 +20,15 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
+import Image from "next/image";
+import Logo from "@/public/logo-white.png";
+
 const Footer = () => {
   return (
     <footer className="w-[6vw] h-screen p-4 mr-8 ml-2">
       <div className="w-full h-full bg-primary/70 rounded-xl flex items-center justify-between flex-col px-10 pt-4 pb-8">
         <div className="flex items-center flex-col space-y-8">
-          <PawPrint size={60} strokeWidth={2} color="white" className="mb-4"/>
+          <Image src={Logo} width={60} height={60} alt="logo" className="mb-4"/>
           <Icons path_name="" tooltip="Go to Home Page"/>
           <Icons path_name="swap" tooltip="Swap Tokens"/>
           <Icons path_name="stake" tooltip="Stake Tokens"/>

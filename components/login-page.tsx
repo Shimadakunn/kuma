@@ -6,14 +6,14 @@ import Image from "next/image";
 
 import { Button } from "@/components/ui/button";
 
-import { PawPrint } from 'lucide-react';
+import Logo from "@/public/logo-white.png";
 
 const Landing = () => {
     const { login } = useWeb3Auth();
     return (
         <main className="relative h-screen w-screen">
             <header className="text-5xl font-[Monument] font-black tracking-tighter pl-8 pt-4 flex items-center justify-start">
-            <PawPrint size={50} strokeWidth={2} color="white" className="mr-4"/> 
+            <Image src={Logo} width={50} height={50} alt="logo" className="mr-4"/>
             <div>KUMA</div> 
             </header>
             <div className="absolute left-0 bottom-0 h-[90vh] pl-28">

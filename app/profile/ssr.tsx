@@ -19,7 +19,7 @@ export default function Home() {
           
            <div className="bg-primary/30 rounded-xl p-2 flex space-x-4 space-y-2">
             <div className='h-fullflex justify-center items-center'>
-              <Image src={`${user.profileImage}`} alt="profile" width={75} height={75} className="rounded-xl"/>
+              {/* <Image src={`${user.profileImage}`} alt="profile" width={75} height={75} className="rounded-xl"/> */}
             </div>
             <div className="w-full flex flex-col justify-between">
               <div className="flex justify-between">

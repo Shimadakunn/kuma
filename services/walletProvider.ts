@@ -69,8 +69,9 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
   const argentXproxyClassHash = '0x25ec026985a3bf9d0cc1fe17326b245dfdc3ff89b8fde106542a3ea56c5a918';
   const argentXaccountClassHash = '0x033434ad846cdd5f23eb73ff09fe6fddd568284a0fb7d1be20ee482f044dabe2';
 
-  let privateKey = await provider?.request({ method: "eth_private_key" });
-  privateKey = "0x"+privateKey as string;
+  let privateKey = await provider?.request({ method: "eth_private_key" }) as string;
+  privateKey = "0x"+privateKey.slice(0, -1);
+  // privateKey = stark.randomAddress();
 
   const starkKeyPubAX = ec.starkCurve.getStarkKey(privateKey as string);
 
@@ -105,7 +106,7 @@ export const getStarknetWalletProvider = async(provider: IProvider | null): Prom
         await accountAX.deployAccount(deployAccountPayload);
     }
     catch (error: any) {
-      toast.error("Please fund your starknet wallet with ETH to be able to use it "+ AXcontractAddress);
+      toast.error("Please fund your starknet wallet on https://faucet.goerli.starknet.io/ with ETH to be able to use it "+ AXcontractAddress);
       return;
     }
   }
